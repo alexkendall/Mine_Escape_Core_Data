@@ -14,6 +14,11 @@ var CURRENT_LEVEL:Int = 0;
 enum SPEED{case SLOW, FAST};
 let NUM_SPEEDS:Int = 10;
 
+func getLocalLevel()->Int
+{
+    return (CURRENT_LEVEL % (NUM_SUB_LEVELS)) + 1;
+}
+
 class GameController : UIViewController
 {
     var game_timer = NSTimer();
@@ -37,11 +42,7 @@ class GameController : UIViewController
     var repeat_button = UIButton();
     var level_button = UIButton();
     var superview = UIView();
-    
-    func getLocalLevel()->Int
-    {
-        return (CURRENT_LEVEL % (NUM_SUB_LEVELS)) + 1;
-    }
+    var nextController = NextGameContoller();
     
     func setProperties()
     {
@@ -175,6 +176,7 @@ class GameController : UIViewController
     // MARKS GAME ACCORDINGLY IF WON OR LOST AND INVALIDATES ALL TIMERS
     func end_game()
     {
+        LevelsController.loadData();
         for(var i = 0; i < NUM_LOCS; ++i)
         {
             if(map[i].mine_exists == true)
@@ -192,7 +194,6 @@ class GameController : UIViewController
             }
         }
         // update progress
-        
         var proportion:Float = Float(COUNT) / Float(NUM_LOCS);
         var prog:Int = 0;
         if(proportion == 1.0)
@@ -217,6 +218,7 @@ class GameController : UIViewController
         
         var error:NSError?;
         var results:[NSManagedObject] = managedContext.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
+        println(results.count);
         
         if(LevelsController.level_buttons[CURRENT_LEVEL].level_data == nil)
         {
@@ -225,8 +227,7 @@ class GameController : UIViewController
             managedObject.setValue(CURRENT_LEVEL, forKey: "level_no");
             managedObject.setValue(prog, forKey: "progress");
             LevelsController.level_buttons[CURRENT_LEVEL].level_data = managedObject;
-            
-            managedContext.insertObject(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
+            managedContext.insertObject(managedObject);
             var error:NSError?;
             managedContext.save(&error);
         }
@@ -234,20 +235,24 @@ class GameController : UIViewController
         {
             // get prev progress-> update only if current score greater than prev
             var prev_progress:Int = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.valueForKey("progress") as! Int;
-            
             if(prog > prev_progress)
             {
                 managedContext.deleteObject(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
                 var error:NSError?;
                 managedContext.save(&error);
-                
                 LevelsController.level_buttons[CURRENT_LEVEL].level_data = nil;
                 end_game();
-                
-                
             }
-
         }
+        if(won_game())
+        {
+            nextController.markWon();
+        }
+        else
+        {
+            nextController.markLost();
+        }
+        self.view.addSubview(nextController.view);
         LevelsController.loadData();
     }
     
@@ -442,6 +447,9 @@ class GameController : UIViewController
         super.viewDidLoad();
         superview = self.view;
         superview.backgroundColor = UIColor.blackColor();
+        
+        // add child view controller
+        self.addChildViewController(nextController);
         
         self.NUM_ROWS = levels[CURRENT_LEVEL].dimension;
         self.NUM_COLS = NUM_ROWS;
@@ -714,6 +722,140 @@ class Mine_cell:UIButton
             explored = true;
             backgroundColor = UIColor.grayColor();
         }
+    }
+}
+
+
+// Window that prompts user to go to the next game if they win, or repeat if they loose
+class NextGameContoller: ViewController
+{
+    // create view that will hold next level
+    var complete_container = UIView();
+    var won_game = false;
+    var next_level = UIButton();
+    var x_button = UIButton();
+    var superview = UIView();
+    var completed_label = UILabel();
+    
+    func exit()
+    {
+        self.view.removeFromSuperview();
+    }
+    
+    func markWon()
+    {
+        completed_label.textColor = UIColor.orangeColor();
+        completed_label.text = String(format: "Level %i Completed", getLocalLevel());
+        next_level.setTitle("Next Level", forState: UIControlState.Normal);
+        next_level.removeTarget(gameController, action: "reset", forControlEvents: UIControlEvents.TouchUpInside);
+        next_level.addTarget(gameController, action: "increment_level", forControlEvents: UIControlEvents.TouchUpInside);
+        x_button.layer.borderColor = UIColor.orangeColor().CGColor;
+        x_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
+        
+    }
+    func markLost()
+    {
+        completed_label.textColor = UIColor.redColor();
+        completed_label.text = String(format: "Level %i Failed", getLocalLevel());
+        next_level.setTitle("Repeat Level", forState: UIControlState.Normal);
+        next_level.removeTarget(gameController, action: "increment_level", forControlEvents: UIControlEvents.TouchUpInside);
+        next_level.addTarget(gameController, action: "reset", forControlEvents: UIControlEvents.TouchUpInside);
+        x_button.layer.borderColor = UIColor.redColor().CGColor;
+        x_button.setTitleColor(UIColor.redColor(), forState: UIControlState.Highlighted);
+    }
+    
+    override func viewDidLoad()
+    {
+        super.viewDidLoad();
+        superview = self.view;
+        superview.layoutIfNeeded();
+        superview.setNeedsLayout();
+        var margin:CGFloat = (superview.bounds.height - superview.bounds.width) / 2.0;
+        
+        var size:CGFloat = superview.bounds.width;
+        
+        superview.frame = CGRect(x: 0.0, y: margin, width: size, height: size);
+        superview.bounds = CGRect(x: 0.0, y: 0.0, width: size, height: size);
+        
+        // create container to hold next level buttn
+        var width = superview.bounds.width * 0.75;
+        complete_container.layer.borderWidth = 1.0;
+        complete_container.layer.borderColor = UIColor.whiteColor().CGColor;
+        complete_container.backgroundColor = UIColor.blackColor();
+        complete_container.alpha = 0.85;
+        
+        // add constraints
+        complete_container.setTranslatesAutoresizingMaskIntoConstraints(false);
+        var centerx = NSLayoutConstraint(item: complete_container, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
+        
+        var centery = NSLayoutConstraint(item: complete_container, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: 0.0);
+        
+        var width_container = NSLayoutConstraint(item: complete_container, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: width);
+        
+        var height_container = NSLayoutConstraint(item: complete_container, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: width);
+        
+        superview.addSubview(complete_container);
+        superview.addConstraint(centerx);
+        superview.addConstraint(centery);
+        superview.addConstraint(width_container);
+        superview.addConstraint(height_container);
+        
+        // add x button
+        x_button.setTranslatesAutoresizingMaskIntoConstraints(false);
+        x_button.setTitle("X", forState: UIControlState.Normal);
+        x_button.clipsToBounds = true;
+        x_button.layer.cornerRadius = 15.0;
+        x_button.layer.borderWidth = 1.0;
+        x_button.backgroundColor = UIColor.blackColor();
+        x_button.alpha = 0.85;
+        x_button.addTarget(self, action: "exit", forControlEvents: UIControlEvents.TouchDown);
+        
+        // add constraints
+        var x_button_centery = NSLayoutConstraint(item: x_button, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: 0.0);
+        
+        var x_button_centerx = NSLayoutConstraint(item: x_button, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 0.0);
+        
+        // conform hiearchy
+        superview.addSubview(x_button);
+        superview.addConstraint(x_button_centery);
+        superview.addConstraint(x_button_centerx);
+        
+        // add win or loss label
+        
+        completed_label.font = UIFont(name: "Arial", size: 25.0);
+        
+        // add constraints
+        completed_label.setTranslatesAutoresizingMaskIntoConstraints(false);
+        var centerx_label = NSLayoutConstraint(item: completed_label, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
+        
+        var centery_label = NSLayoutConstraint(item: completed_label, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: width / 3.0);
+        
+        complete_container.addSubview(completed_label);
+        complete_container.addConstraint(centerx_label);
+        complete_container.addConstraint(centery_label);
+        
+        // add next level button
+        next_level.setTranslatesAutoresizingMaskIntoConstraints(false);
+        next_level.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+        next_level.layer.borderWidth = 1.0;
+        next_level.layer.borderColor = UIColor.whiteColor().CGColor;
+        next_level.setTitleColor(LIGHT_BLUE, forState: UIControlState.Highlighted);
+
+        // add constraints
+        var centery_next_level = NSLayoutConstraint(item: next_level, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: width * 3.0 / 5.0);
+        
+        // add constraints
+        var centerx_next_level = NSLayoutConstraint(item: next_level, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
+        
+        var width_next_level = NSLayoutConstraint(item: next_level, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Width, multiplier: 0.85, constant: 0.0);
+        
+        var height_next_level = NSLayoutConstraint(item: next_level, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: next_level, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -40.0);
+        
+        complete_container.addSubview(next_level);
+        complete_container.addConstraint(centery_next_level);
+        complete_container.addConstraint(centerx_next_level);
+        complete_container.addConstraint(width_next_level);
+        complete_container.addConstraint(height_next_level);
     }
 }
 
