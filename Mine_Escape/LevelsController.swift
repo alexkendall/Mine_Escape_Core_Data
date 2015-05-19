@@ -109,8 +109,6 @@ class LevelController : ViewController
             var error:NSError?;
             var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
             
-            println("Result set size: " + String(results.count));
-            
             if(results.count == 0)
             {
                 level_buttons[i].progress = 0;

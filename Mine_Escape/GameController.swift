@@ -220,7 +220,6 @@ class GameController : UIViewController
         
         if(LevelsController.level_buttons[CURRENT_LEVEL].level_data == nil)
         {
-            println("nil");
             var description = NSEntityDescription.entityForName("Level", inManagedObjectContext: managedContext);
             var managedObject = NSManagedObject(entity: description!, insertIntoManagedObjectContext: managedContext);
             managedObject.setValue(CURRENT_LEVEL, forKey: "level_no");
@@ -234,16 +233,20 @@ class GameController : UIViewController
         else
         {
             // get prev progress-> update only if current score greater than prev
-            println("not nil");
             var prev_progress:Int = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.valueForKey("progress") as! Int;
             
             if(prog > prev_progress)
             {
-                LevelsController.level_buttons[CURRENT_LEVEL].level_data?.setValue(prog, forKey: "progress");
-                managedContext.insertObject(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
+                managedContext.deleteObject(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
                 var error:NSError?;
                 managedContext.save(&error);
+                
+                LevelsController.level_buttons[CURRENT_LEVEL].level_data = nil;
+                end_game();
+                
+                
             }
+
         }
         LevelsController.loadData();
     }
