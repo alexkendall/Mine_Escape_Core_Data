@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 var CURRENT_LEVEL:Int = 0;
 enum SPEED{case SLOW, FAST};
@@ -188,9 +189,63 @@ class GameController : UIViewController
                 {
                     map[i].backgroundColor = UIColor.redColor();
                 }
-                
             }
         }
+        // update progress
+        
+        var proportion:Float = Float(COUNT) / Float(NUM_LOCS);
+        var prog:Int = 0;
+        if(proportion == 1.0)
+        {
+            prog = 3;
+        }
+        else if(proportion >= 0.75)
+        {
+            prog = 2;
+        }
+        else if(proportion >= 0.5)
+        {
+            prog = 1;
+        }
+        
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let managedContext = appDelegate.managedObjectContext!;
+        
+        var fetch = NSFetchRequest(entityName: "Level");
+        var pred = NSPredicate(format: "level_no = %i", CURRENT_LEVEL);
+        fetch.predicate = pred;
+        
+        var error:NSError?;
+        var results:[NSManagedObject] = managedContext.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
+        
+        if(LevelsController.level_buttons[CURRENT_LEVEL].level_data == nil)
+        {
+            println("nil");
+            var description = NSEntityDescription.entityForName("Level", inManagedObjectContext: managedContext);
+            var managedObject = NSManagedObject(entity: description!, insertIntoManagedObjectContext: managedContext);
+            managedObject.setValue(CURRENT_LEVEL, forKey: "level_no");
+            managedObject.setValue(prog, forKey: "progress");
+            LevelsController.level_buttons[CURRENT_LEVEL].level_data = managedObject;
+            
+            managedContext.insertObject(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
+            var error:NSError?;
+            managedContext.save(&error);
+        }
+        else
+        {
+            // get prev progress-> update only if current score greater than prev
+            println("not nil");
+            var prev_progress:Int = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.valueForKey("progress") as! Int;
+            
+            if(prog > prev_progress)
+            {
+                LevelsController.level_buttons[CURRENT_LEVEL].level_data?.setValue(prog, forKey: "progress");
+                managedContext.insertObject(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
+                var error:NSError?;
+                managedContext.save(&error);
+            }
+        }
+        LevelsController.loadData();
     }
     
     func unmarked_global()->(Array<Int>)

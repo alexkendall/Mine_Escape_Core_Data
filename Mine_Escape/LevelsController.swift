@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 var EASY = "EASY", MEDIUM = "MEDIUM", HARD = "HARD", INSANE = "INSANE", IMPOSSIBLE = "IMPOSSIBLE";
 var DIFFICULTY:[String] = [EASY, MEDIUM, HARD, INSANE, IMPOSSIBLE];
@@ -15,6 +16,7 @@ var DIFFICULTY:[String] = [EASY, MEDIUM, HARD, INSANE, IMPOSSIBLE];
 
 class level_view:UIButton
 {
+    var level_data:NSManagedObject?;
     var difficulty:String;
     var level:Int;
     var progress:Int;
@@ -75,7 +77,7 @@ class LevelController : ViewController
     var scroll_view = UIScrollView();
     var superview = UIView();
     var tabs = Array<UILabel>();
-    var level_buttons = Array<UIButton>();
+    var level_buttons = Array<level_view>();
     var back_button = UIButton();
     var title_label = UILabel();
     
@@ -91,6 +93,55 @@ class LevelController : ViewController
     {
         play_sound(SOUND.DEFAULT);
         self.view.removeFromSuperview();
+    }
+    
+    func loadData()
+    {
+        for(var i = 0; i < level_buttons.count; ++i)
+        {
+            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+            let managedContext = appDelegate.managedObjectContext;
+            
+            var fetch = NSFetchRequest(entityName: "Level");
+            var pred = NSPredicate(format: "level_no = %i", i);
+            fetch.predicate = pred;
+            
+            var error:NSError?;
+            var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
+            
+            println("Result set size: " + String(results.count));
+            
+            if(results.count == 0)
+            {
+                level_buttons[i].progress = 0;
+            }
+            if(results.count == 1)
+            {
+                var data = results[0];
+                var prev_progress:Int = data.valueForKey("progress") as! Int;
+                
+                for(var j = 0; j < prev_progress; ++j)
+                {
+                    level_buttons[i].level_data = data;
+                    level_buttons[i].level_status_indicator[j].layer.borderWidth = 0.5;
+                    var color = UIColor();
+                    if(prev_progress == 1)
+                    {
+                        color = UIColor.redColor();
+                    }
+                    if(prev_progress == 2)
+                    {
+                        color = UIColor.yellowColor();
+                    }
+                    if(prev_progress == 3)
+                    {
+                        color = UIColor.greenColor();
+                    }
+                    level_buttons[i].level_status_indicator[j].backgroundColor = color;
+                }
+            }
+        }
+        
     }
 
     override func viewDidLoad()
@@ -227,6 +278,7 @@ class LevelController : ViewController
                     }
                 }
             }
+            loadData();
         }
     }
 }
