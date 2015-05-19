@@ -8,15 +8,60 @@
 
 import UIKit
 import CoreData
+enum DEVICE_TYPE{case IPHONE_4, IPHONE_5, IPHONE_6, IPHONE_6_PLUS, IPAD, IWATCH};
+var DEVICE_VERSION:DEVICE_TYPE = DEVICE_TYPE.IPHONE_6; // default device
+var DEVICE_HEIGHT = CGFloat();
+var DEVICE_WIDTH = CGFloat();
+let MainMenuContoller = MainController();
+let LevelsController = LevelController();
+let AboutViewController = AboutController();
+let HowController = HowToController();
+let settingsController = SettingsController();
+let gameController = GameController();
+// colors
+let LIGHT_BLUE = UIColor(red: 0.0, green: 0.8, blue: 1.0, alpha: 1.0);
+let DARK_BLUE = UIColor(red: 0.0, green: 0.0, blue: 0.3, alpha: 1.0);
+
+
+func setDeviceInfo()
+{
+    DEVICE_HEIGHT = MainMenuContoller.view.bounds.height;
+    DEVICE_WIDTH = MainMenuContoller.view.bounds.width;
+    
+    if(DEVICE_HEIGHT == 480)
+    {
+        DEVICE_VERSION = DEVICE_TYPE.IPHONE_4;
+        println("IPHONE 4S");
+    }
+    else if(DEVICE_HEIGHT == 568)
+    {
+        DEVICE_VERSION = DEVICE_TYPE.IPHONE_5;
+    }
+    else if(DEVICE_HEIGHT == 667)
+    {
+        DEVICE_VERSION = DEVICE_TYPE.IPHONE_6;
+    }
+    else if(DEVICE_HEIGHT == 736)
+    {
+        DEVICE_VERSION = DEVICE_TYPE.IPHONE_6_PLUS;
+    }
+    else if(DEVICE_HEIGHT > 736)
+    {
+        DEVICE_VERSION = DEVICE_TYPE.IPAD;
+    }
+}
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+        setDeviceInfo();
+        gen_levels();
+        window?.rootViewController = MainMenuContoller;
         return true
     }
 
