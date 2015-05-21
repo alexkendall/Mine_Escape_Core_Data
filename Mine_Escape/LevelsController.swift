@@ -76,7 +76,6 @@ class LevelController : ViewController
 {
     var scroll_view = UIScrollView();
     var superview = UIView();
-    var tabs = Array<UILabel>();
     var level_buttons = Array<level_view>();
     var back_button = UIButton();
     var title_label = UILabel();
@@ -139,144 +138,109 @@ class LevelController : ViewController
                 }
             }
         }
-        
     }
 
     override func viewDidLoad()
     {
         superview = self.view;
-        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
+        superview.bounds = superview.frame;
         
+        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
         addChildViewController(gameController);
         
-        // configure scroll view
-        var scroll_mult:CGFloat = 0.9;
+        // configure title
+        // generate title subview
+        var title = UILabel();
+        var margin:CGFloat = superview.bounds.height / 20.0;
+        var font_size:CGFloat = 30.0;
+        var text_size:CGFloat = 20.0;
         
-        var scroll_width = NSLayoutConstraint(item: scroll_view, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Width, multiplier: scroll_mult, constant: 0.0);
+        switch DEVICE_VERSION
+        {
+            case .IPHONE_4: font_size = 23.0; text_size = 14.0;
+            
+            case .IPHONE_5: font_size = 25.0; text_size = 14.0;
+            
+            case .IPHONE_6: font_size = 28.0; text_size = 16.0;
+            
+            case .IPHONE_6_PLUS: font_size = 29.0; text_size = 16.0;
+            
+            case .IPAD: font_size = 50.0; text_size = 24.0;
+            
+            default: font_size = 30.0;
+        }
         
-        var scroll_height = NSLayoutConstraint(item: scroll_view, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Height, multiplier: 0.8, constant: 0.0);
-        
-        var scroll_centerx = NSLayoutConstraint(item: scroll_view, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        
-        var scroll_centery = NSLayoutConstraint(item: scroll_view, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: 0.0);
-        
-        
+        add_title_button(&title_label, &superview, "LEVELS", margin, font_size);
+        add_subview(scroll_view, superview, (margin * 2.5), margin + back_button_size, margin, margin);
         add_back_button(&back_button, &superview);
-        add_title_button(&title_label, &superview, "Levels", 15.0, 20.0);
-        
         back_button.addTarget(self, action: "go_to_main", forControlEvents: UIControlEvents.TouchUpInside);
-        scroll_view.setTranslatesAutoresizingMaskIntoConstraints(false);
+        
         scroll_view.backgroundColor = UIColor.clearColor();
         scroll_view.layer.borderColor = UIColor.whiteColor().CGColor;
         scroll_view.layer.borderWidth = 1.0;
-        scroll_view.frame = superview.bounds;
+        scroll_view.layoutIfNeeded();
+        scroll_view.setNeedsLayout();
         
-        superview.addSubview(scroll_view);
-        superview.addConstraint(scroll_width);
-        superview.addConstraint(scroll_height);
-        superview.addConstraint(scroll_centerx);
-        superview.addConstraint(scroll_centery);
-        
-        var margin:CGFloat = 40.0;
+        var tab_height:CGFloat = scroll_view.bounds.height / 15.0;
+        var tab_width:CGFloat = scroll_view.bounds.width;
         var dimension:Int = Int(sqrt(Float(NUM_SUB_LEVELS)));
-        var mega_width:CGFloat = superview.bounds.width * scroll_mult;
-        var mega_height:CGFloat = mega_width;
-        var sub_height:CGFloat = mega_height / CGFloat(dimension);
-        var sub_width:CGFloat = mega_width / CGFloat(dimension);
-        
-        var content_width:CGFloat = superview.bounds.width * scroll_mult;
-        var content_height:CGFloat = (mega_height * CGFloat(NUM_MEGA_LEVELS)) + (CGFloat(NUM_MEGA_LEVELS) * margin);
-        
-        scroll_view.contentSize = CGSize(width: superview.bounds.width * scroll_mult, height: content_height);
-        scroll_view.clipsToBounds = true;
+        var subview_width:CGFloat = scroll_view.bounds.width / CGFloat(dimension);
+        var subview_height:CGFloat = subview_width;
         
         for(var i = 0; i < NUM_MEGA_LEVELS; ++i)
         {
-            // configure tab properties
-            var tab = UILabel();
-            var current_dim = 4 + i;
-            tab.backgroundColor = UIColor.whiteColor();
-            tab.setTranslatesAutoresizingMaskIntoConstraints(false);
-            tab.text = DIFFICULTY[i]; //+ String(format: " - %i X %i ", current_dim, current_dim);
-            tab.textAlignment = NSTextAlignment.Center;
-            tab.textColor = UIColor.blackColor();
-            tabs.append(tab);
-            
-            // configure constraints
-            var baseline = ((margin + mega_height) * CGFloat(i));
-            
-            var tab_x = NSLayoutConstraint(item:tab, attribute: NSLayoutAttribute.CenterX , relatedBy: NSLayoutRelation.Equal, toItem: scroll_view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-            
-            var tab_y = NSLayoutConstraint(item:tab, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: scroll_view, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: baseline);
-            
-            var tab_width = NSLayoutConstraint(item:tab, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: scroll_view, attribute: NSLayoutAttribute.Width, multiplier: 1.0, constant: 0.0);
-            
-            var tab_height = NSLayoutConstraint(item:tab, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: tab, attribute: NSLayoutAttribute.Height, multiplier: 0, constant: margin);
-            
-            scroll_view.clipsToBounds = true;
-            scroll_view.addSubview(tab);
-            scroll_view.addConstraint(tab_x);
-            scroll_view.addConstraint(tab_y);
-            scroll_view.addConstraint(tab_width);
-            scroll_view.addConstraint(tab_height);
+            var tab_view = UILabel();
+            scroll_view.addSubview(tab_view);
+            tab_view.backgroundColor = UIColor.whiteColor();
+            var top_margin:CGFloat = CGFloat(i) * (tab_height + (CGFloat(dimension) * subview_height));
+            tab_view.frame = CGRect(x: 0.0, y: top_margin, width: tab_width, height: tab_height);
+            tab_view.bounds = CGRect(x: 0.0, y: 0.0, width: tab_width, height: tab_height);
+            tab_view.text = DIFFICULTY[i]; //+ String(format: " - %i X %i ", current_dim, current_dim);
+            tab_view.textAlignment = NSTextAlignment.Center;
+            tab_view.textColor = UIColor.blackColor();
             
             for(var row = 0; row < dimension; ++row)
             {
+                var dist_from_top:CGFloat = top_margin + (CGFloat(row) * subview_height) + tab_height;
                 for(var col = 0; col < dimension; ++col)
                 {
-                    // configure level button properties
-                    var level_but:level_view = level_view(in_level: (row * dimension) + col + 1, in_progress: 0, in_difficulty:DIFFICULTY[i]);
-                    level_but.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.75);
-                    level_but.layer.borderWidth = 1.0;
-                    level_but.layer.borderColor = UIColor.whiteColor().CGColor;
-                    level_but.clipsToBounds = false;
-                    level_but.setTranslatesAutoresizingMaskIntoConstraints(false);
-                    level_but.setTitle(String(level_but.level), forState: UIControlState.Normal);
-                    level_but.addTarget(self, action: "selected_level:", forControlEvents: UIControlEvents.TouchUpInside);
-                    level_but.tag = (i * (dimension * dimension)) + (row * dimension) + col;
-                    
-                    var baseline = margin + ((margin + mega_height) * CGFloat(i)) + (CGFloat(row) * sub_height);
-                    
-                    var level_center_x = NSLayoutConstraint(item:level_but, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: scroll_view, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: CGFloat(col) * sub_width);
-                    
-                    var level_center_y = NSLayoutConstraint(item:level_but, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: scroll_view, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: baseline);
-                    
-                    var level_width = NSLayoutConstraint(item:level_but, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: scroll_view, attribute: NSLayoutAttribute.Width, multiplier: 1.0 / CGFloat(dimension), constant: 0.0);
-                    
-                    var level_height = NSLayoutConstraint(item:level_but, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: scroll_view, attribute: NSLayoutAttribute.Width, multiplier: 1.0 / CGFloat(dimension), constant: 0.0);
-                    
-                    scroll_view.addSubview(level_but);
-                    scroll_view.addConstraint(level_center_x);
-                    scroll_view.addConstraint(level_center_y);
-                    scroll_view.addConstraint(level_width);
-                    scroll_view.addConstraint(level_height);
-                    level_buttons.append(level_but);
-                    
-                    for(var j = 0; j < 3; ++j)  // generate status
+                    // configure level button
+                    var dist_from_left:CGFloat = CGFloat(col) * subview_width;
+                    var level_ = level_view(in_level: (row * dimension) + col + 1, in_progress: 0, in_difficulty:DIFFICULTY[i]);
+                    scroll_view.addSubview(level_);
+                    level_.frame = CGRect(x: dist_from_left, y: dist_from_top, width: subview_width, height: subview_height);
+                    level_.bounds = CGRect(x: 0.0, y: 0.0, width: subview_width, height: subview_height);
+                    level_.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.75);
+                    level_.layer.borderWidth = 1.0;
+                    level_.layer.borderColor = UIColor.whiteColor().CGColor;
+                    level_.setTitle(String(level_.level), forState: UIControlState.Normal);
+                    level_.addTarget(self, action: "selected_level:", forControlEvents: UIControlEvents.TouchUpInside);
+                    level_.tag = (i * (dimension * dimension)) + (row * dimension) + col;
+                    level_buttons.append(level_);
+                    for(var ind = 0; ind < 3; ++ind)
                     {
-                        var level_status = UIView();
-                        level_status.setTranslatesAutoresizingMaskIntoConstraints(false);
-                        level_status.backgroundColor = UIColor.clearColor();
-                        var width:CGFloat = superview.frame.width * scroll_mult / 5.0 / 3.0;
-                        
-                        var status_height_constr = NSLayoutConstraint(item: level_status, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: level_but, attribute: NSLayoutAttribute.Height, multiplier: 0.15, constant: 0.0);
-                        
-                        var status_width_constr = NSLayoutConstraint(item: level_status, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: level_but, attribute: NSLayoutAttribute.Width, multiplier: 1.0 / 3.0, constant: 0.0);
-                        
-                        var status_left = NSLayoutConstraint(item: level_status, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: level_but, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: width * CGFloat(j));
-                        
-                        var status_bottom = NSLayoutConstraint(item: level_status, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: level_but, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: 0.0);
-                        
-                        level_but.addSubview(level_status);
-                        level_but.addConstraint(status_left);
-                        level_but.addConstraint(status_bottom);
-                        level_but.addConstraint(status_height_constr);
-                        level_but.addConstraint(status_width_constr);
-                        level_but.level_status_indicator.append(level_status);
+                        level_.layoutIfNeeded();
+                        level_.setNeedsLayout();
+                        var indicator = UIView();
+                        var ind_height = level_.bounds.height / 6.0;
+                        var ind_width = level_.bounds.width / 3.0;
+                        var x = ind_width * CGFloat(ind);
+                        var y = level_.bounds.height - ind_height;
+                        indicator.frame = CGRect(x: x, y: y, width: ind_width, height: ind_height);
+                        indicator.layer.borderWidth = 0.5;
+                        indicator.backgroundColor = UIColor.clearColor();
+                        level_.addSubview(indicator);
+                        level_.level_status_indicator.append(indicator);
                     }
                 }
             }
-            loadData();
         }
+        var mega_height:CGFloat = subview_height * CGFloat(dimension);
+        var content_height:CGFloat = (mega_height * CGFloat(NUM_MEGA_LEVELS)) + (CGFloat(NUM_MEGA_LEVELS) * tab_height);
+        scroll_view.contentSize = CGSize(width: tab_width, height: content_height);
+        scroll_view.clipsToBounds = true;
+        scroll_view.scrollEnabled = true;
+        loadData();
     }
 }

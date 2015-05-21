@@ -107,10 +107,10 @@
 			children = (
 				46E62D0C1B0A5E7D00A07B7B /* AppDelegate.swift */,
 				46E62D411B0A7D8700A07B7B /* MainController.swift */,
+				4648E7051B0AAF5900380242 /* AboutController.swift */,
 				4648E7031B0AA51600380242 /* LevelsController.swift */,
 				4648E7091B0AB80800380242 /* SettingsController.swift */,
 				4648E70B1B0ABAF400380242 /* GameController.swift */,
-				4648E7051B0AAF5900380242 /* AboutController.swift */,
 				4648E7071B0AB43F00380242 /* HowToController.swift */,
 				46E62D111B0A5E7D00A07B7B /* ViewController.swift */,
 				46E62D2F1B0A5EE000A07B7B /* audio.swift */,

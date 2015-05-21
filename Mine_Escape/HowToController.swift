@@ -23,55 +23,41 @@ class HowToController : ViewController
         super.viewDidLoad();
         
         superview = self.view;
+        superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
+        superview.bounds = superview.frame;
         addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
         
-        var baseline_height:CGFloat = 75.0;
-        var seperation:CGFloat = 50.0;
-        
-        // generate constraints for text_view
-        var width_tv = NSLayoutConstraint(item: text_view, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Width, multiplier: 0.75, constant: 0.0);
-        
-        var height_tv = NSLayoutConstraint(item: text_view, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Height, multiplier: 0.75, constant: 0.0);
-        
-        var centerx_tv = NSLayoutConstraint(item: text_view, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        
-        var centery_tv = NSLayoutConstraint(item: text_view, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: baseline_height + seperation);
-        
         // generate title subview
-        
         var title = UILabel();
-        title.setTranslatesAutoresizingMaskIntoConstraints(false);
-        var centerx_title = NSLayoutConstraint(item: title, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        var centery_title = NSLayoutConstraint(item: title, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: baseline_height);
+        var margin:CGFloat = superview.bounds.height / 20.0;
+        var font_size:CGFloat = 30.0;
+        var text_size:CGFloat = 20.0;
         
-        // configure title subview
-        title.text = "How to Play";
-        title.textColor = UIColor.orangeColor();
-        title.font = UIFont(name: "Arial", size: 30.0);
+        switch DEVICE_VERSION
+        {
+        case .IPHONE_4: font_size = 25.0; text_size = 18.0;
+            
+        case .IPHONE_5: font_size = 27.0; text_size = 18.0;
+            
+        case .IPHONE_6: font_size = 30.0; text_size = 20.0;
+            
+        case .IPHONE_6_PLUS: font_size = 33.0; text_size = 21.0;
+            
+        case .IPAD: font_size = 50.0; text_size = 30.0;
+            
+        default: font_size = 30.0;
+        }
         
-        
-        // organize heiarchy
-        superview.addSubview(title);
-        superview.addConstraint(centerx_title);
-        superview.addConstraint(centery_title);
+        add_title_button(&title, &superview, "HOW TO PLAY", margin, font_size);
         
         // configure text view
-        text_view.setTranslatesAutoresizingMaskIntoConstraints(false);
-        text_view.frame = super_view.bounds;
+        add_subview(text_view, superview, (margin * 2.5), margin + back_button_size, margin, margin);
         text_view.text = text;
         text_view.textAlignment = NSTextAlignment.Left;
         text_view.textColor = UIColor.whiteColor();
         text_view.backgroundColor = UIColor.clearColor();
-        text_view.font = UIFont(name: "Arial", size: 25.0);
+        text_view.font = UIFont(name: "Arial", size: text_size);
         text_view.editable = false;
-        
-        
-        // organize hiearchy
-        superview.addSubview(text_view);
-        superview.addConstraint(width_tv);
-        superview.addConstraint(height_tv);
-        superview.addConstraint(centerx_tv);
-        superview.addConstraint(centery_tv);
         
         // create back button
         add_back_button(&back_button, &superview);

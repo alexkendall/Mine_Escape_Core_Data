@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+var back_button_size:CGFloat = 40.0;
+
 // created gradient on background view
 func configure_gradient(inout background:UIView, top_color:UIColor, bottom_color:UIColor)
 {
@@ -60,7 +62,7 @@ func add_back_button(inout back_button:UIButton, inout superview:UIView)
     
     // configure back button constraints
     
-    var back_margin:CGFloat = 10.0;
+    var back_margin:CGFloat = superview.bounds.width * 0.025;
     var back_length:CGFloat = 40.0;
     
     var back_left = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: back_margin);
@@ -85,7 +87,7 @@ func add_back_button(inout back_button:UIButton, inout superview:UIView)
 func add_title_button(inout title_label:UILabel, inout superview:UIView, text:String, margin:CGFloat, size:CGFloat)
 {
     // configure title label properties
-    title_label.font = UIFont(name:"Arial", size: 30.0);
+    title_label.font = UIFont(name:"Arial", size: size);
     title_label.text = text;
     title_label.textColor = UIColor.orangeColor();
     title_label.textAlignment = NSTextAlignment.Center;

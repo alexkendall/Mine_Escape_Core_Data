@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreData
+import iAd
+
 enum DEVICE_TYPE{case IPHONE_4, IPHONE_5, IPHONE_6, IPHONE_6_PLUS, IPAD, IWATCH};
 var DEVICE_VERSION:DEVICE_TYPE = DEVICE_TYPE.IPHONE_6; // default device
 var DEVICE_HEIGHT = CGFloat();
@@ -21,6 +23,10 @@ let gameController = GameController();
 // colors
 let LIGHT_BLUE = UIColor(red: 0.0, green: 0.8, blue: 1.0, alpha: 1.0);
 let DARK_BLUE = UIColor(red: 0.0, green: 0.0, blue: 0.3, alpha: 1.0);
+
+var banner_view = ADBannerView();
+weak var delegate:ADBannerViewDelegate!;
+
 
 
 func setDeviceInfo()
@@ -62,6 +68,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setDeviceInfo();
         gen_levels();
         window?.rootViewController = MainMenuContoller;
+        banner_view.frame = CGRect(x: 0.0, y: window!.bounds.height - banner_view.bounds.height, width: banner_view.bounds.width, height: banner_view.bounds.height);
+        
+        MainMenuContoller.view.addSubview(banner_view);
         return true
     }
 
