@@ -52,15 +52,52 @@ class GameController : UIViewController
         self.difficulty_indicator.text = levels[CURRENT_LEVEL].difficulty;
         self.NUM_COLS = NUM_ROWS;
         self.NUM_LOCS = NUM_COLS * NUM_ROWS;
-        level_indicator.text = String(format:"LEVEL %i   ", getLocalLevel());
+        level_indicator.text = String(format:"LEVEL %i", getLocalLevel());
         switch difficulty_indicator.text as String!
         {
             case EASY: difficulty_indicator.textColor = UIColor.greenColor();
             case MEDIUM: difficulty_indicator.textColor = UIColor.yellowColor();
-            case HARD:  difficulty_indicator.textColor = UIColor.redColor();
+            case HARD:  difficulty_indicator.textColor = UIColor.orangeColor();
             case INSANE:  difficulty_indicator.textColor = UIColor.whiteColor();
             case IMPOSSIBLE:  difficulty_indicator.textColor = UIColor.redColor();
             default: difficulty_indicator.textColor = UIColor.whiteColor();
+        }
+        level_indicator.textColor = LIGHT_BLUE;
+        var total = UILabel();
+        total.text = level_indicator.text! + difficulty_indicator.text!;
+        total.sizeToFit();
+        var total_width:CGFloat = total.frame.width;  // get total width text takes up
+        
+        total.text = level_indicator.text!;
+        total.sizeToFit();
+        var level_width:CGFloat = total.frame.width;
+        var dific_width:CGFloat = total_width - level_width;
+        
+        var padding:CGFloat = dific_width - level_width;
+        var height = global_but_margin * 2.0
+        var y_origin = ((superview.bounds.height - superview.bounds.width) / 2.0) - global_but_dim;
+        var const_margin:CGFloat = 25.0
+
+        if(padding > 0) // must pad level side to center
+        {
+            var level_width = (superview.bounds.width / 2.0) - padding;
+            var diffic_width = (superview.bounds.width / 2.0);
+            var margin:CGFloat = 15.0;
+            var shift:CGFloat = (padding - margin) / 2.0;
+            level_indicator.frame = CGRect(x: shift, y: y_origin , width: level_width, height: height);
+            difficulty_indicator.frame = CGRect(x: (superview.bounds.width / 2.0) - shift, y: y_origin, width: diffic_width, height: height);
+        }
+            
+        else    // must pad difficulty side to center
+        {
+            padding *= -1;
+            var level_width = (superview.bounds.width / 2.0);
+            var diffic_width = (superview.bounds.width / 2.0) - padding;
+            var margin:CGFloat = 15.0;
+            var shift:CGFloat = (padding - margin) / 2.0;
+            
+            level_indicator.frame = CGRect(x: shift, y: y_origin , width: level_width, height: height);
+            difficulty_indicator.frame = CGRect(x: (superview.bounds.width / 2.0) + padding - shift, y: y_origin, width: diffic_width, height: height);
         }
     }
     
@@ -456,24 +493,13 @@ class GameController : UIViewController
         back_button.layer.borderWidth = 1.0;
         back_button.layer.borderColor = UIColor.whiteColor().CGColor;
         back_button.addTarget(self, action:"GoToLevelMenu", forControlEvents: UIControlEvents.TouchUpInside);
-        
-        
-    
-        // add level indicator icon
-        var space:CGFloat = 10.0;
-        var y_origin = ((superview.bounds.height - superview.bounds.width) / 2.0) - global_but_dim;
-        level_indicator = UILabel(frame: CGRect(x: 0.0, y: y_origin, width:(superview.bounds.width / 2.0) - space, height: global_but_margin * 2.0));
-        
-        level_indicator.text = String(format:"LEVEL %i", getLocalLevel());
-        level_indicator.textColor = LIGHT_BLUE;
+
         level_indicator.textAlignment = NSTextAlignment.Right;
-        superview.addSubview(level_indicator);
-        
-        difficulty_indicator = UILabel(frame: CGRect(x: (superview.bounds.width / 2.0) + space, y: y_origin, width: superview.bounds.width / 2.0, height: global_but_margin * 2.0));
-        difficulty_indicator.text = levels[CURRENT_LEVEL].difficulty;
-        difficulty_indicator.textColor = UIColor.whiteColor();
         difficulty_indicator.textAlignment = NSTextAlignment.Left;
         superview.addSubview(difficulty_indicator);
+        superview.addSubview(level_indicator);
+        setProperties();
+        
         
         // add child view controller
         self.addChildViewController(nextController);

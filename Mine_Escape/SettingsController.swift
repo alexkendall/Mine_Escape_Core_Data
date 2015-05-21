@@ -40,7 +40,7 @@ class SettingsController : ViewController
             managedContext?.deleteObject(results[i]);
         }
         managedContext?.save(&error);
-        LevelsController.loadData();
+        
         for(var i = 0; i < LevelsController.level_buttons.count; ++i)
         {
             LevelsController.level_buttons[i].progress = 0;
@@ -48,8 +48,10 @@ class SettingsController : ViewController
             for(var j = 0; j < 3; ++j)
             {
                 LevelsController.level_buttons[i].level_status_indicator[j].backgroundColor = UIColor.clearColor();
+                LevelsController.level_buttons[i].level_data = nil;
             }
         }
+        LevelsController.loadData();
     }
     
     override func viewDidLoad()
