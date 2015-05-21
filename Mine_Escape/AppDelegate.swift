@@ -21,8 +21,11 @@ let HowController = HowToController();
 let settingsController = SettingsController();
 let gameController = GameController();
 // colors
-let LIGHT_BLUE = UIColor(red: 0.0, green: 0.8, blue: 1.0, alpha: 1.0);
-let DARK_BLUE = UIColor(red: 0.0, green: 0.0, blue: 0.3, alpha: 1.0);
+var LIGHT_BLUE = UIColor(red: 0.0, green: 0.8, blue: 1.0, alpha: 1.0);
+var DARK_BLUE = UIColor(red: 0.0, green: 0.0, blue: 0.3, alpha: 1.0);
+var global_margin:CGFloat = 0.0;
+var global_but_dim:CGFloat = 0.0;
+var global_but_margin:CGFloat = 0.0;
 
 var banner_view = ADBannerView();
 weak var delegate:ADBannerViewDelegate!;
@@ -37,7 +40,6 @@ func setDeviceInfo()
     if(DEVICE_HEIGHT == 480)
     {
         DEVICE_VERSION = DEVICE_TYPE.IPHONE_4;
-        println("IPHONE 4S");
     }
     else if(DEVICE_HEIGHT == 568)
     {
@@ -69,6 +71,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         gen_levels();
         window?.rootViewController = MainMenuContoller;
         banner_view.frame = CGRect(x: 0.0, y: window!.bounds.height - banner_view.bounds.height, width: banner_view.bounds.width, height: banner_view.bounds.height);
+        
+        global_but_margin = MainMenuContoller.view.bounds.height * 0.025;
+        global_margin = MainMenuContoller.view.bounds.height / 20.0;
+        global_but_dim =  MainMenuContoller.view.bounds.width / 10.0;
         
         MainMenuContoller.view.addSubview(banner_view);
         return true

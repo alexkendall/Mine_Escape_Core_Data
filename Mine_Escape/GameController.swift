@@ -52,7 +52,7 @@ class GameController : UIViewController
         self.difficulty_indicator.text = levels[CURRENT_LEVEL].difficulty;
         self.NUM_COLS = NUM_ROWS;
         self.NUM_LOCS = NUM_COLS * NUM_ROWS;
-        level_indicator.text = String(format:"LEVEL %i", getLocalLevel());
+        level_indicator.text = String(format:"LEVEL %i   ", getLocalLevel());
         switch difficulty_indicator.text as String!
         {
             case EASY: difficulty_indicator.textColor = UIColor.greenColor();
@@ -218,7 +218,6 @@ class GameController : UIViewController
         
         var error:NSError?;
         var results:[NSManagedObject] = managedContext.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
-        println(results.count);
         
         if(LevelsController.level_buttons[CURRENT_LEVEL].level_data == nil)
         {
@@ -447,6 +446,34 @@ class GameController : UIViewController
         super.viewDidLoad();
         superview = self.view;
         superview.backgroundColor = UIColor.blackColor();
+        superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
+        superview.bounds = superview.frame;
+        
+        // add back button
+        var back_button = UIButton(frame: CGRect(x: global_but_margin, y: global_but_margin, width: global_but_dim, height: global_but_dim));
+        back_button.setBackgroundImage(UIImage(named: "prev_level"), forState: UIControlState.Normal);
+        superview.addSubview(back_button);
+        back_button.layer.borderWidth = 1.0;
+        back_button.layer.borderColor = UIColor.whiteColor().CGColor;
+        back_button.addTarget(self, action:"GoToLevelMenu", forControlEvents: UIControlEvents.TouchUpInside);
+        
+        
+    
+        // add level indicator icon
+        var space:CGFloat = 10.0;
+        var y_origin = ((superview.bounds.height - superview.bounds.width) / 2.0) - global_but_dim;
+        level_indicator = UILabel(frame: CGRect(x: 0.0, y: y_origin, width:(superview.bounds.width / 2.0) - space, height: global_but_margin * 2.0));
+        
+        level_indicator.text = String(format:"LEVEL %i", getLocalLevel());
+        level_indicator.textColor = LIGHT_BLUE;
+        level_indicator.textAlignment = NSTextAlignment.Right;
+        superview.addSubview(level_indicator);
+        
+        difficulty_indicator = UILabel(frame: CGRect(x: (superview.bounds.width / 2.0) + space, y: y_origin, width: superview.bounds.width / 2.0, height: global_but_margin * 2.0));
+        difficulty_indicator.text = levels[CURRENT_LEVEL].difficulty;
+        difficulty_indicator.textColor = UIColor.whiteColor();
+        difficulty_indicator.textAlignment = NSTextAlignment.Left;
+        superview.addSubview(difficulty_indicator);
         
         // add child view controller
         self.addChildViewController(nextController);
@@ -478,36 +505,10 @@ class GameController : UIViewController
         self.bottom_text.textColor = UIColor.whiteColor();
         self.bottom_text.textAlignment = NSTextAlignment.Center;
         self.bottom_text.font = UIFont(name: "Arial-BoldMT" , size: 35.0);
-        
-        level_button.setTranslatesAutoresizingMaskIntoConstraints(false);
-        level_button.setTitle("LEVEL MENU", forState: UIControlState.Normal);
-        level_button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
-        level_button.titleLabel?.font = UIFont(name: "Arial", size: menu_font_size);
-        superview.addSubview(level_button);
-        level_button.addTarget(self, action:"GoToLevelMenu", forControlEvents: UIControlEvents.TouchUpInside);
-        
-        var menu_offset_x = NSLayoutConstraint(item: level_button, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: -20.0);
-        
-        var offsety_menu = NSLayoutConstraint(item: level_button, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: 20.0);
-        
-        superview.addConstraint(menu_offset_x);
-        superview.addConstraint(offsety_menu);
-        
-        startup_menu.setTranslatesAutoresizingMaskIntoConstraints(false);
-        startup_menu.setTitle("MAIN MENU", forState: UIControlState.Normal);
-        startup_menu.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
-        startup_menu.titleLabel?.font = UIFont(name: "Arial", size: menu_font_size);
-        superview.addSubview(startup_menu);
-        startup_menu.addTarget(self, action: "GoToMainMenu", forControlEvents: UIControlEvents.TouchUpInside);
-        
-        var main_menu_offset_x = NSLayoutConstraint(item: startup_menu, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: 20.0);
-        
-        var main_offsety_menu = NSLayoutConstraint(item: startup_menu, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: 20.0);
-        
-        superview.addConstraint(main_menu_offset_x);
-        superview.addConstraint(main_offsety_menu);
+
         update_local_level();
         
+        /*
         difficulty_indicator.setTranslatesAutoresizingMaskIntoConstraints(false);
         superview.addSubview(difficulty_indicator);
         var off_const:CGFloat = 20.0
@@ -525,11 +526,12 @@ class GameController : UIViewController
         
         var offset_left_li = NSLayoutConstraint(item: level_indicator, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: 20.0);
         
+        
         superview.addConstraint(centery_li);
         superview.addConstraint(offset_left_li);
         level_indicator.text = String(format:"LEVEL %i", getLocalLevel());
         level_indicator.textColor = LIGHT_BLUE;
-        
+        */
         
         var repeat_image = UIImage(named: "repeat_level");
         var prev_image = UIImage(named: "prev_level");
@@ -543,7 +545,7 @@ class GameController : UIViewController
         repeat_button.layer.backgroundColor = UIColor.blackColor().CGColor;
         repeat_button.addTarget(self, action: "reset", forControlEvents: UIControlEvents.TouchUpInside);
         
-        var button_width:CGFloat = 40.0;
+        var button_width:CGFloat = global_but_dim;
         
         //set constraints
         var centerx_repeat = NSLayoutConstraint(item: repeat_button, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);

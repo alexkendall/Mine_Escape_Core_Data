@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 class SettingsController : ViewController
 {
@@ -16,11 +17,39 @@ class SettingsController : ViewController
     var volume_slider = UISlider();
     var volume_label = UILabel();
     var restore_button = UIButton();
+    var label_text = ["VOLUME", "RESTORE PROGRESS"];
     
     func GoToMain()
     {
         play_sound(SOUND.DEFAULT);
         self.view.removeFromSuperview();
+    }
+    
+    func resetProgress()
+    {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let managedContext = appDelegate.managedObjectContext;
+        
+        var fetch = NSFetchRequest(entityName: "Level");
+
+        var error:NSError?;
+        var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
+        
+        for(var i = 0; i < results.count; ++i)
+        {
+            managedContext?.deleteObject(results[i]);
+        }
+        managedContext?.save(&error);
+        LevelsController.loadData();
+        for(var i = 0; i < LevelsController.level_buttons.count; ++i)
+        {
+            LevelsController.level_buttons[i].progress = 0;
+            
+            for(var j = 0; j < 3; ++j)
+            {
+                LevelsController.level_buttons[i].level_status_indicator[j].backgroundColor = UIColor.clearColor();
+            }
+        }
     }
     
     override func viewDidLoad()
@@ -31,9 +60,6 @@ class SettingsController : ViewController
         superview.bounds = superview.frame;
         
         addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
-        
-        var baseline_height:CGFloat = 75.0;
-        var seperation:CGFloat = 50.0;
         
         // generate title subview
         var title = UILabel();
@@ -60,73 +86,37 @@ class SettingsController : ViewController
         add_back_button(&back_button, &superview);
         back_button.addTarget(self, action: "GoToMain", forControlEvents: UIControlEvents.TouchUpInside);
         
+        var container_view = UIView();
+        var top = margin * 2.5;
+        var left_margin = margin;
+        var right_margin = margin;
+        var bottom_margin = back_button_size + banner_view.bounds.height;
         
-        // configure volume slider
-        volume_slider.setTranslatesAutoresizingMaskIntoConstraints(false);
-        volume_slider.maximumValue = 1.0;
-        volume_slider.minimumValue = 0.0;
-        volume_slider.maximumTrackTintColor = LIGHT_BLUE;
-        volume_slider.minimumTrackTintColor = UIColor.orangeColor();
-        volume_slider.setValue(VOLUME_LEVEL, animated: false);
-        var height_slider_:CGFloat = 40.0;
-        
-        var width_slider = NSLayoutConstraint(item: volume_slider, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Width, multiplier: 0.75, constant: 0.0);
-        
-        var height_slider = NSLayoutConstraint(item: volume_slider, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: volume_slider, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -height_slider_);
-        
-        var centerx_slider = NSLayoutConstraint(item: volume_slider, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        
-        var centery_slider = NSLayoutConstraint(item: volume_slider, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: 0.0);
+        add_subview(container_view, superview, top, bottom_margin, left_margin, right_margin);
+        //container_view.backgroundColor = UIColor.whiteColor();
         
         
-        // configure restore progress button
-        var restore_height:CGFloat = 30.0;
-        var top_margin = superview.bounds.height * 2.0 / 3.0;
-        var bottom_margin = superview.bounds.height - top_margin - restore_height;
-        var left_margin:CGFloat = 0.0;
-        var right_margin:CGFloat = 0.0;
-        add_subview(restore_button, superview, top_margin, bottom_margin, left_margin, right_margin);
-        restore_button.setTitle("RESTORE PROGRESS", forState: UIControlState.Normal);
-        restore_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal);
-        restore_button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Highlighted);
-        restore_button.titleLabel?.font = UIFont.systemFontOfSize(20.0);
-        
-        
-        // organize hiearchy
-        superview.addSubview(volume_slider);
-        superview.addConstraint(width_slider);
-        superview.addConstraint(height_slider);
-        superview.addConstraint(centerx_slider);
-        superview.addConstraint(centery_slider);
-        
-        
-        // configure volume label
-        volume_label.setTranslatesAutoresizingMaskIntoConstraints(false);
-        volume_label.backgroundColor = UIColor.orangeColor();
-        volume_label.layer.borderWidth = 2.0;
-        volume_label.layer.borderColor = UIColor.whiteColor().CGColor;
-        volume_label.text = String(Int(100.0 * VOLUME_LEVEL));
-        volume_label.textColor = UIColor.whiteColor();
-        volume_label.textAlignment = NSTextAlignment.Center;
-        volume_label.font = UIFont(name: "Arial", size: 30.0);
-        
-        var width_label = NSLayoutConstraint(item: volume_label, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Width, multiplier: 0.30, constant: 0.0);
-        
-        var height_label = NSLayoutConstraint(item: volume_label, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Height, multiplier: 0.2, constant: -10.0);
-        
-        var centerx_label = NSLayoutConstraint(item: volume_label, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        
-        var centery_label = NSLayoutConstraint(item: volume_label, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: volume_slider, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: -30.0);
-        
-        superview.addSubview(volume_label);
-        superview.addConstraint(width_label);
-        superview.addConstraint(height_label);
-        superview.addConstraint(centerx_label);
-        superview.addConstraint(centery_label);
-        
-        add_back_button(&back_button, &superview);
-        back_button.addTarget(self, action: "GoToMain", forControlEvents: UIControlEvents.TouchUpInside);
-        super.viewDidLoad();
+        for(var i = 0; i < label_text.count; ++i)
+        {
+            container_view.layoutIfNeeded();
+            container_view.setNeedsLayout();
+            var label_height = container_view.bounds.height / 10.0;
+            var label_width = container_view.bounds.width;
+            var label_x:CGFloat = 0.0;
+            var label_y = CGFloat(i) * label_height;
+            
+            var label = UIButton(frame: CGRect(x: label_x, y: label_y, width: label_width, height: label_height));
+            label.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+            label.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
+            label.setTitle(label_text[i], forState: UIControlState.Normal);
+            label.titleLabel?.font = UIFont.systemFontOfSize(text_size);
+            container_view.addSubview(label);
+            
+            if(i == 1)  // add buttons to adjust volume
+            {
+                label.addTarget(self, action: "resetProgress", forControlEvents: UIControlEvents.TouchUpInside);
+            }
+        }
     }
 }
 
