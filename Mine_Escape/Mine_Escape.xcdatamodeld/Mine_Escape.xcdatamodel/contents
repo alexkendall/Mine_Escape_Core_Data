@@ -4,7 +4,11 @@
         <attribute name="level_no" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="progress" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
     </entity>
+    <entity name="Volume" syncable="YES">
+        <attribute name="value" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+    </entity>
     <elements>
         <element name="Level" positionX="-45" positionY="0" width="128" height="75"/>
+        <element name="Volume" positionX="-45" positionY="18" width="128" height="60"/>
     </elements>
 </model>

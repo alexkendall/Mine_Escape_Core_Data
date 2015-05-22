@@ -17,8 +17,39 @@ class SettingsController : ViewController
     var volume_slider = UISlider();
     var volume_label = UILabel();
     var restore_button = UIButton();
-    var label_text = ["VOLUME", "RESTORE PROGRESS"];
+    var label_text = ["VOLUME: 10", "RESTORE PROGRESS"];
     var clearController = ClearDataController();
+    var volume:Int = 10;
+    var plus_button = UIButton();
+    var minus_button = UIButton();
+    var volume_indicator = UIButton();
+    
+    func load_volume()
+    {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let managedContext = appDelegate.managedObjectContext;
+        
+        var fetch = NSFetchRequest(entityName: "Volume");
+        var error:NSError?;
+        var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
+        
+        if(results.count == 0)
+        {
+            var descr = NSEntityDescription.entityForName("Volume", inManagedObjectContext: managedContext!);
+            var managed_object = NSManagedObject(entity: descr!, insertIntoManagedObjectContext: managedContext);
+            managed_object.setValue(10, forKey: "value");
+            managedContext?.insertObject(managed_object);
+            
+            var error:NSError?;
+            managedContext?.save(&error);
+        }
+        else
+        {
+            self.volume = results[0].valueForKey("value") as! Int;
+        }
+        volume_indicator.setTitle("VOLUME: " + String(volume), forState: UIControlState.Normal);
+        VOLUME_LEVEL = Float(volume) / 10.0;
+    }
     
     func GoToMain()
     {
@@ -26,10 +57,55 @@ class SettingsController : ViewController
         self.view.removeFromSuperview();
     }
     
+    func set_volume()
+    {
+        volume_indicator.setTitle("VOLUME: " + String(volume), forState: UIControlState.Normal);
+        VOLUME_LEVEL = Float(volume) / 10.0;
+        play_sound(SOUND.DEFAULT);
+    }
+    
     func clicked_reset()
     {
         superview.addSubview(clearController.view);
     }
+    
+    func change_volume(sender:UIButton!)
+    {
+        println(sender.tag);
+        volume += sender.tag;
+        if(volume < 0)
+        {
+            volume = 0;
+        }
+        if(volume > 10)
+        {
+            volume = 10;
+        }
+        set_volume();
+        
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let managedContext = appDelegate.managedObjectContext;
+        
+        var fetch = NSFetchRequest(entityName: "Volume");
+        var error:NSError?;
+        var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
+        
+        assert(results.count == 1, "INVALID FETCH OF VOLUME ENTITY");
+        for(var i = 0; i < results.count; ++i)
+        {
+            var obj = results[i];
+            managedContext?.deleteObject(obj);
+        }
+        
+        var descr = NSEntityDescription.entityForName("Volume", inManagedObjectContext: managedContext!);
+        var managed_object = NSManagedObject(entity: descr!, insertIntoManagedObjectContext: managedContext);
+        managed_object.setValue(volume, forKey: "value");
+        managedContext?.insertObject(managed_object);
+        
+        managedContext?.save(&error);
+        
+    }
+    
     
     override func viewDidLoad()
     {
@@ -79,22 +155,66 @@ class SettingsController : ViewController
         {
             container_view.layoutIfNeeded();
             container_view.setNeedsLayout();
+            
+            /*
             var label_height = container_view.bounds.height / 5.0;
             var label_width = container_view.bounds.width;
             var label_x:CGFloat = 0.0;
             var label_y = CGFloat(i) * label_height;
+            */
             
-            var label = UIButton(frame: CGRect(x: label_x, y: label_y, width: label_width, height: label_height));
+            var label = UIButton();
             label.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
             label.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
             label.setTitle(label_text[i], forState: UIControlState.Normal);
             label.titleLabel?.font = UIFont.systemFontOfSize(text_size);
+            label.sizeToFit();
+            var label_width:CGFloat = label.frame.width;
+            var label_x:CGFloat = (container_view.frame.width - label_width) / 2.0;
+            var label_height = container_view.bounds.height / 5.0;
+            var label_y = CGFloat(i) * label_height;
+            label.frame = CGRect(x: label_x, y: label_y, width: label_width, height: label_height);
             container_view.addSubview(label);
             
-            if(i == 1)  // add buttons to adjust volume
+            
+            if(i == 0)  // VOLUME
+            {
+                volume_indicator = label;
+                // add  - volume buttons
+                var space:CGFloat = 10.0
+                var minus_dim:CGFloat = label_height;
+                var minus_x = label.frame.origin.x - minus_dim;
+                var minus_y = label_y;
+                minus_button = UIButton(frame: CGRect(x: minus_x, y: minus_y, width: minus_dim, height: minus_dim));
+                minus_button.setTitle("-", forState: UIControlState.Normal);
+                minus_button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+                minus_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
+                minus_button.titleLabel?.font = UIFont.systemFontOfSize(text_size);
+                minus_button.addTarget(self, action: "change_volume:", forControlEvents: UIControlEvents.TouchDown);
+                minus_button.tag = -1;
+                container_view.addSubview(minus_button);
+                
+                // add + button
+                var plus_dim:CGFloat = minus_dim;
+                var plus_x = label.frame.origin.x + label.frame.width;
+                var plus_y = minus_y;
+                plus_button = UIButton(frame: CGRect(x: plus_x, y: plus_y, width: plus_dim, height: plus_dim));
+                plus_button.setTitle("+", forState: UIControlState.Normal);
+                plus_button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+                plus_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
+                plus_button.titleLabel?.font = UIFont.systemFontOfSize(text_size);
+                plus_button.addTarget(self, action: "change_volume:", forControlEvents: UIControlEvents.TouchDown);
+                plus_button.tag = 1;
+                container_view.addSubview(plus_button);
+                
+                set_volume();
+                
+            }
+            if(i == 1) // RESTORE PROGRESS
             {
                 label.addTarget(self, action: "clicked_reset", forControlEvents: UIControlEvents.TouchUpInside);
             }
+            
         }
     }
 }

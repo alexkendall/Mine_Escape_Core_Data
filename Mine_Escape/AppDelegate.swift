@@ -69,6 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setDeviceInfo();
         gen_levels();
+        settingsController.load_volume();
         window?.rootViewController = MainMenuContoller;
         banner_view.frame = CGRect(x: 0.0, y: window!.bounds.height - banner_view.bounds.height, width: banner_view.bounds.width, height: banner_view.bounds.height);
         
