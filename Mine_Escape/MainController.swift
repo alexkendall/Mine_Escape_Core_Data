@@ -48,6 +48,11 @@ class MainController: UIViewController {
     var start_alpha:Bool = false;
     var alpha:CGFloat = 0.0;
     
+    override func prefersStatusBarHidden() -> Bool
+    {
+        return true;
+    }
+    
     override func viewDidAppear(animated: Bool)
     {
         super.viewDidAppear(animated);
@@ -94,6 +99,7 @@ class MainController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         
+    
         // configure superview
         superview = self.view;
         superview.backgroundColor = UIColor.lightGrayColor();
@@ -113,11 +119,32 @@ class MainController: UIViewController {
         self.init_mine_frame = CGRect(x: -title_height, y: title_margin, width: title_height, height: title_height);
         self.result_mine_frame = CGRect(x: superview.bounds.width, y: title_margin, width: title_height, height: title_height);
         
+        
+        // configure device specific attributes
+        setDeviceInfo();
+        var font_size:CGFloat = 30.0;
+        var text_size:CGFloat = 20.0;
+        
+        switch DEVICE_VERSION
+        {
+        case .IPHONE_4: font_size = 34.0; text_size = 20.0;
+            
+        case .IPHONE_5: font_size = 34.0; text_size = 20.0;
+            
+        case .IPHONE_6: font_size = 40.0; text_size = 24.0;
+            
+        case .IPHONE_6_PLUS: font_size = 43.0; text_size = 26.0;
+            
+        case .IPAD: font_size = 70.0; text_size = 40.0;
+            
+        default: font_size = 30.0;
+        }
+        
         // configure title view
         var title_frame = CGRect(x: margin, y: title_margin, width: title_width, height: title_height);
         title_view = UILabel(frame: title_frame);
         title_view.text = "Mine Escape";
-        title_view.font = UIFont(name: "AirstrikeBold", size: 40.0);
+        title_view.font = UIFont(name: "AirstrikeBold", size: font_size);
         title_view.textAlignment = NSTextAlignment.Center;
         title_view.textColor = UIColor.orangeColor();
         superview.addSubview(title_view);
@@ -167,7 +194,7 @@ class MainController: UIViewController {
                 subtitle.alpha = 0.0;
                 subtitle.addTarget(self, action: "goToSettings", forControlEvents: UIControlEvents.TouchUpInside);
             }
-            
+            subtitle.titleLabel?.font = UIFont.systemFontOfSize(text_size);
             subtitle_result_frames.append(CGRect(x: 0.0, y: top_marg, width: sub_width, height: sub_height));
             superview.addSubview(subtitle);
             subtitle.setTitle(subtitle_texts[i], forState: UIControlState.Normal);

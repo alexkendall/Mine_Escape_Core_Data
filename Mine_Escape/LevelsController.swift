@@ -79,6 +79,7 @@ class LevelController : ViewController
     var level_buttons = Array<level_view>();
     var back_button = UIButton();
     var title_label = UILabel();
+    var scroll_frame = CGRect();
     
     func selected_level(level_button:UIButton)
     {
@@ -139,6 +140,12 @@ class LevelController : ViewController
             }
         }
     }
+    
+    override func viewDidAppear(animated: Bool)
+    {
+        super.viewDidAppear(animated);
+        UIView.animateWithDuration(0.5, animations: {self.scroll_view.frame = self.scroll_frame});
+    }
 
     override func viewDidLoad()
     {
@@ -172,7 +179,17 @@ class LevelController : ViewController
         }
         
         add_title_button(&title_label, &superview, "LEVELS", margin, font_size);
-        add_subview(scroll_view, superview, (margin * 2.5), margin + back_button_size, margin, margin);
+        //add_subview(scroll_view, superview, (margin * 2.5), margin + back_button_size, margin, margin);
+        
+        title_label.layoutIfNeeded();
+        title_label.setNeedsLayout();
+        var scroll_width = superview.bounds.width - (2.0 * margin);
+        var scroll_height = superview.bounds.height - title_label.bounds.height - (margin * 2.0) - back_button_size;
+        
+        self.scroll_frame = CGRect(x: margin, y: (margin * 2.5), width: scroll_width, height: scroll_height);
+        scroll_view.frame = CGRect(x: margin, y: (margin * 2.5), width: scroll_width, height: 0.0);
+        superview.addSubview(scroll_view);
+        
         add_back_button(&back_button, &superview);
         back_button.addTarget(self, action: "go_to_main", forControlEvents: UIControlEvents.TouchUpInside);
         
