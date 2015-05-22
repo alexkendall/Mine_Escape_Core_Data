@@ -18,6 +18,7 @@ class SettingsController : ViewController
     var volume_label = UILabel();
     var restore_button = UIButton();
     var label_text = ["VOLUME", "RESTORE PROGRESS"];
+    var clearController = ClearDataController();
     
     func GoToMain()
     {
@@ -27,6 +28,8 @@ class SettingsController : ViewController
     
     func resetProgress()
     {
+        superview.addSubview(clearController.view);
+        
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
         
@@ -128,10 +131,14 @@ class ClearDataController : ViewController
     override func viewDidLoad()
     {
         super.viewDidLoad();
+        superview = self.view;
+        var margin:CGFloat = superview.bounds.height / 20.0;
         
         // configure superview
-        superview = self.view;
         superview.backgroundColor = UIColor.whiteColor();
-        
+        superview.layer.borderWidth = 1.0;
+        var dim:CGFloat = superview.bounds.width - (2.0 * margin);
+        var y:CGFloat = (superview.bounds.height - dim - banner_view.bounds.height) / 2.0;
+        superview.frame = CGRect(x: margin, y: y, width: dim, height: dim);
     }
 }

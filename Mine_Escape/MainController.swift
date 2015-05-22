@@ -56,7 +56,7 @@ class MainController: UIViewController {
     override func viewDidAppear(animated: Bool)
     {
         super.viewDidAppear(animated);
-        UIView.animateWithDuration(2.0, animations: {self.blocker.frame = self.result_blocker_frame; self.mine_view.frame = self.result_mine_frame;});
+        UIView.animateWithDuration(1.5, animations: {self.blocker.frame = self.result_blocker_frame; self.mine_view.frame = self.result_mine_frame;});
         
         for(var i = 0; i < subtitles.count; ++i)
         {

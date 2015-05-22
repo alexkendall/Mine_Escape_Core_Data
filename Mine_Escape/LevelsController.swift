@@ -199,8 +199,8 @@ class LevelController : ViewController
         scroll_view.layoutIfNeeded();
         scroll_view.setNeedsLayout();
         
-        var tab_height:CGFloat = scroll_view.bounds.height / 15.0;
-        var tab_width:CGFloat = scroll_view.bounds.width;
+        var tab_height:CGFloat = self.scroll_frame.height / 15.0;
+        var tab_width:CGFloat = self.scroll_frame.width;
         var dimension:Int = Int(sqrt(Float(NUM_SUB_LEVELS)));
         var subview_width:CGFloat = scroll_view.bounds.width / CGFloat(dimension);
         var subview_height:CGFloat = subview_width;
@@ -216,7 +216,8 @@ class LevelController : ViewController
             tab_view.text = DIFFICULTY[i]; //+ String(format: " - %i X %i ", current_dim, current_dim);
             tab_view.textAlignment = NSTextAlignment.Center;
             tab_view.textColor = UIColor.blackColor();
-            
+            tab_view.layer.borderWidth = 1.0;
+            tab_view.layer.borderColor = UIColor.whiteColor().CGColor;
             for(var row = 0; row < dimension; ++row)
             {
                 var dist_from_top:CGFloat = top_margin + (CGFloat(row) * subview_height) + tab_height;

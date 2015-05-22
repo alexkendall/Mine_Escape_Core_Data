@@ -12,7 +12,7 @@ import UIKit
 class AboutController : ViewController
 {
     var superview = UIView();
-    var text = "App created by Alex Harrison\n" + "alexharr@umich.edu\n" + "alexkendall.harrison@Gmail.com\n";
+    var text = "Created by Alex Harrison\n" + "alexharr@umich.edu\n" + "alexkendall.harrison@Gmail.com\n";
     var text_view = UITextView();
     var back_button = UIButton();
 
@@ -43,15 +43,15 @@ class AboutController : ViewController
         
         switch DEVICE_VERSION
         {
-            case .IPHONE_4: font_size = 25.0; text_size = 14.0;
+            case .IPHONE_4: font_size = 25.0; text_size = 15.0;
             
-            case .IPHONE_5: font_size = 27.0; text_size = 14.0;
+            case .IPHONE_5: font_size = 27.0; text_size = 15.0;
             
-            case .IPHONE_6: font_size = 30.0; text_size = 16.0;
+            case .IPHONE_6: font_size = 30.0; text_size = 18.0;
             
-            case .IPHONE_6_PLUS: font_size = 33.0; text_size = 16.0;
+            case .IPHONE_6_PLUS: font_size = 33.0; text_size = 19.0;
             
-            case .IPAD: font_size = 50.0; text_size = 24.0;
+            case .IPAD: font_size = 50.0; text_size = 30.0;
     
             default: font_size = 30.0;
         }
