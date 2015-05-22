@@ -829,6 +829,3 @@ class NextGameContoller: ViewController
         next_level.setTitleColor(LIGHT_BLUE, forState: UIControlState.Highlighted);
     }
 }
-
-
-
