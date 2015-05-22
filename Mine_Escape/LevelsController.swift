@@ -179,7 +179,6 @@ class LevelController : ViewController
         }
         
         add_title_button(&title_label, &superview, "LEVELS", margin, font_size);
-        //add_subview(scroll_view, superview, (margin * 2.5), margin + back_button_size, margin, margin);
         
         title_label.layoutIfNeeded();
         title_label.setNeedsLayout();

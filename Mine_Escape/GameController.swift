@@ -533,32 +533,7 @@ class GameController : UIViewController
         self.bottom_text.font = UIFont(name: "Arial-BoldMT" , size: 35.0);
 
         update_local_level();
-        
-        /*
-        difficulty_indicator.setTranslatesAutoresizingMaskIntoConstraints(false);
-        superview.addSubview(difficulty_indicator);
-        var off_const:CGFloat = 20.0
-        var csy = NSLayoutConstraint(item: difficulty_indicator, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -20.0);
-        
-        var offset_right = NSLayoutConstraint(item: difficulty_indicator, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: -off_const);
-        
-        level_indicator.setTranslatesAutoresizingMaskIntoConstraints(false);
-        superview.addSubview(level_indicator);
-        
-        superview.addConstraint(offset_right);
-        superview.addConstraint(csy);
-        
-        var centery_li = NSLayoutConstraint(item: level_indicator, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: difficulty_indicator, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: 0.0);
-        
-        var offset_left_li = NSLayoutConstraint(item: level_indicator, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: 20.0);
-        
-        
-        superview.addConstraint(centery_li);
-        superview.addConstraint(offset_left_li);
-        level_indicator.text = String(format:"LEVEL %i", getLocalLevel());
-        level_indicator.textColor = LIGHT_BLUE;
-        */
-        
+
         var repeat_image = UIImage(named: "repeat_level");
         var prev_image = UIImage(named: "prev_level");
         var next_image = UIImage(named: "next_level");
@@ -796,39 +771,24 @@ class NextGameContoller: ViewController
     {
         super.viewDidLoad();
         superview = self.view;
-        superview.layoutIfNeeded();
-        superview.setNeedsLayout();
-        var margin:CGFloat = (superview.bounds.height - superview.bounds.width) / 2.0;
+        var margin:CGFloat = superview.bounds.height * 0.05;
+        var super_width:CGFloat = superview.bounds.width - (2.0 * margin);
+        var super_height:CGFloat = super_width;
+        var super_x:CGFloat = margin;
+        var super_y:CGFloat = ((superview.bounds.height - super_width) / 2.0) - (banner_view.bounds.height / 2.0);
+        superview.frame = CGRect(x: super_x, y: super_y, width: super_width, height: super_height);
         
-        var size:CGFloat = superview.bounds.width;
         
-        superview.frame = CGRect(x: 0.0, y: margin, width: size, height: size);
-        superview.bounds = CGRect(x: 0.0, y: 0.0, width: size, height: size);
-        
-        // create container to hold next level buttn
-        var width = superview.bounds.width * 0.75;
+        // configure complete container
+        complete_container.frame = superview.bounds;
+        superview.addSubview(complete_container);
+        complete_container.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.8);
         complete_container.layer.borderWidth = 1.0;
         complete_container.layer.borderColor = UIColor.whiteColor().CGColor;
-        complete_container.backgroundColor = UIColor.blackColor();
-        complete_container.alpha = 0.85;
-        
-        // add constraints
-        complete_container.setTranslatesAutoresizingMaskIntoConstraints(false);
-        var centerx = NSLayoutConstraint(item: complete_container, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        
-        var centery = NSLayoutConstraint(item: complete_container, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: 0.0);
-        
-        var width_container = NSLayoutConstraint(item: complete_container, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: width);
-        
-        var height_container = NSLayoutConstraint(item: complete_container, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: width);
-        
-        superview.addSubview(complete_container);
-        superview.addConstraint(centerx);
-        superview.addConstraint(centery);
-        superview.addConstraint(width_container);
-        superview.addConstraint(height_container);
+
         
         // add x button
+        
         x_button.setTranslatesAutoresizingMaskIntoConstraints(false);
         x_button.setTitle("X", forState: UIControlState.Normal);
         x_button.clipsToBounds = true;
@@ -848,42 +808,25 @@ class NextGameContoller: ViewController
         superview.addConstraint(x_button_centery);
         superview.addConstraint(x_button_centerx);
         
-        // add win or loss label
-        
+
+        // confiugure label
+        var label_height:CGFloat = complete_container.bounds.height / 8.0;
+        completed_label.frame = CGRect(x: 0.0, y: (complete_container.bounds.height / 3.0) - (label_height / 2.0), width: complete_container.bounds.width, height: label_height);
+        completed_label.textAlignment = NSTextAlignment.Center;
+        complete_container.addSubview(completed_label);
         completed_label.font = UIFont(name: "Arial", size: 25.0);
         
-        // add constraints
-        completed_label.setTranslatesAutoresizingMaskIntoConstraints(false);
-        var centerx_label = NSLayoutConstraint(item: completed_label, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        
-        var centery_label = NSLayoutConstraint(item: completed_label, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: width / 3.0);
-        
-        complete_container.addSubview(completed_label);
-        complete_container.addConstraint(centerx_label);
-        complete_container.addConstraint(centery_label);
-        
-        // add next level button
-        next_level.setTranslatesAutoresizingMaskIntoConstraints(false);
+        // configure next level button
+        complete_container.addSubview(next_level);
+        var next_y:CGFloat = complete_container.bounds.height * 2.0 / 3.0;
+        var next_x:CGFloat = margin;
+        var next_width:CGFloat = complete_container.bounds.width - (2.0 * margin);
+        var next_height:CGFloat = complete_container.bounds.height / 6.0;
+        next_level.frame = CGRect(x: next_x, y: next_y, width: next_width, height: next_height);
         next_level.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
         next_level.layer.borderWidth = 1.0;
         next_level.layer.borderColor = UIColor.whiteColor().CGColor;
         next_level.setTitleColor(LIGHT_BLUE, forState: UIControlState.Highlighted);
-
-        // add constraints
-        var centery_next_level = NSLayoutConstraint(item: next_level, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: width * 3.0 / 5.0);
-        
-        // add constraints
-        var centerx_next_level = NSLayoutConstraint(item: next_level, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        
-        var width_next_level = NSLayoutConstraint(item: next_level, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Width, multiplier: 0.85, constant: 0.0);
-        
-        var height_next_level = NSLayoutConstraint(item: next_level, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: next_level, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -40.0);
-        
-        complete_container.addSubview(next_level);
-        complete_container.addConstraint(centery_next_level);
-        complete_container.addConstraint(centerx_next_level);
-        complete_container.addConstraint(width_next_level);
-        complete_container.addConstraint(height_next_level);
     }
 }
 
