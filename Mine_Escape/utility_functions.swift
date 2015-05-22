@@ -163,3 +163,13 @@ func add_subview(var subview:UIView, var superview:UIView, var top_margin:CGFloa
 }
 
 //-------------------------------------------------------------------------------------------------------------------------
+
+func addGradient(var view:UIView, var colors:Array<CGColor>)
+{
+    var gradient = CAGradientLayer();
+    gradient.frame = view.bounds;
+    gradient.colors = colors;
+    view.layer.insertSublayer(gradient, atIndex: 0);
+    
+}
+

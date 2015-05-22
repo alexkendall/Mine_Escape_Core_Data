@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		46336C0B1B0EEF2A00AAEA75 /* airstrikebold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */; };
 		4648E7041B0AA51600380242 /* LevelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4648E7031B0AA51600380242 /* LevelsController.swift */; };
 		4648E7061B0AAF5900380242 /* AboutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4648E7051B0AAF5900380242 /* AboutController.swift */; };
 		4648E7081B0AB43F00380242 /* HowToController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4648E7071B0AB43F00380242 /* HowToController.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = airstrikebold.ttf; sourceTree = "<group>"; };
 		4648E7031B0AA51600380242 /* LevelsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsController.swift; sourceTree = "<group>"; };
 		4648E7051B0AAF5900380242 /* AboutController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutController.swift; sourceTree = "<group>"; };
 		4648E7071B0AB43F00380242 /* HowToController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HowToController.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 		46E62D091B0A5E7D00A07B7B /* Mine_Escape */ = {
 			isa = PBXGroup;
 			children = (
+				46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */,
 				46E62D0C1B0A5E7D00A07B7B /* AppDelegate.swift */,
 				46E62D411B0A7D8700A07B7B /* MainController.swift */,
 				4648E7051B0AAF5900380242 /* AboutController.swift */,
@@ -234,6 +237,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46336C0B1B0EEF2A00AAEA75 /* airstrikebold.ttf in Resources */,
 				46E62D3F1B0A5F4500A07B7B /* game_lost.wav in Resources */,
 				46E62D151B0A5E7D00A07B7B /* Main.storyboard in Resources */,
 				46E62D401B0A5F4500A07B7B /* won_game.wav in Resources */,

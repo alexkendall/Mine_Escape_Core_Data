@@ -9,109 +9,172 @@
 import Foundation
 import UIKit
 
+//
+//  ViewController.swift
+//  Animation
+//
+//  Created by Alex Harrison on 5/21/15.
+//  Copyright (c) 2015 Alex Harrison. All rights reserved.
+//
+//var LIGHT_BLUE = UIColor(red: 0.0, green: 0.8, blue: 1.0, alpha: 1.0);
 
-class MainController : ViewController
-{
-    var superview = UIView();
-    var menu_options = ["free play","about", "how to play", "settings"];
-    var game_name:String = "MINE ESCAPE";
-    var menu_buttons = Array<UIButton>();
-    var super_height = CGFloat();
-    var super_width = CGFloat();
-    var title_label = UILabel();
+import UIKit
+import Foundation
+
+class MainController: UIViewController {
     
-    override func viewDidLoad()
+    var superview = UIView();
+    var animate_button = UIButton();
+    var animate_switch = true;
+    var square = UIView();
+    var result_blocker_frame = CGRect();
+    var init_blocker_frame = CGRect();
+    var result_mine_frame = CGRect();
+    var init_mine_frame = CGRect();
+    var num_rows = 8;
+    var num_cols = 5;
+    var result_frames = Array<CGRect>();
+    var title_view = UILabel();
+    var margin:CGFloat = 0.0;
+    var mine_view = UIButton();
+    var blocker = UIView();
+    
+    // configure subtitles
+    var subtitles = Array<UIButton>();
+    var subtitle_texts = ["free play", "about", "how to play", "settings"];
+    var subtitle_margin:CGFloat = CGFloat();
+    var subtitle_result_frames = Array<CGRect>();
+    var delay = NSTimeInterval();
+    var start_alpha:Bool = false;
+    var alpha:CGFloat = 0.0;
+    
+    override func viewDidAppear(animated: Bool)
     {
-        super.viewDidLoad();
+        super.viewDidAppear(animated);
+        UIView.animateWithDuration(2.0, animations: {self.blocker.frame = self.result_blocker_frame; self.mine_view.frame = self.result_mine_frame;});
         
-        // configure super_view
-        superview = self.view;
-        self.view.layoutIfNeeded();
-        self.view.setNeedsLayout();
-        super_height = superview.bounds.height;
-        super_width = superview.bounds.width;
-        
-        superview = self.view;
-        var colors:Array<CGColorRef> = [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor];
-        addGradient(superview, colors);
-        
-        // configure title
-        var title_height:CGFloat = 50.0;
-        
-        var top_title_margin:CGFloat = super_height * 0.25;
-        var bottom_title_margin = super_height - top_title_margin - title_height;
-        var left_title_margin:CGFloat = 0.0;
-        var right_title_margin:CGFloat = 0.0;
-        
-        title_label.text = game_name;
-        title_label.textColor = UIColor.orangeColor();
-        title_label.textAlignment = NSTextAlignment.Center
-        var subFontSize:CGFloat = CGFloat();
-        
-        // Device specific configurations
-        setDeviceInfo();
-        switch DEVICE_VERSION
+        for(var i = 0; i < subtitles.count; ++i)
         {
-            case .IPHONE_4:
-                title_label.font = UIFont.systemFontOfSize(23.0);
-                subFontSize = 18.0;
-            case .IPHONE_5:
-                title_label.font = UIFont.systemFontOfSize(23.0);
-                subFontSize = 18.0;
-            case .IPHONE_6:
-                title_label.font = UIFont.systemFontOfSize(30.0);
-                subFontSize = 23.0;
-            case .IPHONE_6_PLUS:
-                title_label.font = UIFont.systemFontOfSize(35.0);
-                subFontSize = 27.0;
-            case .IPAD:
-                title_label.font = UIFont.systemFontOfSize(60.0);
-                subFontSize = 40.0;
-            default:
-                title_label.font = UIFont.systemFontOfSize(30.0);
-                subFontSize = 23.0;
+            //UIView.animateWithDuration(1.0, animations: {self.subtitles[i].frame = self.subtitle_result_frames[i]});
+            UIView.animateWithDuration(0.5, delay: 1.5, options: nil, animations: {self.subtitles[i].frame = self.subtitle_result_frames[i]}, completion: nil);
         }
-
-        add_subview(title_label, superview, top_title_margin, bottom_title_margin, left_title_margin, right_title_margin);
         
-        for(var i = 0; i < menu_options.count; ++i)
+        
+        var period:NSTimeInterval = 0.01;
+        var alpha_timer = NSTimer.scheduledTimerWithTimeInterval(period, target: self, selector: "appear_bottom:", userInfo: nil, repeats: true);
+        
+        delay = 2.0 * (1.0 / period);
+        
+    }
+    
+    func appear_bottom(timer:NSTimer)
+    {
+        if(!start_alpha)
         {
-            var button = UIButton();
-            button.setTitle(menu_options[i], forState: UIControlState.Normal);
-            button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
-            button.titleLabel?.font = UIFont.systemFontOfSize(subFontSize);
-            if(i == 0)
+            delay--;
+        }
+        else
+        {
+            alpha += 0.02;
+            subtitles[2].alpha = alpha;
+            subtitles[3].alpha = alpha;
+            if(alpha >= 1.0)
             {
-                button.addTarget(self, action: "goToLevels", forControlEvents: UIControlEvents.TouchUpInside);
+                timer.invalidate();
             }
-            if(i == 1)
+        }
+        if(delay == Double(0))
+        {
+            start_alpha = true;
+        }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+        
+        
+        // configure superview
+        superview = self.view;
+        superview.backgroundColor = UIColor.lightGrayColor();
+        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        
+        margin = superview.bounds.height * 0.05;
+        
+        // confogure title view
+        var title_width = superview.bounds.width - (margin * 2.0);
+        var title_height = title_width * 0.3;
+        var title_margin = superview.bounds.height / 5.0;
+        
+        self.init_blocker_frame = CGRect(x: -title_height / 2.0, y: 0, width: superview.bounds.width + title_width, height: superview.bounds.height);
+        self.result_blocker_frame = CGRect(x: superview.bounds.width + (title_height / 2.0), y: 0, width: superview.bounds.width + title_width, height: superview.bounds.height);
+        
+        
+        self.init_mine_frame = CGRect(x: -title_height, y: title_margin, width: title_height, height: title_height);
+        self.result_mine_frame = CGRect(x: superview.bounds.width, y: title_margin, width: title_height, height: title_height);
+        
+        // configure title view
+        var title_frame = CGRect(x: margin, y: title_margin, width: title_width, height: title_height);
+        title_view = UILabel(frame: title_frame);
+        title_view.text = "Mine Escape";
+        title_view.font = UIFont(name: "AirstrikeBold", size: 40.0);
+        title_view.textAlignment = NSTextAlignment.Center;
+        title_view.textColor = UIColor.orangeColor();
+        superview.addSubview(title_view);
+        var names = UIFont.familyNames();
+        
+        // confgure blocker view
+        blocker = UIView(frame: self.init_blocker_frame);
+        addGradient(blocker, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        superview.addSubview(blocker);
+        
+        // configure logo view
+        var mine_width = title_height;
+        mine_view = UIButton(frame: self.init_mine_frame);
+        mine_view.setBackgroundImage(UIImage(named: "mine_orange"), forState: UIControlState.Normal);
+        superview.addSubview(mine_view);
+        
+        // configure subtitles
+        var total_height = superview.bounds.height - (title_margin * 2.0);
+        var sub_height = total_height / CGFloat(subtitle_texts.count + 2);
+        
+        for(var i:Int = 0; i < subtitle_texts.count; ++i)
+        {
+            var top_marg:CGFloat = (sub_height * CGFloat(i + 1)) + title_margin + (0.5 * sub_height);
+            var sub_width:CGFloat = superview.bounds.width;
+            
+            var subtitle:UIButton;
+            
+            if(i == 0) // left to right
             {
-                button.addTarget(self, action: "goToAbout", forControlEvents: UIControlEvents.TouchUpInside);
+                subtitle = UIButton(frame: CGRect(x: -sub_width, y: top_marg, width: sub_width, height: sub_height));
+                subtitle.addTarget(self, action: "goToLevels", forControlEvents: UIControlEvents.TouchUpInside);
             }
-            if(i == 2)
+            else if(i == 1) // right to left
             {
-                button.addTarget(self, action: "goToHow", forControlEvents: UIControlEvents.TouchUpInside);
+                subtitle = UIButton(frame: CGRect(x: sub_width, y: top_marg, width: sub_width, height: sub_height));
+                subtitle.addTarget(self, action: "goToAbout", forControlEvents: UIControlEvents.TouchUpInside);
             }
-            if(i == 3)
+            else if (i == 2) // invisible to visibe
             {
-                button.addTarget(self, action: "goToSettings", forControlEvents: UIControlEvents.TouchUpInside);
+                subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
+                subtitle.alpha = 0.0;
+                subtitle.addTarget(self, action: "goToHow", forControlEvents: UIControlEvents.TouchUpInside);
+            }
+            else
+            {
+                subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
+                subtitle.alpha = 0.0;
+                subtitle.addTarget(self, action: "goToSettings", forControlEvents: UIControlEvents.TouchUpInside);
             }
             
-    
-            var span:CGFloat = super_height - top_title_margin - (0.25 * super_height);
-            var increment:CGFloat = span / CGFloat(menu_options.count + 2);
-            var sub_height = increment;
-            var top_sub_margin:CGFloat = (top_title_margin * 1.50) + (increment * CGFloat(i));
-            var left_sub_margin:CGFloat = 0.0;
-            var right_sub_margin:CGFloat = 0.0;
-            var bottom_sub_margin = super_height - top_sub_margin - sub_height;
-            add_subview(button, superview, top_sub_margin, bottom_sub_margin, left_sub_margin, right_sub_margin);
+            subtitle_result_frames.append(CGRect(x: 0.0, y: top_marg, width: sub_width, height: sub_height));
+            superview.addSubview(subtitle);
+            subtitle.setTitle(subtitle_texts[i], forState: UIControlState.Normal);
+            subtitle.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
+            subtitle.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+            subtitles.append(subtitle);
         }
-        
-        self.addChildViewController(LevelsController);
-        self.addChildViewController(AboutViewController);
-        self.addChildViewController(HowController);
-        self.addChildViewController(settingsController);
     }
     
     func goToLevels()
@@ -134,15 +197,9 @@ class MainController : ViewController
         play_sound(SOUND.DEFAULT);
         superview.addSubview(settingsController.view);
     }
-}
-
-
-
-func addGradient(var view:UIView, var colors:Array<CGColor>)
-{
-    var gradient = CAGradientLayer();
-    gradient.frame = view.bounds;
-    gradient.colors = colors;
-    view.layer.insertSublayer(gradient, atIndex: 0);
     
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
 }

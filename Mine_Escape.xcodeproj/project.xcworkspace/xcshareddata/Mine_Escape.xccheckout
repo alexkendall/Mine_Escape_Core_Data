@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>E35DCD42-5B98-400D-90C4-E09E819693B5</string>
 	<key>IDESourceControlProjectName</key>
-	<string>Mine_Escape</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>54BA919EF29B2F4970658DDEB7E205E14F02816E</key>
 		<string>https://github.com/alexkendall/Mine_Escape_Core_Data.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Mine_Escape.xcodeproj</string>
+	<string>Mine_Escape.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>54BA919EF29B2F4970658DDEB7E205E14F02816E</key>
