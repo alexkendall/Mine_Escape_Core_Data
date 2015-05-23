@@ -16,7 +16,6 @@ import UIKit
 //  Created by Alex Harrison on 5/21/15.
 //  Copyright (c) 2015 Alex Harrison. All rights reserved.
 //
-//var LIGHT_BLUE = UIColor(red: 0.0, green: 0.8, blue: 1.0, alpha: 1.0);
 
 import UIKit
 import Foundation
@@ -60,7 +59,6 @@ class MainController: UIViewController {
         
         for(var i = 0; i < subtitles.count; ++i)
         {
-            //UIView.animateWithDuration(1.0, animations: {self.subtitles[i].frame = self.subtitle_result_frames[i]});
             UIView.animateWithDuration(0.5, delay: 1.5, options: nil, animations: {self.subtitles[i].frame = self.subtitle_result_frames[i]}, completion: nil);
         }
         
@@ -98,8 +96,6 @@ class MainController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        
-    
         // configure superview
         superview = self.view;
         superview.backgroundColor = UIColor.lightGrayColor();
@@ -139,6 +135,15 @@ class MainController: UIViewController {
             
         default: font_size = 30.0;
         }
+        
+        /*
+        var font_names = UIFont.familyNames();
+        for(var i = 0; i < font_names.count; ++i)
+        {
+            println(font_names[i]);
+        }
+        */
+        //"MicroFLF"
         
         // configure title view
         var title_frame = CGRect(x: margin, y: title_margin, width: title_width, height: title_height);
@@ -194,7 +199,7 @@ class MainController: UIViewController {
                 subtitle.alpha = 0.0;
                 subtitle.addTarget(self, action: "goToSettings", forControlEvents: UIControlEvents.TouchUpInside);
             }
-            subtitle.titleLabel?.font = UIFont.systemFontOfSize(text_size);
+            subtitle.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
             subtitle_result_frames.append(CGRect(x: 0.0, y: top_marg, width: sub_width, height: sub_height));
             superview.addSubview(subtitle);
             subtitle.setTitle(subtitle_texts[i], forState: UIControlState.Normal);

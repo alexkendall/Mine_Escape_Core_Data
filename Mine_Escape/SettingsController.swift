@@ -71,7 +71,6 @@ class SettingsController : ViewController
     
     func change_volume(sender:UIButton!)
     {
-        println(sender.tag);
         volume += sender.tag;
         if(volume < 0)
         {
@@ -167,7 +166,7 @@ class SettingsController : ViewController
             label.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
             label.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
             label.setTitle(label_text[i], forState: UIControlState.Normal);
-            label.titleLabel?.font = UIFont.systemFontOfSize(text_size);
+            label.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
             label.sizeToFit();
             var label_width:CGFloat = label.frame.width;
             var label_x:CGFloat = (container_view.frame.width - label_width) / 2.0;
@@ -189,7 +188,7 @@ class SettingsController : ViewController
                 minus_button.setTitle("-", forState: UIControlState.Normal);
                 minus_button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
                 minus_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
-                minus_button.titleLabel?.font = UIFont.systemFontOfSize(text_size);
+                minus_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
                 minus_button.addTarget(self, action: "change_volume:", forControlEvents: UIControlEvents.TouchDown);
                 minus_button.tag = -1;
                 container_view.addSubview(minus_button);
@@ -202,12 +201,10 @@ class SettingsController : ViewController
                 plus_button.setTitle("+", forState: UIControlState.Normal);
                 plus_button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
                 plus_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
-                plus_button.titleLabel?.font = UIFont.systemFontOfSize(text_size);
+                plus_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
                 plus_button.addTarget(self, action: "change_volume:", forControlEvents: UIControlEvents.TouchDown);
                 plus_button.tag = 1;
                 container_view.addSubview(plus_button);
-                
-                set_volume();
                 
             }
             if(i == 1) // RESTORE PROGRESS
@@ -216,6 +213,7 @@ class SettingsController : ViewController
             }
             
         }
+        volume_indicator.setTitle("VOLUME: " + String(volume), forState: UIControlState.Normal);
     }
 }
 

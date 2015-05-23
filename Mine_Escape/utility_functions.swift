@@ -87,7 +87,7 @@ func add_back_button(inout back_button:UIButton, inout superview:UIView)
 func add_title_button(inout title_label:UILabel, inout superview:UIView, text:String, margin:CGFloat, size:CGFloat)
 {
     // configure title label properties
-    title_label.font = UIFont(name:"Arial", size: size);
+    title_label.font = UIFont(name: "Galano Grotesque Alt DEMO", size: size);
     title_label.text = text;
     title_label.textColor = UIColor.orangeColor();
     title_label.textAlignment = NSTextAlignment.Center;

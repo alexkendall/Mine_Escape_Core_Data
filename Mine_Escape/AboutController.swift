@@ -63,7 +63,7 @@ class AboutController : ViewController
         text_view.textAlignment = NSTextAlignment.Left;
         text_view.textColor = UIColor.whiteColor();
         text_view.backgroundColor = UIColor.clearColor();
-        text_view.font = UIFont(name: "Arial", size: text_size);
+        text_view.font = UIFont(name: "MicroFLF", size: text_size);
         text_view.editable = false;
         var text_margin = superview.bounds.height * 0.05;
         add_subview(text_view, superview, (margin * 2.5), text_margin, text_margin, text_margin);

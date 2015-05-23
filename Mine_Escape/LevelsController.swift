@@ -216,6 +216,7 @@ class LevelController : ViewController
             tab_view.textAlignment = NSTextAlignment.Center;
             tab_view.textColor = UIColor.blackColor();
             tab_view.layer.borderWidth = 1.0;
+            tab_view.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 17.0);
             tab_view.layer.borderColor = UIColor.whiteColor().CGColor;
             for(var row = 0; row < dimension; ++row)
             {
@@ -234,6 +235,7 @@ class LevelController : ViewController
                     level_.setTitle(String(level_.level), forState: UIControlState.Normal);
                     level_.addTarget(self, action: "selected_level:", forControlEvents: UIControlEvents.TouchUpInside);
                     level_.tag = (i * (dimension * dimension)) + (row * dimension) + col;
+                    level_.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 17.0);
                     level_buttons.append(level_);
                     for(var ind = 0; ind < 3; ++ind)
                     {

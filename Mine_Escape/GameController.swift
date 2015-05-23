@@ -99,6 +99,25 @@ class GameController : UIViewController
             level_indicator.frame = CGRect(x: shift, y: y_origin , width: level_width, height: height);
             difficulty_indicator.frame = CGRect(x: (superview.bounds.width / 2.0) + padding - shift, y: y_origin, width: diffic_width, height: height);
         }
+        
+        var text_size:CGFloat;
+        switch DEVICE_VERSION
+        {
+        case .IPHONE_4: text_size = 18.0;
+            
+        case .IPHONE_5: text_size = 18.0;
+            
+        case .IPHONE_6: text_size = 20.0;
+            
+        case .IPHONE_6_PLUS: text_size = 22.0;
+            
+        case .IPAD: text_size = 35.0;
+            
+        default: text_size = 20.0;
+        }
+        
+        level_indicator.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
+        difficulty_indicator.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
     }
     
     func reset()
@@ -114,11 +133,11 @@ class GameController : UIViewController
     
     func increment_level()
     {
+        CURRENT_LEVEL += 1;
         if(CURRENT_LEVEL >= NUM_LEVELS)
         {
-            CURRENT_LEVEL = 0;
+            CURRENT_LEVEL = NUM_LEVELS - 1;
         }
-        CURRENT_LEVEL += 1;
         reset();
     }
     func decrement_level()
@@ -778,7 +797,6 @@ class NextGameContoller: ViewController
         var super_y:CGFloat = ((superview.bounds.height - super_width) / 2.0) - (banner_view.bounds.height / 2.0);
         superview.frame = CGRect(x: super_x, y: super_y, width: super_width, height: super_height);
         
-        
         // configure complete container
         complete_container.frame = superview.bounds;
         superview.addSubview(complete_container);
@@ -786,9 +804,7 @@ class NextGameContoller: ViewController
         complete_container.layer.borderWidth = 1.0;
         complete_container.layer.borderColor = UIColor.whiteColor().CGColor;
 
-        
         // add x button
-        
         x_button.setTranslatesAutoresizingMaskIntoConstraints(false);
         x_button.setTitle("X", forState: UIControlState.Normal);
         x_button.clipsToBounds = true;

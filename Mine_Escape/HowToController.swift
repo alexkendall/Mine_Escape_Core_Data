@@ -56,7 +56,7 @@ class HowToController : ViewController
         text_view.textAlignment = NSTextAlignment.Left;
         text_view.textColor = UIColor.whiteColor();
         text_view.backgroundColor = UIColor.clearColor();
-        text_view.font = UIFont(name: "Arial", size: text_size);
+        text_view.font = UIFont(name: "MicroFLF", size: text_size);
         text_view.editable = false;
         
         // create back button

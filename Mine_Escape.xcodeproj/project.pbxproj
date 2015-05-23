@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		462392101B0FF2CB00AA0610 /* MicroFLF.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4623920F1B0FF15000AA0610 /* MicroFLF.ttf */; };
+		462392121B0FF52400AA0610 /* Galano.otf in Resources */ = {isa = PBXBuildFile; fileRef = 462392111B0FF51D00AA0610 /* Galano.otf */; };
 		46336C0B1B0EEF2A00AAEA75 /* airstrikebold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */; };
 		4648E7041B0AA51600380242 /* LevelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4648E7031B0AA51600380242 /* LevelsController.swift */; };
 		4648E7061B0AAF5900380242 /* AboutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4648E7051B0AAF5900380242 /* AboutController.swift */; };
@@ -41,6 +43,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4623920F1B0FF15000AA0610 /* MicroFLF.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MicroFLF.ttf; sourceTree = "<group>"; };
+		462392111B0FF51D00AA0610 /* Galano.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Galano.otf; sourceTree = "<group>"; };
 		46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = airstrikebold.ttf; sourceTree = "<group>"; };
 		4648E7031B0AA51600380242 /* LevelsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsController.swift; sourceTree = "<group>"; };
 		4648E7051B0AAF5900380242 /* AboutController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutController.swift; sourceTree = "<group>"; };
@@ -108,6 +112,8 @@
 			isa = PBXGroup;
 			children = (
 				46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */,
+				4623920F1B0FF15000AA0610 /* MicroFLF.ttf */,
+				462392111B0FF51D00AA0610 /* Galano.otf */,
 				46E62D0C1B0A5E7D00A07B7B /* AppDelegate.swift */,
 				46E62D411B0A7D8700A07B7B /* MainController.swift */,
 				4648E7051B0AAF5900380242 /* AboutController.swift */,
@@ -237,6 +243,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				462392121B0FF52400AA0610 /* Galano.otf in Resources */,
+				462392101B0FF2CB00AA0610 /* MicroFLF.ttf in Resources */,
 				46336C0B1B0EEF2A00AAEA75 /* airstrikebold.ttf in Resources */,
 				46E62D3F1B0A5F4500A07B7B /* game_lost.wav in Resources */,
 				46E62D151B0A5E7D00A07B7B /* Main.storyboard in Resources */,
