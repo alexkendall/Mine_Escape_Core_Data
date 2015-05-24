@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		462392101B0FF2CB00AA0610 /* MicroFLF.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4623920F1B0FF15000AA0610 /* MicroFLF.ttf */; };
 		462392121B0FF52400AA0610 /* Galano.otf in Resources */ = {isa = PBXBuildFile; fileRef = 462392111B0FF51D00AA0610 /* Galano.otf */; };
+		462392141B124B3300AA0610 /* timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462392131B124B3300AA0610 /* timer.swift */; };
 		46336C0B1B0EEF2A00AAEA75 /* airstrikebold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */; };
 		4648E7041B0AA51600380242 /* LevelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4648E7031B0AA51600380242 /* LevelsController.swift */; };
 		4648E7061B0AAF5900380242 /* AboutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4648E7051B0AAF5900380242 /* AboutController.swift */; };
@@ -45,6 +46,7 @@
 /* Begin PBXFileReference section */
 		4623920F1B0FF15000AA0610 /* MicroFLF.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MicroFLF.ttf; sourceTree = "<group>"; };
 		462392111B0FF51D00AA0610 /* Galano.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Galano.otf; sourceTree = "<group>"; };
+		462392131B124B3300AA0610 /* timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = timer.swift; sourceTree = "<group>"; };
 		46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = airstrikebold.ttf; sourceTree = "<group>"; };
 		4648E7031B0AA51600380242 /* LevelsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelsController.swift; sourceTree = "<group>"; };
 		4648E7051B0AAF5900380242 /* AboutController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutController.swift; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 				4648E7031B0AA51600380242 /* LevelsController.swift */,
 				4648E7091B0AB80800380242 /* SettingsController.swift */,
 				4648E70B1B0ABAF400380242 /* GameController.swift */,
+				462392131B124B3300AA0610 /* timer.swift */,
 				4648E7071B0AB43F00380242 /* HowToController.swift */,
 				46E62D111B0A5E7D00A07B7B /* ViewController.swift */,
 				46E62D2F1B0A5EE000A07B7B /* audio.swift */,
@@ -272,6 +275,7 @@
 			files = (
 				4648E70A1B0AB80800380242 /* SettingsController.swift in Sources */,
 				4648E7081B0AB43F00380242 /* HowToController.swift in Sources */,
+				462392141B124B3300AA0610 /* timer.swift in Sources */,
 				4648E7101B0AD18900380242 /* utility_functions.swift in Sources */,
 				46E62D341B0A5EE000A07B7B /* audio.swift in Sources */,
 				46E62D121B0A5E7D00A07B7B /* ViewController.swift in Sources */,

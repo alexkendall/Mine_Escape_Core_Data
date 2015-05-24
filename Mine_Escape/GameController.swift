@@ -57,7 +57,11 @@ class GameController : UIViewController, ADBannerViewDelegate
     
     func resume_game()
     {
-        
+        for(var i = 0; i < self.map.count; ++i)
+        {
+            map[i].resume();
+        }
+        pauseController.view.removeFromSuperview();
     }
     
     // START AD BANNER VIEW DELEGATE IMPLEMENTATION --------------------------
@@ -95,7 +99,14 @@ class GameController : UIViewController, ADBannerViewDelegate
         }
         else    // pause game if game is active
         {
-            
+            if(!GAME_OVER && GAME_STARTED)
+            {
+                for(var i = 0; i < self.map.count; ++i)
+                {
+                    map[i].pause();
+                }
+                self.view.addSubview(pauseController.view);
+            }
         }
         return true;
     }
@@ -700,7 +711,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         superview.addConstraint(height_next);
         
         self.addChildViewController(pauseController);
-        superview.addSubview(pauseController.view);
+
     }
 }
 
@@ -714,6 +725,7 @@ class Mine_cell:UIButton
     var timer = NSTimer();
     var timer_running:Bool = false;
     var speed:SPEED;
+    var startup_time:NSTimeInterval = NSTimeInterval();
     
     required init(coder aDecoder: NSCoder) {
         loc_id = -1;
@@ -734,6 +746,23 @@ class Mine_cell:UIButton
         super.init(frame:CGRectZero);
         loc_id = location_identifier;
     }
+    func pause()
+    {
+        if(timer.valid)
+        {
+            var paused_date = NSDate();
+            startup_time = timer.fireDate.timeIntervalSinceDate(paused_date);
+            timer.fireDate = NSDate(timeIntervalSinceReferenceDate: Double.infinity);   // keep timer from firing
+        }
+    }
+    func resume()
+    {
+        if(timer.valid)
+        {
+            timer.fireDate = NSDate(timeInterval: startup_time, sinceDate: NSDate());
+        }
+    }
+    
     func set_image(var name:String)
     {
         var image = UIImage(named: name);
@@ -973,13 +1002,18 @@ class PauseGameController:UIViewController
         // configure frame
         super.viewDidLoad();
         superview =  self.view;
-        superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
+        
+        var super_x:CGFloat = 0.0;
+        var super_y:CGFloat = (superview.bounds.height - superview.bounds.width - banner_view.bounds.height) / 2.0;
+        var super_width:CGFloat = superview.bounds.width;
+        var super_height:CGFloat = super_width;
+        superview.frame = CGRect(x: super_x, y: super_y, width: super_width, height: super_height);
         superview.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3);
         
         // configure visual attributes
         var margin:CGFloat = superview.bounds.width * 0.1;
         var x:CGFloat = margin;
-        var y:CGFloat = ((superview.bounds.height - superview.bounds.width) / 2.0) + margin;
+        var y:CGFloat = margin;
         var width:CGFloat = superview.bounds.width - (2.0 * margin);
         var height:CGFloat = width;
         
