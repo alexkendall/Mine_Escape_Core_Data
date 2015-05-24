@@ -35,15 +35,15 @@ class HowToController : ViewController
         
         switch DEVICE_VERSION
         {
-        case .IPHONE_4: font_size = 25.0; text_size = 18.0;
+        case .IPHONE_4: font_size = 25.0; text_size = 20.0;
             
-        case .IPHONE_5: font_size = 27.0; text_size = 18.0;
+        case .IPHONE_5: font_size = 27.0; text_size = 20.0;
             
-        case .IPHONE_6: font_size = 30.0; text_size = 20.0;
+        case .IPHONE_6: font_size = 30.0; text_size = 22.0;
             
-        case .IPHONE_6_PLUS: font_size = 33.0; text_size = 21.0;
+        case .IPHONE_6_PLUS: font_size = 33.0; text_size = 24.0;
             
-        case .IPAD: font_size = 50.0; text_size = 30.0;
+        case .IPAD: font_size = 50.0; text_size = 34.0;
             
         default: font_size = 30.0;
         }

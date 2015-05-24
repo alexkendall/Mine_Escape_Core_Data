@@ -27,10 +27,10 @@ var global_margin:CGFloat = 0.0;
 var global_but_dim:CGFloat = 0.0;
 var global_but_margin:CGFloat = 0.0;
 
+var banner_loadedFrame = CGRect();
+var banner_notLoadedFrame = CGRect();
+
 var banner_view = ADBannerView();
-weak var delegate:ADBannerViewDelegate!;
-
-
 
 func setDeviceInfo()
 {
@@ -66,18 +66,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        
         setDeviceInfo();
         gen_levels();
         settingsController.load_volume();
         window?.rootViewController = MainMenuContoller;
-        banner_view.frame = CGRect(x: 0.0, y: window!.bounds.height - banner_view.bounds.height, width: banner_view.bounds.width, height: banner_view.bounds.height);
+        window?.backgroundColor = LIGHT_BLUE;
         
         global_but_margin = MainMenuContoller.view.bounds.height * 0.025;
         global_margin = MainMenuContoller.view.bounds.height / 20.0;
         global_but_dim =  MainMenuContoller.view.bounds.width / 10.0;
         
+        // configure banner-> initialize outside of view and translate into view upon sucessful fetch of ad
+        banner_loadedFrame = CGRect(x: 0.0, y: window!.bounds.height - banner_view.bounds.height, width: banner_view.bounds.width, height: banner_view.bounds.height);
+        banner_notLoadedFrame = CGRect(x: -banner_view.bounds.width, y: window!.bounds.height - banner_view.bounds.height, width: banner_view.bounds.width, height: banner_view.bounds.height);
+        banner_view.frame = banner_notLoadedFrame;
+        banner_view.delegate = gameController;
         MainMenuContoller.view.addSubview(banner_view);
+        
         return true
     }
 

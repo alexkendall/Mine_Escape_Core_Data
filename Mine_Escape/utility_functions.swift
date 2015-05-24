@@ -162,6 +162,12 @@ func add_subview(var subview:UIView, var superview:UIView, var top_margin:CGFloa
     
 }
 
+func AddSubview(inout subview:UIView, inout superview:UIView, var in_x:CGFloat, var in_y:CGFloat, var width:CGFloat, var height:CGFloat)
+{
+    subview.frame = CGRect(x: in_x, y: in_y, width: width, height: height);
+    superview.addSubview(subview);
+}
+
 //-------------------------------------------------------------------------------------------------------------------------
 
 func addGradient(var view:UIView, var colors:Array<CGColor>)

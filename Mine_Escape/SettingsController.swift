@@ -254,9 +254,10 @@ class ClearDataController : ViewController
         text_view.text = text;
         text_view.textAlignment = NSTextAlignment.Center;
         text_view.textColor = UIColor.blackColor();
-        text_view.font = UIFont.systemFontOfSize(23.0);
         text_view.textColor = UIColor.orangeColor();
         text_view.backgroundColor = UIColor.clearColor();
+        text_view.font = UIFont(name: "MicroFLF", size: 21.0);
+        
         container_view.addSubview(text_view);
         
         // add yes button
@@ -271,7 +272,9 @@ class ClearDataController : ViewController
         yes_button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         yes_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
         yes_button.addTarget(self, action: "delete_data", forControlEvents: UIControlEvents.TouchUpInside);
+        yes_button.titleLabel?.font = UIFont(name: "MicroFLF", size: 23.0);
         container_view.addSubview(yes_button);
+        
         
         // add no button
         var no_x:CGFloat = yes_x + yes_width - 1.0; // sift left 1 to account for border
@@ -285,6 +288,7 @@ class ClearDataController : ViewController
         no_button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         no_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
         no_button.addTarget(self, action: "exit", forControlEvents: UIControlEvents.TouchUpInside);
+        no_button.titleLabel?.font = UIFont(name: "MicroFLF", size: 23.0);
         container_view.addSubview(no_button);
     }
     

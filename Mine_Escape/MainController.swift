@@ -19,8 +19,9 @@ import UIKit
 
 import UIKit
 import Foundation
+import iAd
 
-class MainController: UIViewController {
+class MainController: UIViewController, ADBannerViewDelegate {
     
     var superview = UIView();
     var animate_button = UIButton();
@@ -98,7 +99,7 @@ class MainController: UIViewController {
         
         // configure superview
         superview = self.view;
-        superview.backgroundColor = UIColor.lightGrayColor();
+        superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
         addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
         
         margin = superview.bounds.height * 0.05;
@@ -135,15 +136,6 @@ class MainController: UIViewController {
             
         default: font_size = 30.0;
         }
-        
-        /*
-        var font_names = UIFont.familyNames();
-        for(var i = 0; i < font_names.count; ++i)
-        {
-            println(font_names[i]);
-        }
-        */
-        //"MicroFLF"
         
         // configure title view
         var title_frame = CGRect(x: margin, y: title_margin, width: title_width, height: title_height);

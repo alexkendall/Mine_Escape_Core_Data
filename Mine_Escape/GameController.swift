@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import CoreData
+import iAd
 
 var CURRENT_LEVEL:Int = 0;
 enum SPEED{case SLOW, FAST};
@@ -19,7 +20,7 @@ func getLocalLevel()->Int
     return (CURRENT_LEVEL % (NUM_SUB_LEVELS)) + 1;
 }
 
-class GameController : UIViewController
+class GameController : UIViewController, ADBannerViewDelegate
 {
     var game_timer = NSTimer();
     var map = Array<Mine_cell>();
@@ -43,9 +44,75 @@ class GameController : UIViewController
     var level_button = UIButton();
     var superview = UIView();
     var nextController = NextGameContoller();
+    var bannerIsVisible = false;
+    
+    
+    var beatDifficultyWin = BeatDifficultyController();
+    var pauseController = PauseGameController();
+    
+    func pause_game()
+    {
+        
+    }
+    
+    func resume_game()
+    {
+        
+    }
+    
+    // START AD BANNER VIEW DELEGATE IMPLEMENTATION --------------------------
+    func bannerViewDidLoadAd(banner: ADBannerView!)
+    {
+        if(!bannerIsVisible)
+        {
+            UIView.animateWithDuration(0.5, delay: 2.0, options: nil, animations: {banner_view.frame = banner_loadedFrame}, completion: nil);
+            bannerIsVisible = true;
+        }
+    }
+    
+    func bannerViewWillLoadAd(banner: ADBannerView!)
+    {
+        return;
+    }
+    
+    func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!)
+    {
+        if(bannerIsVisible) // remove add if it is visible until it can be fetched
+        {
+            UIView.animateWithDuration(0.5, delay: 0.0, options: nil, animations: {banner_view.frame = banner_notLoadedFrame}, completion: nil);
+        }
+        bannerIsVisible = false;
+        NSLog("%s", "App failed to retrive advertisement!");
+        return;
+    }
+    
+    func bannerViewActionShouldBegin(banner: ADBannerView!, willLeaveApplication willLeave: Bool) -> Bool
+    {
+        println("Action should begin");
+        if(willLeave)
+        {
+            
+        }
+        else    // pause game if game is active
+        {
+            
+        }
+        return true;
+    }
+    
+    func bannerViewActionDidFinish(banner: ADBannerView!)
+    {
+        println("Action did finish");   // unpause game if it is paused
+        return;
+    }
+    
+    // END AD BANNER VIEW DELEGATE IMPLEMENTATION -------------------------------------
     
     func setProperties()
     {
+        var delegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        delegate.window?.backgroundColor = UIColor.blackColor();
+        
         self.NUM_ROWS = levels[CURRENT_LEVEL].dimension;
         self.MINE_SPEED = levels[CURRENT_LEVEL].speed;
         self.POLICY = levels[CURRENT_LEVEL].policy;
@@ -152,6 +219,8 @@ class GameController : UIViewController
     
     func GoToLevelMenu()
     {
+        var delegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        delegate.window?.backgroundColor = LIGHT_BLUE;
         self.view.removeFromSuperview();
         play_sound(SOUND.DEFAULT);
     }
@@ -480,19 +549,18 @@ class GameController : UIViewController
         self.map[self.START_LOC].backgroundColor = UIColor.grayColor();
         self.map[self.START_LOC].setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal);
         self.map[self.START_LOC].setTitle("START", forState: UIControlState.Normal);
-        
         var font_size:CGFloat = 12.0 + ((8.0 - CGFloat(NUM_ROWS)) * 2.0);
-        if(NUM_ROWS > 6)
+        if(NUM_ROWS >= 6)
         {
-            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Arial-BoldMT" , size: 12.0);
+            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 12.0);
         }
         if(NUM_ROWS == 5)
         {
-            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Arial-BoldMT" , size: 15.0);
+            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 15.0);
         }
         if(NUM_ROWS == 4)
         {
-            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Arial-BoldMT" , size: 18.0);
+            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 18.0);
         }
     }
 
@@ -630,6 +698,9 @@ class GameController : UIViewController
         superview.addConstraint(centery_next);
         superview.addConstraint(width_next);
         superview.addConstraint(height_next);
+        
+        self.addChildViewController(pauseController);
+        superview.addSubview(pauseController.view);
     }
 }
 
@@ -824,13 +895,12 @@ class NextGameContoller: ViewController
         superview.addConstraint(x_button_centery);
         superview.addConstraint(x_button_centerx);
         
-
         // confiugure label
         var label_height:CGFloat = complete_container.bounds.height / 8.0;
         completed_label.frame = CGRect(x: 0.0, y: (complete_container.bounds.height / 3.0) - (label_height / 2.0), width: complete_container.bounds.width, height: label_height);
         completed_label.textAlignment = NSTextAlignment.Center;
         complete_container.addSubview(completed_label);
-        completed_label.font = UIFont(name: "Arial", size: 25.0);
+        completed_label.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 25.0);
         
         // configure next level button
         complete_container.addSubview(next_level);
@@ -843,5 +913,97 @@ class NextGameContoller: ViewController
         next_level.layer.borderWidth = 1.0;
         next_level.layer.borderColor = UIColor.whiteColor().CGColor;
         next_level.setTitleColor(LIGHT_BLUE, forState: UIControlState.Highlighted);
+        next_level.titleLabel?.font = UIFont(name: "MicroFLF", size: 17.0);
     }
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
+//      BEAT DIFFICULTY VIEW CONTROLLER CLASS
+//----------------------------------------------------------------------------------------------------------------
+
+class BeatDifficultyController:UIViewController
+{
+    // properties
+    var text:String = "EASY";
+    var superview:UIView  = UIView();
+    var margin:CGFloat = 0.0;
+    var text_view:UITextView = UITextView();
+    var text_:String = "Congratulations! You have defeated all levels on EASY!";
+    
+    override func viewDidLoad() {
+        super.viewDidLoad();
+        
+        // configure view
+        superview = self.view;
+        superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.frame.width, height: superview.frame.height - banner_view.frame.height);
+        margin = superview.bounds.height * 0.05;
+        var x:CGFloat = 0.0;
+        var y:CGFloat = (superview.bounds.height - superview.bounds.width) / 2.0;
+        var width:CGFloat = superview.bounds.width;
+        var height:CGFloat = width;
+        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        
+        // configure text_view
+        var view = text_view as UIView;
+        AddSubview(&view, &superview, 0.0, 0.0, superview.bounds.width, superview.bounds.height);
+        text_view.textAlignment = NSTextAlignment.Center;
+        text_view.textColor = UIColor.orangeColor();
+        text_view.text = text_;
+        text_view.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 30.0);
+        text_view.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
+        
+        
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------
+//      END DIFFICULTY VIEW CONTROLLER CLASS
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//      PAUSE GAME VIEW CONTROLLER CLASS
+//----------------------------------------------------------------------------------------------------------------
+
+class PauseGameController:UIViewController
+{
+    var superview = UIView();
+    var play_button = UIButton();
+    override func viewDidLoad()
+    {
+        // configure frame
+        super.viewDidLoad();
+        superview =  self.view;
+        superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
+        superview.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3);
+        
+        // configure visual attributes
+        var margin:CGFloat = superview.bounds.width * 0.1;
+        var x:CGFloat = margin;
+        var y:CGFloat = ((superview.bounds.height - superview.bounds.width) / 2.0) + margin;
+        var width:CGFloat = superview.bounds.width - (2.0 * margin);
+        var height:CGFloat = width;
+        
+        play_button.frame = CGRect(x: x, y: y, width: width, height: height);
+        superview.addSubview(play_button);
+        play_button.setBackgroundImage(UIImage(named: "play"), forState: UIControlState.Normal);
+        play_button.alpha = 0.7;
+        play_button.setTitle("RESUME", forState: UIControlState.Normal);
+        play_button.setTitleColor(LIGHT_BLUE, forState: UIControlState.Normal);
+        play_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 30.0);
+        play_button.addTarget(gameController, action: "resume_game", forControlEvents: UIControlEvents.TouchUpInside);
+        
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------
+//      END PAUSE GAME VIEW CONTROLLER CLASS
+//----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
