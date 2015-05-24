@@ -282,11 +282,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Mine_Escape/GameController.swift"
-            timestampString = "454189231.28264"
+            timestampString = "454189620.912323"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1007"
-            endingLineNumber = "1007"
+            startingLineNumber = "1008"
+            endingLineNumber = "1008"
             landmarkName = "viewDidLoad()"
             landmarkType = "5">
          </BreakpointContent>

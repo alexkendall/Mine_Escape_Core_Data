@@ -1022,10 +1022,10 @@ class PauseGameController:UIViewController
         play_button.setBackgroundImage(UIImage(named: "play"), forState: UIControlState.Normal);
         play_button.alpha = 0.7;
         play_button.setTitle("RESUME", forState: UIControlState.Normal);
-        play_button.setTitleColor(LIGHT_BLUE, forState: UIControlState.Normal);
+        play_button.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal);
         play_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 30.0);
         play_button.addTarget(gameController, action: "resume_game", forControlEvents: UIControlEvents.TouchUpInside);
-        
+        play_button.titleLabel?.alpha = 1.0;
     }
 }
 
