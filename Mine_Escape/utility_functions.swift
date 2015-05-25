@@ -159,7 +159,6 @@ func add_subview(var subview:UIView, var superview:UIView, var top_margin:CGFloa
     superview.addConstraint(right);
     superview.addConstraint(top);
     superview.addConstraint(bottom);
-    
 }
 
 func AddSubview(inout subview:UIView, inout superview:UIView, var in_x:CGFloat, var in_y:CGFloat, var width:CGFloat, var height:CGFloat)
@@ -176,6 +175,5 @@ func addGradient(var view:UIView, var colors:Array<CGColor>)
     gradient.frame = view.bounds;
     gradient.colors = colors;
     view.layer.insertSublayer(gradient, atIndex: 0);
-    
 }
 

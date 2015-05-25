@@ -241,6 +241,7 @@ class ClearDataController : ViewController
         container_view.frame = CGRect(x: margin, y: y, width: dim, height: dim);
         container_view.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         container_view.layer.borderWidth = 1.0;
+        container_view.layer.borderColor = UIColor.whiteColor().CGColor;
         container_view.layoutIfNeeded();
         container_view.setNeedsLayout();
         

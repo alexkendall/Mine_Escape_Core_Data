@@ -48,6 +48,9 @@ class MainController: UIViewController, ADBannerViewDelegate {
     var start_alpha:Bool = false;
     var alpha:CGFloat = 0.0;
     
+    // dificulty controller testing
+    var beatDifficultyController = BeatDifficultyController();
+    
     override func prefersStatusBarHidden() -> Bool
     {
         return true;

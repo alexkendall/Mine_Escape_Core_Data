@@ -50,11 +50,6 @@ class GameController : UIViewController, ADBannerViewDelegate
     var beatDifficultyWin = BeatDifficultyController();
     var pauseController = PauseGameController();
     
-    func pause_game()
-    {
-        
-    }
-    
     func resume_game()
     {
         for(var i = 0; i < self.map.count; ++i)
@@ -92,12 +87,7 @@ class GameController : UIViewController, ADBannerViewDelegate
     
     func bannerViewActionShouldBegin(banner: ADBannerView!, willLeaveApplication willLeave: Bool) -> Bool
     {
-        println("Action should begin");
-        if(willLeave)
-        {
-            
-        }
-        else    // pause game if game is active
+        if(!willLeave)    // pause game if game is active
         {
             if(!GAME_OVER && GAME_STARTED)
             {
@@ -113,7 +103,6 @@ class GameController : UIViewController, ADBannerViewDelegate
     
     func bannerViewActionDidFinish(banner: ADBannerView!)
     {
-        println("Action did finish");   // unpause game if it is paused
         return;
     }
     
@@ -354,7 +343,9 @@ class GameController : UIViewController, ADBannerViewDelegate
         
         var error:NSError?;
         var results:[NSManagedObject] = managedContext.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
-        
+        var beat_difficulty = false;
+        var flag = false;
+        var difficulty = levels[CURRENT_LEVEL].difficulty;
         if(LevelsController.level_buttons[CURRENT_LEVEL].level_data == nil)
         {
             var description = NSEntityDescription.entityForName("Level", inManagedObjectContext: managedContext);
@@ -365,6 +356,37 @@ class GameController : UIViewController, ADBannerViewDelegate
             managedContext.insertObject(managedObject);
             var error:NSError?;
             managedContext.save(&error);
+            
+            if(prog == 3)   // check for beating difficulty
+            {
+                beat_difficulty = true;
+                if(difficulty == EASY)
+                {
+                    for(var i = 0; i < 25; ++i)
+                    {
+                        if(LevelsController.level_buttons[i].level_data == nil)
+                        {
+                            beat_difficulty = false;
+                            break;
+                        }
+                        else
+                        {
+                            var data:NSManagedObject = LevelsController.level_buttons[i].level_data!;
+                            var progress:Int = data.valueForKey("progress") as! Int;
+                            if(progress != 3)
+                            {
+                                beat_difficulty = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(beat_difficulty)
+                    {
+                        beatDifficultyWin.setDifficulty(difficulty);
+                        self.view.addSubview(beatDifficultyWin.view);
+                    }
+                }
+            }
         }
         else
         {
@@ -379,6 +401,7 @@ class GameController : UIViewController, ADBannerViewDelegate
                 end_game();
             }
         }
+        
         if(won_game())
         {
             nextController.markWon();
@@ -387,7 +410,10 @@ class GameController : UIViewController, ADBannerViewDelegate
         {
             nextController.markLost();
         }
-        self.view.addSubview(nextController.view);
+        if(!beat_difficulty)
+        {
+            self.view.addSubview(nextController.view);
+        }
         LevelsController.loadData();
     }
     
@@ -710,7 +736,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         superview.addConstraint(width_next);
         superview.addConstraint(height_next);
         
-        self.addChildViewController(pauseController);
+        self.addChildViewController(beatDifficultyWin);
 
     }
 }
@@ -954,11 +980,25 @@ class NextGameContoller: ViewController
 class BeatDifficultyController:UIViewController
 {
     // properties
-    var text:String = "EASY";
     var superview:UIView  = UIView();
     var margin:CGFloat = 0.0;
     var text_view:UITextView = UITextView();
-    var text_:String = "Congratulations! You have defeated all levels on EASY!";
+    var text:String = "Congratulations! You have defeated all levels on MEDIUM!";
+    var continue_button:UIButton = UIButton();
+    
+    func setDifficulty(var in_difficulty:String)
+    {
+        text = "Congratulations! You have defeated all levels on " + in_difficulty + "!";
+        gameController.nextController.view.removeFromSuperview();
+        
+    
+    }
+    
+    func exit()
+    {
+        self.view.removeFromSuperview();
+        gameController.GoToLevelMenu();
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad();
@@ -966,23 +1006,36 @@ class BeatDifficultyController:UIViewController
         // configure view
         superview = self.view;
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.frame.width, height: superview.frame.height - banner_view.frame.height);
-        margin = superview.bounds.height * 0.05;
-        var x:CGFloat = 0.0;
-        var y:CGFloat = (superview.bounds.height - superview.bounds.width) / 2.0;
-        var width:CGFloat = superview.bounds.width;
-        var height:CGFloat = width;
         addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+       
+        margin = superview.bounds.height * 0.05;
+        var x:CGFloat = margin;
+        var y:CGFloat = (superview.bounds.height - superview.bounds.width) / 2.0;
+        var width:CGFloat = superview.bounds.width - (2.0 * margin);
+        var height:CGFloat = width;
+        var frame = CGRect(x: x, y: y, width: width, height: height);
         
         // configure text_view
-        var view = text_view as UIView;
-        AddSubview(&view, &superview, 0.0, 0.0, superview.bounds.width, superview.bounds.height);
+        superview.addSubview(text_view);
+        text_view.frame = frame;
         text_view.textAlignment = NSTextAlignment.Center;
-        text_view.textColor = UIColor.orangeColor();
-        text_view.text = text_;
+        text_view.textColor = UIColor.whiteColor();
+        text_view.text = text;
         text_view.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 30.0);
-        text_view.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
+        text_view.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5);
+        text_view.layer.borderWidth = 1.0;
+        text_view.layer.borderColor = UIColor.whiteColor().CGColor;
+        text_view.editable = false;
         
-        
+        // configure continue button
+        var cont_x:CGFloat = text_view.bounds.width * 0.25;
+        var cont_y:CGFloat = (text_view.bounds.height * 0.5);
+        var cont_width:CGFloat = text_view.bounds.width * 0.5;
+        var cont_height:CGFloat = cont_width;
+        continue_button.frame = CGRect(x: cont_x, y: cont_y, width: cont_width, height: cont_height);
+        text_view.addSubview(continue_button);
+        continue_button.setBackgroundImage(UIImage(named: "next_level"), forState: UIControlState.Normal);
+        continue_button.addTarget(self, action: "exit", forControlEvents: UIControlEvents.TouchUpInside);
     }
 }
 
@@ -1032,12 +1085,3 @@ class PauseGameController:UIViewController
 //----------------------------------------------------------------------------------------------------------------
 //      END PAUSE GAME VIEW CONTROLLER CLASS
 //----------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
