@@ -60,6 +60,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         {
             map[i].resume();
         }
+        resume_game_clock();
         pauseController.view.removeFromSuperview();
     }
     
@@ -100,6 +101,7 @@ class GameController : UIViewController, ADBannerViewDelegate
                     map[i].pause();
                 }
                 self.view.addSubview(pauseController.view);
+                pause_game_clock();
             }
         }
         return true;
@@ -375,44 +377,40 @@ class GameController : UIViewController, ADBannerViewDelegate
                         break;
                     }
                 }
-                
-                
-                if(difficulty == EASY)
+                for(var i = (mega * 25); i < ((mega * 25) + 25); ++i)
                 {
-                    for(var i = (mega * 25); i < ((mega * 25) + 25); ++i)
+                    if(LevelsController.level_buttons[i].level_data == nil)
                     {
-                        if(LevelsController.level_buttons[i].level_data == nil)
+                        beat_difficulty = false;
+                        break;
+                    }
+                    else
+                    {
+                        var data:NSManagedObject = LevelsController.level_buttons[i].level_data!;
+                        var progress:Int = data.valueForKey("progress") as! Int;
+                        if(progress != 3)
                         {
                             beat_difficulty = false;
                             break;
                         }
-                        else
-                        {
-                            var data:NSManagedObject = LevelsController.level_buttons[i].level_data!;
-                            var progress:Int = data.valueForKey("progress") as! Int;
-                            if(progress != 3)
-                            {
-                                beat_difficulty = false;
-                                break;
-                            }
-                        }
-                    }
-                    if(beat_difficulty)
-                    {
-                        // Add achievement here for beating difficulty
-                        achievementController.set_text("Beat all levels on " + difficulty + "!");
-                        achievementController.animate();
-                        
-                        // report achievement to the game center
-                        var player = GKGameViewController.localPlayer;
-                        var id:String = "mine.escape." + difficulty;
-                        var achievement = GKAchievement(identifier: id, player: player);
-                        achievement.percentComplete = 100.0;
-                        GKAchievement.reportAchievements([achievement], withCompletionHandler: nil);
-                        println("Reported achievement");
                     }
                 }
+                if(beat_difficulty)
+                {
+                    // Add achievement here for beating difficulty
+                    achievementController.set_text("Beat all levels on " + difficulty + "!");
+                    achievementController.animate();
+                        
+                    // report achievement to the game center
+                    var player = GKGameViewController.localPlayer;
+                    var id:String = "mine.escape." + difficulty.lowercaseString;
+                    var achievement = GKAchievement(identifier: id, player: player);
+                    achievement.percentComplete = 100.0;
+                    GKAchievement.reportAchievements([achievement], withCompletionHandler: nil);
+                    println("Reported achievement: " + id);
+                }
             }
+
         }
         else
         {
@@ -991,6 +989,7 @@ class NextGameContoller: ViewController
         x_button.backgroundColor = UIColor.blackColor();
         x_button.alpha = 0.85;
         x_button.addTarget(self, action: "exit", forControlEvents: UIControlEvents.TouchDown);
+        
         
         // add constraints
         var x_button_centery = NSLayoutConstraint(item: x_button, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: 0.0);
