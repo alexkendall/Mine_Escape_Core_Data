@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import GameKit
 
 //
 //  ViewController.swift
@@ -21,7 +22,7 @@ import UIKit
 import Foundation
 import iAd
 
-class MainController: UIViewController, ADBannerViewDelegate {
+class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterControllerDelegate {
     
     var superview = UIView();
     var animate_button = UIButton();
@@ -42,14 +43,72 @@ class MainController: UIViewController, ADBannerViewDelegate {
     // configure subtitles
     var subtitles = Array<UIButton>();
     var subtitle_texts = ["free play", "about", "how to play", "settings"];
+    enum subtitle_index {case FREE_PLAY, ABOUT, HOW_TO_PLAY, SETTINGS};
     var subtitle_margin:CGFloat = CGFloat();
     var subtitle_result_frames = Array<CGRect>();
     var delay = NSTimeInterval();
     var start_alpha:Bool = false;
     var alpha:CGFloat = 0.0;
     
-    // dificulty controller testing
-    var beatDifficultyController = BeatDifficultyController();
+     // start leaderboard variables-------------------------------------------------
+    var score: Int = 0 // Stores the score
+    var gcEnabled = Bool() // Stores if the user has Game Center enabled
+    var gcDefaultLeaderBoard = String() // Stores the default leaderboardID
+    //  end leaderboard variables---------------------------------------------------
+    
+    func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController!)
+    {
+        gameCenterViewController.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func authenticateLocalPlayer()
+    {
+        var localPlayer = GKLocalPlayer.localPlayer();
+        localPlayer.authenticateHandler =
+            {(viewController : UIViewController!, error : NSError!) -> Void in
+                if viewController != nil
+                {
+                    self.presentViewController(viewController, animated:true, completion: nil)
+                }
+                else
+                {
+                    if localPlayer.authenticated
+                    {
+                        self.gcEnabled = true
+                        localPlayer.loadDefaultLeaderboardIdentifierWithCompletionHandler
+                            {(leaderboardIdentifier, error) -> Void in
+                                if(error != nil)
+                                {
+                                    print("error")
+                                }
+                                    /*
+                                else
+                                {
+                                    //self.gcDefaultLeaderBoard = leaderboardIdentifier
+                                    //println("\(self.gcDefaultLeaderBoard)")
+                                }
+                                */
+                        }
+                    }
+                    else
+                    {
+                        println("not able to authenticate fail")
+                        self.gcEnabled = false
+                        
+                        if(error != nil)
+                        {
+                            println("\(error.description)")
+                        }
+                        else
+                        {
+                            println("error is nil")
+                        }
+                    }
+                }
+        }
+    }
+    
+    // -- END LEADERBOARD INFORMATION ---------------------------------------------------
     
     override func prefersStatusBarHidden() -> Bool
     {
@@ -60,17 +119,14 @@ class MainController: UIViewController, ADBannerViewDelegate {
     {
         super.viewDidAppear(animated);
         UIView.animateWithDuration(1.5, animations: {self.blocker.frame = self.result_blocker_frame; self.mine_view.frame = self.result_mine_frame;});
-        
         for(var i = 0; i < subtitles.count; ++i)
         {
             UIView.animateWithDuration(0.5, delay: 1.5, options: nil, animations: {self.subtitles[i].frame = self.subtitle_result_frames[i]}, completion: nil);
         }
-        
-        
         var period:NSTimeInterval = 0.01;
         var alpha_timer = NSTimer.scheduledTimerWithTimeInterval(period, target: self, selector: "appear_bottom:", userInfo: nil, repeats: true);
-        
         delay = 2.0 * (1.0 / period);
+        
         
     }
     
@@ -83,8 +139,8 @@ class MainController: UIViewController, ADBannerViewDelegate {
         else
         {
             alpha += 0.02;
-            subtitles[2].alpha = alpha;
-            subtitles[3].alpha = alpha;
+            subtitles[subtitle_index.HOW_TO_PLAY.hashValue].alpha = alpha;
+            subtitles[subtitle_index.SETTINGS.hashValue].alpha = alpha;
             if(alpha >= 1.0)
             {
                 timer.invalidate();
@@ -110,7 +166,7 @@ class MainController: UIViewController, ADBannerViewDelegate {
         // confogure title view
         var title_width = superview.bounds.width - (margin * 2.0);
         var title_height = title_width * 0.3;
-        var title_margin = superview.bounds.height / 5.0;
+        var title_margin = superview.bounds.height / 6.0;
         
         self.init_blocker_frame = CGRect(x: -title_height / 2.0, y: 0, width: superview.bounds.width + title_width, height: superview.bounds.height);
         self.result_blocker_frame = CGRect(x: superview.bounds.width + (title_height / 2.0), y: 0, width: superview.bounds.width + title_width, height: superview.bounds.height);
@@ -165,42 +221,45 @@ class MainController: UIViewController, ADBannerViewDelegate {
         var total_height = superview.bounds.height - (title_margin * 2.0);
         var sub_height = total_height / CGFloat(subtitle_texts.count + 2);
         
-        for(var i:Int = 0; i < subtitle_texts.count; ++i)
+        for(var sub:Int = 0; sub < subtitle_texts.count; ++sub)
         {
-            var top_marg:CGFloat = (sub_height * CGFloat(i + 1)) + title_margin + (0.5 * sub_height);
+            var top_marg:CGFloat = (sub_height * CGFloat(sub + 1)) + title_margin + (0.5 * sub_height);
             var sub_width:CGFloat = superview.bounds.width;
-            
             var subtitle:UIButton;
+
+            switch sub
+            {
+                case subtitle_index.FREE_PLAY.hashValue:
+                    subtitle = UIButton(frame: CGRect(x: -sub_width, y: top_marg, width: sub_width, height: sub_height));
+                    subtitle.addTarget(self, action: "goToLevels", forControlEvents: UIControlEvents.TouchUpInside);
+                
+                case subtitle_index.ABOUT.hashValue:
+                    subtitle = UIButton(frame: CGRect(x: sub_width, y: top_marg, width: sub_width, height: sub_height));
+                    subtitle.addTarget(self, action: "goToAbout", forControlEvents: UIControlEvents.TouchUpInside);
+                
+                case subtitle_index.HOW_TO_PLAY.hashValue:
+                    subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
+                    subtitle.alpha = 0.0;
+                    subtitle.addTarget(self, action: "goToHow", forControlEvents: UIControlEvents.TouchUpInside);
+                
+                case subtitle_index.SETTINGS.hashValue:
+                    subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
+                    subtitle.alpha = 0.0;
+                    subtitle.addTarget(self, action: "goToSettings", forControlEvents: UIControlEvents.TouchUpInside);
+                
+                default:
+                    println("Should not execute default statement of switch");
+                    subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
+            }
             
-            if(i == 0) // left to right
-            {
-                subtitle = UIButton(frame: CGRect(x: -sub_width, y: top_marg, width: sub_width, height: sub_height));
-                subtitle.addTarget(self, action: "goToLevels", forControlEvents: UIControlEvents.TouchUpInside);
-            }
-            else if(i == 1) // right to left
-            {
-                subtitle = UIButton(frame: CGRect(x: sub_width, y: top_marg, width: sub_width, height: sub_height));
-                subtitle.addTarget(self, action: "goToAbout", forControlEvents: UIControlEvents.TouchUpInside);
-            }
-            else if (i == 2) // invisible to visibe
-            {
-                subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
-                subtitle.alpha = 0.0;
-                subtitle.addTarget(self, action: "goToHow", forControlEvents: UIControlEvents.TouchUpInside);
-            }
-            else
-            {
-                subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
-                subtitle.alpha = 0.0;
-                subtitle.addTarget(self, action: "goToSettings", forControlEvents: UIControlEvents.TouchUpInside);
-            }
             subtitle.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
             subtitle_result_frames.append(CGRect(x: 0.0, y: top_marg, width: sub_width, height: sub_height));
             superview.addSubview(subtitle);
-            subtitle.setTitle(subtitle_texts[i], forState: UIControlState.Normal);
+            subtitle.setTitle(subtitle_texts[sub], forState: UIControlState.Normal);
             subtitle.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
             subtitle.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
             subtitles.append(subtitle);
+            authenticateLocalPlayer();
         }
     }
     

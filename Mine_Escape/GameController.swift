@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import CoreData
 import iAd
+import GameKit
 
 var CURRENT_LEVEL:Int = 0;
 enum SPEED{case SLOW, FAST};
@@ -23,6 +24,11 @@ func getLocalLevel()->Int
 class GameController : UIViewController, ADBannerViewDelegate
 {
     var game_timer = NSTimer();
+    var game_clock:NSTimeInterval = 0.0;
+    var precision:NSTimeInterval = 0.01; // measure to nearest .01 second
+    var clock_str = String();
+    var achievementController = AchievementController();
+    
     var map = Array<Mine_cell>();
     var NUM_ROWS:Int = 5;
     var NUM_COLS:Int = 5;
@@ -46,8 +52,6 @@ class GameController : UIViewController, ADBannerViewDelegate
     var nextController = NextGameContoller();
     var bannerIsVisible = false;
     
-    
-    var beatDifficultyWin = BeatDifficultyController();
     var pauseController = PauseGameController();
     
     func resume_game()
@@ -301,6 +305,8 @@ class GameController : UIViewController, ADBannerViewDelegate
     // MARKS GAME ACCORDINGLY IF WON OR LOST AND INVALIDATES ALL TIMERS
     func end_game()
     {
+        stop_game_clock();
+        nextController.set_time(clock_str);
         LevelsController.loadData();
         for(var i = 0; i < NUM_LOCS; ++i)
         {
@@ -360,9 +366,20 @@ class GameController : UIViewController, ADBannerViewDelegate
             if(prog == 3)   // check for beating difficulty
             {
                 beat_difficulty = true;
+                var mega:Int = 0;
+                for(var i = 0; i < DIFFICULTY.count; ++i)
+                {
+                    if(DIFFICULTY[i] == difficulty)
+                    {
+                        mega = i;
+                        break;
+                    }
+                }
+                
+                
                 if(difficulty == EASY)
                 {
-                    for(var i = 0; i < 25; ++i)
+                    for(var i = (mega * 25); i < ((mega * 25) + 25); ++i)
                     {
                         if(LevelsController.level_buttons[i].level_data == nil)
                         {
@@ -382,8 +399,17 @@ class GameController : UIViewController, ADBannerViewDelegate
                     }
                     if(beat_difficulty)
                     {
-                        beatDifficultyWin.setDifficulty(difficulty);
-                        self.view.addSubview(beatDifficultyWin.view);
+                        // Add achievement here for beating difficulty
+                        achievementController.set_text("Beat all levels on " + difficulty + "!");
+                        achievementController.animate();
+                        
+                        // report achievement to the game center
+                        var player = GKGameViewController.localPlayer;
+                        var id:String = "mine.escape." + difficulty;
+                        var achievement = GKAchievement(identifier: id, player: player);
+                        achievement.percentComplete = 100.0;
+                        GKAchievement.reportAchievements([achievement], withCompletionHandler: nil);
+                        println("Reported achievement");
                     }
                 }
             }
@@ -410,10 +436,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         {
             nextController.markLost();
         }
-        if(!beat_difficulty)
-        {
-            self.view.addSubview(nextController.view);
-        }
+        self.view.addSubview(nextController.view);
         LevelsController.loadData();
     }
     
@@ -483,6 +506,28 @@ class GameController : UIViewController, ADBannerViewDelegate
         }
     }
     
+    func update_game_clock()
+    {
+        self.game_clock += precision;
+        self.clock_str = String(format: "%.2f seconds", self.game_clock);
+    }
+    
+    func stop_game_clock()
+    {
+        self.game_timer.invalidate();
+        self.game_clock = 0.0;  // reset game clock
+    }
+    
+    func pause_game_clock()
+    {
+        self.game_timer.invalidate();
+    }
+    
+    func resume_game_clock()
+    {
+        self.game_timer = NSTimer.scheduledTimerWithTimeInterval(precision, target: self, selector: "update_game_clock", userInfo: nil, repeats: true);
+    }
+    
     func mark_location(button:UIButton)
     {
         var loc_id:Int = button.tag
@@ -496,6 +541,7 @@ class GameController : UIViewController, ADBannerViewDelegate
                 map[loc_id].explored = true;
                 play_sound(SOUND.EXPLORED);
                 // begin game timer
+                game_timer = NSTimer.scheduledTimerWithTimeInterval(precision, target: self, selector: "update_game_clock", userInfo: nil, repeats: true);
             }
         }
         else if(!GAME_OVER)
@@ -736,8 +782,8 @@ class GameController : UIViewController, ADBannerViewDelegate
         superview.addConstraint(width_next);
         superview.addConstraint(height_next);
         
-        self.addChildViewController(beatDifficultyWin);
-
+        // add achievement controller to hiearchy
+        superview.addSubview(achievementController.view);
     }
 }
 
@@ -884,6 +930,7 @@ class NextGameContoller: ViewController
     var x_button = UIButton();
     var superview = UIView();
     var completed_label = UILabel();
+    var time_label = UILabel();
     
     func exit()
     {
@@ -910,6 +957,11 @@ class NextGameContoller: ViewController
         next_level.addTarget(gameController, action: "reset", forControlEvents: UIControlEvents.TouchUpInside);
         x_button.layer.borderColor = UIColor.redColor().CGColor;
         x_button.setTitleColor(UIColor.redColor(), forState: UIControlState.Highlighted);
+    }
+    
+    func set_time(var time:String)
+    {
+        time_label.text = time;
     }
     
     override func viewDidLoad()
@@ -969,6 +1021,13 @@ class NextGameContoller: ViewController
         next_level.layer.borderColor = UIColor.whiteColor().CGColor;
         next_level.setTitleColor(LIGHT_BLUE, forState: UIControlState.Highlighted);
         next_level.titleLabel?.font = UIFont(name: "MicroFLF", size: 17.0);
+        
+        // configure time label
+        time_label.frame = superview.bounds;
+        time_label.textAlignment = NSTextAlignment.Center;
+        time_label.textColor = UIColor.whiteColor();
+        time_label.font = UIFont(name: "MicroFLF", size: 17.0);
+        superview.addSubview(time_label);
     }
 }
 
@@ -1084,4 +1143,55 @@ class PauseGameController:UIViewController
 
 //----------------------------------------------------------------------------------------------------------------
 //      END PAUSE GAME VIEW CONTROLLER CLASS
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//      ACHIVEMENT VIEW CONTROLLER CLASS
+//----------------------------------------------------------------------------------------------------------------
+
+class AchievementController:UIViewController
+{
+    var superview = UIView();
+    var out_frame = CGRect();
+    var in_frame = CGRect();
+    var label = UILabel();
+    var speed = NSTimeInterval(1.0);
+    var pause = NSTimeInterval(5.0);
+    
+    override func viewDidLoad()
+    {
+        super.viewDidLoad();
+        superview = self.view;
+        var height:CGFloat = back_button_size;
+        var width:CGFloat = superview.bounds.width / 1.5;
+        var y:CGFloat = global_but_margin;
+        var x:CGFloat = superview.bounds.width + width;
+        out_frame = CGRect(x: x, y: y, width: width, height: height);
+        in_frame = CGRect(x: superview.bounds.width - width - global_but_margin, y: y, width: width, height: height);
+        superview.frame = out_frame;
+        superview.addSubview(label);
+        label.font = UIFont(name: "MicroFLF", size: 14.0);
+        label.textColor = UIColor.blackColor();
+        label.frame = superview.bounds;
+        label.textAlignment = NSTextAlignment.Center;
+        superview.addSubview(label);
+        superview.backgroundColor = LIGHT_BLUE;
+        
+    }
+    
+    func set_text(var in_text:String)
+    {
+        label.text = in_text;
+    }
+
+    func animate()
+    {
+        UIView.animateWithDuration(speed, animations: {self.superview.frame = self.in_frame});
+        UIView.animateWithDuration(speed, delay: pause, options: nil, animations: {self.superview.frame = self.out_frame}, completion: nil);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------
+//      END ACHIEVMENT VIEW CONTROLLER CLASS
 //----------------------------------------------------------------------------------------------------------------
