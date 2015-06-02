@@ -383,12 +383,6 @@ class GameController : UIViewController, ADBannerViewDelegate
             {
                 // get previoius time
                 var previous_time:Float = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.valueForKey("time") as! Float;
-                
-                /*
-                println("Previous time: " + String(stringInterpolationSegment: previous_time));
-                println("New time: " + String(stringInterpolationSegment: game_time));
-                */
-                
                 if(Float(game_time) < previous_time)
                 {
                     LevelsController.level_buttons[CURRENT_LEVEL].level_data?.setValue(Float(game_time), forKey: "time");

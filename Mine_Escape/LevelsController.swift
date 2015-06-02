@@ -141,6 +141,11 @@ class LevelController : ViewController
         }
     }
     
+    func see_times()
+    {
+        println("Bring up time view controller");
+    }
+    
     override func viewDidAppear(animated: Bool)
     {
         super.viewDidAppear(animated);
@@ -189,8 +194,23 @@ class LevelController : ViewController
         scroll_view.frame = CGRect(x: margin, y: (margin * 2.5), width: scroll_width, height: 0.0);
         superview.addSubview(scroll_view);
         
+        // add back button to bottom left corner
         add_back_button(&back_button, &superview);
         back_button.addTarget(self, action: "go_to_main", forControlEvents: UIControlEvents.TouchUpInside);
+        
+        // add time information button to right corner
+        back_button.layoutIfNeeded();
+        back_button.setNeedsLayout();
+        var x = superview.bounds.width - global_but_margin - global_but_dim;
+        var y = back_button.frame.origin.y;
+        var width = back_button.bounds.width;
+        var height = back_button.bounds.height;
+        var time_button:UIButton = UIButton(frame: CGRect(x: x, y: y, width: width, height: height));
+        time_button.layer.borderWidth = 1.0;
+        time_button.layer.borderColor = UIColor.whiteColor().CGColor;
+        time_button.setBackgroundImage(UIImage(named: "clock"), forState: UIControlState.Normal);
+        superview.addSubview(time_button);
+        time_button.addTarget(self, action: "see_times", forControlEvents: UIControlEvents.TouchUpInside);
         
         scroll_view.backgroundColor = UIColor.clearColor();
         scroll_view.layer.borderColor = UIColor.whiteColor().CGColor;
