@@ -506,11 +506,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Mine_Escape/LevelsController.swift"
-            timestampString = "454917084.038228"
+            timestampString = "454949029.164352"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Mine_Escape/LevelsController.swift"
+            timestampString = "454952674.083231"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "300"
+            endingLineNumber = "300"
             landmarkName = "viewDidLoad()"
             landmarkType = "5">
          </BreakpointContent>
