@@ -307,8 +307,9 @@ class GameController : UIViewController, ADBannerViewDelegate
     // MARKS GAME ACCORDINGLY IF WON OR LOST AND INVALIDATES ALL TIMERS
     func end_game()
     {
+        let game_time = game_clock; // game clock is reset we need temp variable to hold time...
+        nextController.set_time(String(format: "%.2f", game_time));
         stop_game_clock();
-        nextController.set_time(clock_str);
         LevelsController.loadData();
         for(var i = 0; i < NUM_LOCS; ++i)
         {
@@ -360,57 +361,11 @@ class GameController : UIViewController, ADBannerViewDelegate
             var managedObject = NSManagedObject(entity: description!, insertIntoManagedObjectContext: managedContext);
             managedObject.setValue(CURRENT_LEVEL, forKey: "level_no");
             managedObject.setValue(prog, forKey: "progress");
+            managedObject.setValue(Float(game_time), forKey: "time");
             LevelsController.level_buttons[CURRENT_LEVEL].level_data = managedObject;
             managedContext.insertObject(managedObject);
             var error:NSError?;
             managedContext.save(&error);
-            
-            if(prog == 3)   // check for beating difficulty
-            {
-                beat_difficulty = true;
-                var mega:Int = 0;
-                for(var i = 0; i < DIFFICULTY.count; ++i)
-                {
-                    if(DIFFICULTY[i] == difficulty)
-                    {
-                        mega = i;
-                        break;
-                    }
-                }
-                for(var i = (mega * 25); i < ((mega * 25) + 25); ++i)
-                {
-                    if(LevelsController.level_buttons[i].level_data == nil)
-                    {
-                        beat_difficulty = false;
-                        break;
-                    }
-                    else
-                    {
-                        var data:NSManagedObject = LevelsController.level_buttons[i].level_data!;
-                        var progress:Int = data.valueForKey("progress") as! Int;
-                        if(progress != 3)
-                        {
-                            beat_difficulty = false;
-                            break;
-                        }
-                    }
-                }
-                if(beat_difficulty)
-                {
-                    // Add achievement here for beating difficulty
-                    achievementController.set_text("Beat all levels on " + difficulty + "!");
-                    achievementController.animate();
-                        
-                    // report achievement to the game center
-                    var player = GKGameViewController.localPlayer;
-                    var id:String = "mine.escape." + difficulty.lowercaseString;
-                    var achievement = GKAchievement(identifier: id, player: player);
-                    achievement.percentComplete = 100.0;
-                    GKAchievement.reportAchievements([achievement], withCompletionHandler: nil);
-                    println("Reported achievement: " + id);
-                }
-            }
-
         }
         else
         {
@@ -424,6 +379,25 @@ class GameController : UIViewController, ADBannerViewDelegate
                 LevelsController.level_buttons[CURRENT_LEVEL].level_data = nil;
                 end_game();
             }
+            else if((prog == prev_progress) && (prog == 3)) // update best time if necessary
+            {
+                // get previoius time
+                var previous_time:Float = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.valueForKey("time") as! Float;
+                
+                /*
+                println("Previous time: " + String(stringInterpolationSegment: previous_time));
+                println("New time: " + String(stringInterpolationSegment: game_time));
+                */
+                
+                if(Float(game_time) < previous_time)
+                {
+                    LevelsController.level_buttons[CURRENT_LEVEL].level_data?.setValue(Float(game_time), forKey: "time");
+                    // save new time update
+                    managedContext.save(&error);
+                    achievementController.set_text(String(format: "New Best Time For Level %i", current_level));
+                    achievementController.animate();
+                }
+            }
         }
         
         if(won_game())
@@ -436,6 +410,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         }
         self.view.addSubview(nextController.view);
         LevelsController.loadData();
+        GKGameViewController.update_achievements(difficulty);
     }
     
     func unmarked_global()->(Array<Int>)

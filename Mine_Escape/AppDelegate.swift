@@ -83,7 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         banner_view.frame = banner_notLoadedFrame;
         banner_view.delegate = gameController;
         MainMenuContoller.view.addSubview(banner_view);
-        
+
         return true
     }
 

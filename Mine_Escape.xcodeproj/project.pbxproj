@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		461303981B13C27B00D16C31 /* game_center.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461303971B13C27B00D16C31 /* game_center.swift */; };
+		461303981B13C27B00D16C31 /* GameCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461303971B13C27B00D16C31 /* GameCenter.swift */; };
 		462392101B0FF2CB00AA0610 /* MicroFLF.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4623920F1B0FF15000AA0610 /* MicroFLF.ttf */; };
 		462392121B0FF52400AA0610 /* Galano.otf in Resources */ = {isa = PBXBuildFile; fileRef = 462392111B0FF51D00AA0610 /* Galano.otf */; };
 		462392141B124B3300AA0610 /* timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462392131B124B3300AA0610 /* timer.swift */; };
@@ -45,7 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		461303971B13C27B00D16C31 /* game_center.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = game_center.swift; sourceTree = "<group>"; };
+		461303971B13C27B00D16C31 /* GameCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCenter.swift; sourceTree = "<group>"; };
 		4623920F1B0FF15000AA0610 /* MicroFLF.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MicroFLF.ttf; sourceTree = "<group>"; };
 		462392111B0FF51D00AA0610 /* Galano.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Galano.otf; sourceTree = "<group>"; };
 		462392131B124B3300AA0610 /* timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = timer.swift; sourceTree = "<group>"; };
@@ -124,7 +124,7 @@
 				4648E7031B0AA51600380242 /* LevelsController.swift */,
 				4648E7091B0AB80800380242 /* SettingsController.swift */,
 				4648E70B1B0ABAF400380242 /* GameController.swift */,
-				461303971B13C27B00D16C31 /* game_center.swift */,
+				461303971B13C27B00D16C31 /* GameCenter.swift */,
 				462392131B124B3300AA0610 /* timer.swift */,
 				4648E7071B0AB43F00380242 /* HowToController.swift */,
 				46E62D111B0A5E7D00A07B7B /* ViewController.swift */,
@@ -287,7 +287,7 @@
 				4648E7041B0AA51600380242 /* LevelsController.swift in Sources */,
 				46E62D421B0A7D8700A07B7B /* MainController.swift in Sources */,
 				46E62D101B0A5E7D00A07B7B /* Mine_Escape.xcdatamodeld in Sources */,
-				461303981B13C27B00D16C31 /* game_center.swift in Sources */,
+				461303981B13C27B00D16C31 /* GameCenter.swift in Sources */,
 				4648E7061B0AAF5900380242 /* AboutController.swift in Sources */,
 				4648E70E1B0AD17900380242 /* level.swift in Sources */,
 				4648E70C1B0ABAF400380242 /* GameController.swift in Sources */,
@@ -349,6 +349,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -394,6 +395,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -422,9 +424,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Mine_Escape/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "85b70d52-3f41-46b1-ab39-93edd2182c79";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -435,9 +438,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Mine_Escape/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "85b70d52-3f41-46b1-ab39-93edd2182c79";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import GameKit
+import CoreData
 
 //
 //  ViewController.swift
@@ -106,6 +107,57 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
                     }
                 }
         }
+    }
+    
+    func update_achievements(var difficulty:String)
+    {
+        var mega:Int = -1;
+        for(var i = 0; i < DIFFICULTY.count; ++i)
+        {
+            if(difficulty == DIFFICULTY[i])
+            {
+                mega = i;
+                break;
+            }
+        }
+        assert(mega != -1, "Invalid difficulty entered as function argument");
+        
+        // query all levels of specified difficulty
+        var min_level:Int = NUM_SUB_LEVELS * mega;
+        var max_level:Int = min_level + NUM_SUB_LEVELS - 1;
+        
+        println(String(format: "Min Level: %d --- Max Level: %d", min_level, max_level));
+        
+        // fetch level progress
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let managedContext = appDelegate.managedObjectContext;
+        var request = NSFetchRequest(entityName: "Level");
+        var predictae = NSPredicate(format: "(progress = 3) AND (level_no > %i) AND (level_no < %i)", min_level - 1, max_level + 1);
+        request.predicate = predictae;
+        var error:NSError?;
+        var results:[NSManagedObject] = managedContext?.executeFetchRequest(request, error: &error) as! [NSManagedObject];
+        var percent = 100.0; //Double(results.count) / Double(NUM_SUB_LEVELS) * 100.0;
+        var achievement_id = "mine.escape." + difficulty.lowercaseString;
+        self.report_achievement(achievement_id, percent: percent);
+    }
+    
+    func report_achievement(var achievement_id:String, var percent:Double)
+    {
+        var achievement = GKAchievement(identifier: achievement_id, player: GKGameViewController.localPlayer);
+        assert(achievement != nil, "Invalid identifier");
+        achievement.showsCompletionBanner = true;   // for debug mode only -> remove later
+        println("Previous percentage: " + String(stringInterpolationSegment: achievement.percentComplete));
+        achievement.percentComplete = percent;
+        GKAchievement.reportAchievements([achievement], withCompletionHandler:
+            {(NSError) in
+                if(NSError != nil)
+                {
+                    println("Error. Unable to report achievement");
+                }
+            }
+        );
+        println("Achievement: " +  achievement_id + "--- Percentage Complete: " + String(stringInterpolationSegment: achievement.percentComplete));
+        
     }
     
     // -- END LEADERBOARD INFORMATION ---------------------------------------------------
