@@ -202,6 +202,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         self.GAME_OVER = false;
         self.GAME_STARTED = false;
         generateMap();
+        game_clock = 0.0;
     }
     
     func increment_level()
