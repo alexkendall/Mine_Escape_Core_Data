@@ -389,7 +389,7 @@ class GameController : UIViewController, ADBannerViewDelegate
                     LevelsController.level_buttons[CURRENT_LEVEL].level_data?.setValue(Float(game_time), forKey: "time");
                     // save new time update
                     managedContext.save(&error);
-                    achievementController.set_text(String(format: "New Best Time For Level %i", current_level));
+                    achievementController.set_text(String(format: "New Best Time For Level %i", getLocalLevel()));
                     achievementController.animate();
                 }
             }

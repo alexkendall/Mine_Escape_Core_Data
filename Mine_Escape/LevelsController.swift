@@ -145,6 +145,8 @@ class LevelController : ViewController
     func see_times()
     {
         self.view.addSubview(time_controller.view);
+        time_controller.load_data();
+        time_controller.scroll_view.contentOffset = scroll_view.contentOffset;
     }
     
     override func viewDidAppear(animated: Bool)
@@ -407,6 +409,32 @@ class TimeController:UIViewController
         scroll_view.contentSize = CGSize(width: tab_width, height: content_height);
         scroll_view.clipsToBounds = true;
         scroll_view.scrollEnabled = true;
+        self.load_data();
+    }
+    
+    // adds a clock to whatever level button has a time and has been completed
+    func load_data()
+    {
+        for(var i = 0; i <  LevelsController.level_buttons.count; ++i)
+        {
+            var data = LevelsController.level_buttons[i].level_data;
+            if(data != nil)
+            {
+                var progress = data?.valueForKey("progress") as! Int;
+                if(progress == 3)
+                {
+                    level_buttons[i].setTitleColor(UIColor.greenColor(), forState: UIControlState.Normal);
+                }
+                else
+                {
+                    level_buttons[i].setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+                }
+            }
+            else
+            {
+                level_buttons[i].setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+            }
+        }
     }
     
     func enter_levels()
@@ -417,6 +445,7 @@ class TimeController:UIViewController
         {
             level_buttons[i].backgroundColor = self.level_color;
         }
+        LevelsController.scroll_view.contentOffset = scroll_view.contentOffset;
     }
     
     func get_time(level:UIButton)

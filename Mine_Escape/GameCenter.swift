@@ -57,6 +57,8 @@ class GKGameController: UIViewController, GKGameCenterControllerDelegate
         }
         assert(mega != -1, "Invalid difficulty entered as function argument");
         
+        // 1. CHECK FOR 5 100 Point Achievements
+        
         // query all levels of specified difficulty
         var min_level:Int = NUM_SUB_LEVELS * mega;
         var max_level:Int = min_level + NUM_SUB_LEVELS - 1;

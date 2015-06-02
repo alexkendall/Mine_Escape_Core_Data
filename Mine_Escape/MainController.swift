@@ -43,8 +43,8 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
     
     // configure subtitles
     var subtitles = Array<UIButton>();
-    var subtitle_texts = ["free play", "about", "how to play", "settings"];
-    enum subtitle_index {case FREE_PLAY, ABOUT, HOW_TO_PLAY, SETTINGS};
+    var subtitle_texts = ["free play", "about", "how to play", "settings", "achievements"];
+    enum subtitle_index {case FREE_PLAY, ABOUT, HOW_TO_PLAY, SETTINGS, ACHIEVEMENTS};
     var subtitle_margin:CGFloat = CGFloat();
     var subtitle_result_frames = Array<CGRect>();
     var delay = NSTimeInterval();
@@ -299,9 +299,14 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
                     subtitle.alpha = 0.0;
                     subtitle.addTarget(self, action: "goToSettings", forControlEvents: UIControlEvents.TouchUpInside);
                 
+                case subtitle_index.ACHIEVEMENTS.hashValue:
+                    subtitle = UIButton(frame: CGRect(x: 0, y: superview.bounds.height + sub_height, width: sub_width, height: sub_height));
+                    subtitle.addTarget(self, action: "show_achievements", forControlEvents: UIControlEvents.TouchUpInside);
+                
                 default:
                     println("Should not execute default statement of switch");
                     subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
+                    subtitle.addTarget(self, action: "show_achievements", forControlEvents: UIControlEvents.TouchUpInside);
             }
             
             subtitle.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
@@ -313,6 +318,13 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
             subtitles.append(subtitle);
             authenticateLocalPlayer();
         }
+    }
+    
+    func show_achievements()
+    {
+        var achievement_controller = GKGameCenterViewController();
+        achievement_controller.gameCenterDelegate = self;
+        presentViewController(achievement_controller, animated: true, completion: nil);
     }
     
     func goToLevels()
