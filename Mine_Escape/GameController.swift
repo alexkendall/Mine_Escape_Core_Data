@@ -1143,7 +1143,6 @@ class AchievementController:UIViewController
         label.textAlignment = NSTextAlignment.Center;
         superview.addSubview(label);
         superview.backgroundColor = LIGHT_BLUE;
-        
     }
     
     func set_text(var in_text:String)

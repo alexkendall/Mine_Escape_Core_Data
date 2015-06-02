@@ -292,7 +292,9 @@ class TimeController:UIViewController
     var title_label = UILabel();
     var scroll_view = UIScrollView();
     var scroll_frame = CGRect();
-    
+    var time_label = UILabel();
+    var level_color = UIColor();
+    var level_buttons = [UIButton]();
     override func viewDidLoad()
     {
         superview = self.view as UIView;
@@ -328,6 +330,18 @@ class TimeController:UIViewController
         // add time information button to right corner
         back_button.layoutIfNeeded();
         back_button.setNeedsLayout();
+        
+        // configure time label at bottom
+        var x = back_button.frame.origin.x + global_but_dim + global_but_margin;
+        var y = back_button.frame.origin.y;
+        var height = back_button.bounds.height;
+        var width = superview.bounds.width - x - global_but_margin;
+        time_label.layer.borderColor = UIColor.whiteColor().CGColor;
+        time_label.layer.borderWidth = 1.0;
+        time_label.frame = CGRect(x: x, y: y, width: width, height: height);
+        time_label.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.75);
+        
+        superview.addSubview(time_label);
         
         title_label.layoutIfNeeded();
         title_label.setNeedsLayout();
@@ -370,12 +384,13 @@ class TimeController:UIViewController
                 for(var col = 0; col < dimension; ++col)
                 {
                     // configure level button
+                    level_color = UIColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 0.75);
                     var dist_from_left:CGFloat = CGFloat(col) * subview_width;
                     var level_ = level_view(in_level: (row * dimension) + col + 1, in_progress: 0, in_difficulty:DIFFICULTY[i]);
                     scroll_view.addSubview(level_);
                     level_.frame = CGRect(x: dist_from_left, y: dist_from_top, width: subview_width, height: subview_height);
                     level_.bounds = CGRect(x: 0.0, y: 0.0, width: subview_width, height: subview_height);
-                    level_.backgroundColor = UIColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 0.75);
+                    level_.backgroundColor = level_color;
                     level_.layer.borderWidth = 1.0;
                     level_.layer.borderColor = UIColor.whiteColor().CGColor;
                     level_.setTitle(String(level_.level), forState: UIControlState.Normal);
@@ -383,6 +398,7 @@ class TimeController:UIViewController
                     level_.tag = (i * NUM_SUB_LEVELS) + (row * Int(sqrt(Double(NUM_SUB_LEVELS)))) + col;
                     level_.tag = (i * (dimension * dimension)) + (row * dimension) + col;
                     level_.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 17.0);
+                    level_buttons.append(level_);
                 }
             }
         }
@@ -396,17 +412,38 @@ class TimeController:UIViewController
     func enter_levels()
     {
         self.view.removeFromSuperview();
+        self.time_label.text = "";
+        for(var i = 0; i < level_buttons.count; ++i)
+        {
+            level_buttons[i].backgroundColor = self.level_color;
+        }
     }
     
     func get_time(level:UIButton)
     {
-        println("Level time for level: " + String(level.tag));
-        // fetch time for level
         
+        for(var i = 0; i < level_buttons.count; ++i)
+        {
+            level_buttons[i].backgroundColor = self.level_color;
+        }
+        level_buttons[level.tag].backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.75);
+        // fetch time for level
+        var data:NSManagedObject? = LevelsController.level_buttons[level.tag].level_data;
+        var time:String = "";
+        var text = "Best Time: Unbeatten";
+        // only time will be available if level has been completed (progress == 3)
+        if(data != nil)
+        {
+            var time_float = data?.valueForKey("time") as! Float;
+            var progress:Int = data?.valueForKey("progress") as! Int;
+            if(progress == 3)
+            {
+                time = String(format: "%.2f", time_float);
+                text = "Best Time: " + time + " Seconds";
+            }
+        }
+        time_label.text = text;
+        time_label.textAlignment = NSTextAlignment.Center;
+        time_label.textColor = UIColor.whiteColor();
     }
 }
-
-
-
-
-
