@@ -377,6 +377,7 @@ class GameController : UIViewController, ADBannerViewDelegate
                 var error:NSError?;
                 managedContext.save(&error);
                 LevelsController.level_buttons[CURRENT_LEVEL].level_data = nil;
+                game_clock = game_time;
                 end_game();
             }
             else if((prog == prev_progress) && (prog == 3)) // update best time if necessary
@@ -1020,7 +1021,6 @@ class BeatDifficultyController:UIViewController
         
     
     }
-    
     func exit()
     {
         self.view.removeFromSuperview();
