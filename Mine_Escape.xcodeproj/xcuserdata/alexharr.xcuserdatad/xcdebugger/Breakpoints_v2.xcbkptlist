@@ -282,11 +282,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Mine_Escape/GameController.swift"
-            timestampString = "455127613.910231"
+            timestampString = "455129126.673059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1113"
-            endingLineNumber = "1113"
+            startingLineNumber = "1164"
+            endingLineNumber = "1164"
             landmarkName = "viewDidLoad()"
             landmarkType = "5">
          </BreakpointContent>
@@ -410,11 +410,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Mine_Escape/GameController.swift"
-            timestampString = "455127613.910231"
+            timestampString = "455129126.673059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1154"
-            endingLineNumber = "1154"
+            startingLineNumber = "1205"
+            endingLineNumber = "1205"
             landmarkName = "AchievementController"
             landmarkType = "3">
          </BreakpointContent>
@@ -426,11 +426,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Mine_Escape/GameController.swift"
-            timestampString = "455127613.910231"
+            timestampString = "455129126.673059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1165"
-            endingLineNumber = "1165"
+            startingLineNumber = "1216"
+            endingLineNumber = "1216"
             landmarkName = "viewDidLoad()"
             landmarkType = "5">
          </BreakpointContent>
@@ -442,11 +442,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Mine_Escape/GameController.swift"
-            timestampString = "455127613.910231"
+            timestampString = "455129126.673059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1166"
-            endingLineNumber = "1166"
+            startingLineNumber = "1217"
+            endingLineNumber = "1217"
             landmarkName = "viewDidLoad()"
             landmarkType = "5">
          </BreakpointContent>

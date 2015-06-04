@@ -706,79 +706,50 @@ class GameController : UIViewController, ADBannerViewDelegate
         var prev_image = UIImage(named: "prev_level");
         var next_image = UIImage(named: "next_level");
         
-        // create repeat button
-        repeat_button.setTranslatesAutoresizingMaskIntoConstraints(false);
+        
+        // get y for buttons, this will be different depending on device
+        var button_y:CGFloat = ((superview.bounds.height - superview.bounds.width) * 0.5) + global_but_margin + superview.bounds.width;
+        if((DEVICE_VERSION == DEVICE_TYPE.IPAD) || (DEVICE_VERSION == DEVICE_TYPE.IPHONE_4))
+        {
+            button_y = (((superview.bounds.height - superview.bounds.width) * 0.75) + superview.bounds.width) - (global_but_dim * 0.5);
+        }
+        
+        // configure previous button
+        var prev_x:CGFloat = (superview.bounds.width - ((3.0 * global_but_dim) + (2.0 * global_but_margin))) / 2.0;
+        var prev_width:CGFloat = global_but_dim;
+        var prev_height:CGFloat = global_but_dim;
+        prev_button = UIButton(frame: CGRect(x: prev_x, y: button_y, width: prev_width, height: prev_height));
+        prev_button.setBackgroundImage(prev_image, forState: UIControlState.Normal);
+        prev_button.layer.borderWidth = 1.0;
+        prev_button.layer.borderColor = UIColor.whiteColor().CGColor;
+        prev_button.layer.backgroundColor = UIColor.blackColor().CGColor;
+        prev_button.addTarget(self, action: "deceremenet_level", forControlEvents: UIControlEvents.TouchUpInside);
+        
+        // configure repeat button
+        var repeat_x:CGFloat = prev_button.frame.origin.x + global_but_dim + global_but_margin;
+        var repeat_width:CGFloat = global_but_dim;
+        var repeat_height:CGFloat = global_but_dim;
+        repeat_button = UIButton(frame: CGRect(x: repeat_x, y: button_y, width: repeat_width, height: repeat_height));
         repeat_button.setBackgroundImage(repeat_image, forState: UIControlState.Normal);
         repeat_button.layer.borderWidth = 1.0;
         repeat_button.layer.borderColor = UIColor.whiteColor().CGColor;
         repeat_button.layer.backgroundColor = UIColor.blackColor().CGColor;
         repeat_button.addTarget(self, action: "reset", forControlEvents: UIControlEvents.TouchUpInside);
         
-        var button_width:CGFloat = global_but_dim;
-        
-        //set constraints
-        var centerx_repeat = NSLayoutConstraint(item: repeat_button, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
-        
-        var centery_repeat = NSLayoutConstraint(item: repeat_button, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: map[map.count - 1], attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: 15.0);
-        
-        var width_repeat = NSLayoutConstraint(item: repeat_button, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: repeat_button, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: button_width);
-        
-        var height_repeat = NSLayoutConstraint(item: repeat_button, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: repeat_button, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -button_width);
-        
-        // configure hiearchy
-        superview.addSubview(repeat_button);
-        superview.addConstraint(centerx_repeat);
-        superview.addConstraint(centery_repeat);
-        superview.addConstraint(width_repeat);
-        superview.addConstraint(height_repeat);
-        
-        // create previous button
-        prev_button.setTranslatesAutoresizingMaskIntoConstraints(false);
-        prev_button.setBackgroundImage(prev_image, forState: UIControlState.Normal);
-        prev_button.layer.borderWidth = 1.0;
-        prev_button.layer.borderColor = UIColor.whiteColor().CGColor;
-        prev_button.layer.backgroundColor = UIColor.blackColor().CGColor;
-        prev_button.addTarget(self, action: "decrement_level", forControlEvents: UIControlEvents.TouchUpInside);
-        
-        //set constraints
-        var centerx_prev = NSLayoutConstraint(item: prev_button, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: repeat_button, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: -15.0);
-        
-        var centery_prev = NSLayoutConstraint(item: prev_button, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: repeat_button, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: 0.0);
-        
-        var width_prev = NSLayoutConstraint(item: prev_button, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: prev_button, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: button_width);
-        
-        var height_prev = NSLayoutConstraint(item: prev_button, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: prev_button, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -button_width);
-        
-        // configure hiearchy
-        superview.addSubview(prev_button);
-        superview.addConstraint(centerx_prev);
-        superview.addConstraint(centery_prev);
-        superview.addConstraint(width_prev);
-        superview.addConstraint(height_prev);
-        
-        // create next button
-        next_button.setTranslatesAutoresizingMaskIntoConstraints(false);
+        // configure next button
+        var next_x:CGFloat = repeat_button.frame.origin.x + global_but_dim + global_but_margin;
+        var next_width:CGFloat = global_but_dim;
+        var next_height:CGFloat = global_but_dim;
+        next_button = UIButton(frame: CGRect(x: next_x, y: button_y, width: next_width, height: next_height));
         next_button.setBackgroundImage(next_image, forState: UIControlState.Normal);
         next_button.layer.borderWidth = 1.0;
         next_button.layer.borderColor = UIColor.whiteColor().CGColor;
         next_button.layer.backgroundColor = UIColor.blackColor().CGColor;
         next_button.addTarget(self, action: "increment_level", forControlEvents: UIControlEvents.TouchUpInside);
         
-        //set constraints
-        var centerx_next = NSLayoutConstraint(item: next_button, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: repeat_button, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 15.0);
-        
-        var centery_next = NSLayoutConstraint(item: next_button, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: repeat_button, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: 0.0);
-        
-        var width_next = NSLayoutConstraint(item: next_button, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: next_button, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: button_width);
-        
-        var height_next = NSLayoutConstraint(item: next_button, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: next_button, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -button_width);
-        
-        // configure hiearchy
+        superview.addSubview(prev_button);
+        superview.addSubview(repeat_button);
         superview.addSubview(next_button);
-        superview.addConstraint(centerx_next);
-        superview.addConstraint(centery_next);
-        superview.addConstraint(width_next);
-        superview.addConstraint(height_next);
         
         // add achievement controller to hiearchy
         superview.addSubview(achievementController.view);
