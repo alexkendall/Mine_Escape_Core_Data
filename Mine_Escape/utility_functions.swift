@@ -64,6 +64,8 @@ func add_back_button(inout back_button:UIButton, inout superview:UIView)
     
     var back_margin:CGFloat = superview.bounds.width * 0.025;
     var back_length:CGFloat = 40.0;
+    global_but_margin = back_margin;
+    global_but_dim = back_length;
     
     var back_left = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: back_margin);
     

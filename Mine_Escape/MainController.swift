@@ -82,13 +82,6 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
                                 {
                                     print("error")
                                 }
-                                    /*
-                                else
-                                {
-                                    //self.gcDefaultLeaderBoard = leaderboardIdentifier
-                                    //println("\(self.gcDefaultLeaderBoard)")
-                                }
-                                */
                         }
                     }
                     else
@@ -235,7 +228,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         
         switch DEVICE_VERSION
         {
-        case .IPHONE_4: font_size = 34.0; text_size = 20.0;
+        case .IPHONE_4: font_size = 30.0; text_size = 18.0;
             
         case .IPHONE_5: font_size = 34.0; text_size = 20.0;
             

@@ -125,13 +125,9 @@ class GKGameController: UIViewController, GKGameCenterControllerDelegate
                 }
             }
         );
-        println("Achievement: " + achievement_id + " --- Percent Complete: " + String(stringInterpolationSegment: achievement.percentComplete));
+        //println("Achievement: " + achievement_id + " --- Percent Complete: " + String(stringInterpolationSegment: achievement.percentComplete));
     }
-    
-    
-    
-    
-    
+
     func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController!)
     {
         //code to dismiss your gameCenterViewController

@@ -34,7 +34,7 @@ var banner_view = ADBannerView();
 
 func setDeviceInfo()
 {
-    DEVICE_HEIGHT = MainMenuContoller.view.bounds.height;
+    DEVICE_HEIGHT = MainMenuContoller.view.bounds.height + banner_view.bounds.height;
     DEVICE_WIDTH = MainMenuContoller.view.bounds.width;
     
     if(DEVICE_HEIGHT == 480)

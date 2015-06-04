@@ -51,6 +51,7 @@ class GameController : UIViewController, ADBannerViewDelegate
     var superview = UIView();
     var nextController = NextGameContoller();
     var bannerIsVisible = false;
+    var back_button = UIButton();
     
     var pauseController = PauseGameController();
     
@@ -147,8 +148,14 @@ class GameController : UIViewController, ADBannerViewDelegate
         var dific_width:CGFloat = total_width - level_width;
         
         var padding:CGFloat = dific_width - level_width;
-        var height = global_but_margin * 2.0
-        var y_origin = ((superview.bounds.height - superview.bounds.width) / 2.0) - global_but_dim;
+        var height = global_but_dim;
+        
+        var y_origin = ((superview.bounds.height - superview.bounds.width) * 0.5) - global_but_dim;
+        if((DEVICE_VERSION == DEVICE_TYPE.IPAD) || (DEVICE_VERSION == DEVICE_TYPE.IPHONE_4))
+        {
+            y_origin = ((superview.bounds.height - superview.bounds.width) * 0.25) - (global_but_dim * 0.5);
+        }
+        
         var const_margin:CGFloat = 25.0
 
         if(padding > 0) // must pad level side to center
@@ -365,8 +372,8 @@ class GameController : UIViewController, ADBannerViewDelegate
             managedObject.setValue(Float(game_time), forKey: "time");
             LevelsController.level_buttons[CURRENT_LEVEL].level_data = managedObject;
             managedContext.insertObject(managedObject);
-            var error:NSError?;
-            managedContext.save(&error);
+            var error2:NSError?;
+            managedContext.save(&error2);
         }
         else
         {
@@ -375,8 +382,18 @@ class GameController : UIViewController, ADBannerViewDelegate
             if(prog > prev_progress)
             {
                 managedContext.deleteObject(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
-                var error:NSError?;
+                var error_:NSError?;
                 managedContext.save(&error);
+                // delete all other references to the object
+                pred = NSPredicate(format: "level_no = %i", CURRENT_LEVEL);
+                fetch.predicate = pred;
+                var results_:[NSManagedObject] = managedContext.executeFetchRequest(fetch, error: &error_) as! [NSManagedObject];
+                for(var i = 0; i < results.count; ++i)
+                {
+                    managedContext.deleteObject(results[i]);
+                }
+                var error3:NSError?;
+                managedContext.save(&error3);
                 LevelsController.level_buttons[CURRENT_LEVEL].level_data = nil;
                 game_clock = game_time;
                 end_game();
@@ -624,21 +641,33 @@ class GameController : UIViewController, ADBannerViewDelegate
         superview.backgroundColor = UIColor.blackColor();
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
         superview.bounds = superview.frame;
+        superview.layoutIfNeeded();
+        superview.setNeedsLayout();
         
-        // add back button
-        var back_button = UIButton(frame: CGRect(x: global_but_margin, y: global_but_margin, width: global_but_dim, height: global_but_dim));
+        // configure back button
+        var back_y:CGFloat = global_but_margin;
+        if((DEVICE_VERSION == DEVICE_TYPE.IPAD) || (DEVICE_VERSION == DEVICE_TYPE.IPHONE_4))
+        {
+            back_y = ((superview.bounds.height - superview.bounds.width) * 0.25) - (global_but_dim * 0.5);
+        }
+        var back_x:CGFloat = global_but_margin;
+        var back_width:CGFloat = global_but_dim;
+        var back_height:CGFloat = global_but_dim;
+        back_button = UIButton(frame: CGRect(x: back_x, y: back_y, width: back_width, height: back_height));
         back_button.setBackgroundImage(UIImage(named: "prev_level"), forState: UIControlState.Normal);
-        superview.addSubview(back_button);
         back_button.layer.borderWidth = 1.0;
         back_button.layer.borderColor = UIColor.whiteColor().CGColor;
         back_button.addTarget(self, action:"GoToLevelMenu", forControlEvents: UIControlEvents.TouchUpInside);
-
+        superview.addSubview(back_button);
+        back_button.layoutIfNeeded();
+        back_button.setNeedsLayout();
+        
+        // configure level indicator
         level_indicator.textAlignment = NSTextAlignment.Right;
         difficulty_indicator.textAlignment = NSTextAlignment.Left;
         superview.addSubview(difficulty_indicator);
         superview.addSubview(level_indicator);
         setProperties();
-        
         
         // add child view controller
         self.addChildViewController(nextController);

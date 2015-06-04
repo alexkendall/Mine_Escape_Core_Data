@@ -114,7 +114,7 @@ class LevelController : ViewController
             {
                 level_buttons[i].progress = 0;
             }
-            if(results.count == 1)
+            else if(results.count == 1)
             {
                 var data = results[0];
                 var prev_progress:Int = data.valueForKey("progress") as! Int;
@@ -138,6 +138,10 @@ class LevelController : ViewController
                     }
                     level_buttons[i].level_status_indicator[j].backgroundColor = color;
                 }
+            }
+            else
+            {
+                println(String(format:"Error: %i Managed Objects Stored for Single Level No. %i", results.count, i));
             }
         }
     }
@@ -173,17 +177,17 @@ class LevelController : ViewController
         
         switch DEVICE_VERSION
         {
-            case .IPHONE_4: font_size = 23.0; text_size = 14.0;
+        case .IPHONE_4: font_size = 23.0; text_size = 15.0;
             
-            case .IPHONE_5: font_size = 25.0; text_size = 14.0;
+        case .IPHONE_5: font_size = 25.0; text_size = 15.0;
             
-            case .IPHONE_6: font_size = 28.0; text_size = 16.0;
+        case .IPHONE_6: font_size = 28.0; text_size = 17.0;
             
-            case .IPHONE_6_PLUS: font_size = 29.0; text_size = 16.0;
+        case .IPHONE_6_PLUS: font_size = 29.0; text_size = 18.0;
             
-            case .IPAD: font_size = 50.0; text_size = 24.0;
+        case .IPAD: font_size = 50.0; text_size = 24.0;
             
-            default: font_size = 30.0;
+        default: font_size = 30.0;
         }
         
         add_title_button(&title_label, &superview, "LEVELS", margin, font_size);
@@ -239,7 +243,7 @@ class LevelController : ViewController
             tab_view.textAlignment = NSTextAlignment.Center;
             tab_view.textColor = UIColor.blackColor();
             tab_view.layer.borderWidth = 1.0;
-            tab_view.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 17.0);
+            tab_view.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
             tab_view.layer.borderColor = UIColor.whiteColor().CGColor;
             for(var row = 0; row < dimension; ++row)
             {
@@ -258,7 +262,7 @@ class LevelController : ViewController
                     level_.setTitle(String(level_.level), forState: UIControlState.Normal);
                     level_.addTarget(self, action: "selected_level:", forControlEvents: UIControlEvents.TouchUpInside);
                     level_.tag = (i * (dimension * dimension)) + (row * dimension) + col;
-                    level_.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 17.0);
+                    level_.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
                     level_buttons.append(level_);
                     for(var ind = 0; ind < 3; ++ind)
                     {
@@ -315,13 +319,13 @@ class TimeController:UIViewController
         
         switch DEVICE_VERSION
         {
-        case .IPHONE_4: font_size = 23.0; text_size = 14.0;
+        case .IPHONE_4: font_size = 23.0; text_size = 15.0;
             
-        case .IPHONE_5: font_size = 25.0; text_size = 14.0;
+        case .IPHONE_5: font_size = 25.0; text_size = 15.0;
             
-        case .IPHONE_6: font_size = 28.0; text_size = 16.0;
+        case .IPHONE_6: font_size = 28.0; text_size = 17.0;
             
-        case .IPHONE_6_PLUS: font_size = 29.0; text_size = 16.0;
+        case .IPHONE_6_PLUS: font_size = 29.0; text_size = 18.0;
             
         case .IPAD: font_size = 50.0; text_size = 24.0;
             
@@ -378,7 +382,7 @@ class TimeController:UIViewController
             tab_view.textAlignment = NSTextAlignment.Center;
             tab_view.textColor = UIColor.blackColor();
             tab_view.layer.borderWidth = 1.0;
-            tab_view.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 17.0);
+            tab_view.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
             tab_view.layer.borderColor = UIColor.whiteColor().CGColor;
             for(var row = 0; row < dimension; ++row)
             {
@@ -399,7 +403,7 @@ class TimeController:UIViewController
                     level_.addTarget(self, action: "get_time:", forControlEvents: UIControlEvents.TouchUpInside);
                     level_.tag = (i * NUM_SUB_LEVELS) + (row * Int(sqrt(Double(NUM_SUB_LEVELS)))) + col;
                     level_.tag = (i * (dimension * dimension)) + (row * dimension) + col;
-                    level_.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 17.0);
+                    level_.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
                     level_buttons.append(level_);
                 }
             }
@@ -423,7 +427,7 @@ class TimeController:UIViewController
                 var progress = data?.valueForKey("progress") as! Int;
                 if(progress == 3)
                 {
-                    level_buttons[i].setTitleColor(UIColor.greenColor(), forState: UIControlState.Normal);
+                    level_buttons[i].setTitleColor(LIGHT_BLUE, forState: UIControlState.Normal);
                 }
                 else
                 {
@@ -459,7 +463,7 @@ class TimeController:UIViewController
         // fetch time for level
         var data:NSManagedObject? = LevelsController.level_buttons[level.tag].level_data;
         var time:String = "";
-        var text = "Best Time: Unbeatten";
+        var text = "Best Time: Incomplete";
         // only time will be available if level has been completed (progress == 3)
         if(data != nil)
         {
