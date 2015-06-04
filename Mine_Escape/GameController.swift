@@ -621,15 +621,49 @@ class GameController : UIViewController, ADBannerViewDelegate
         var font_size:CGFloat = 12.0 + ((8.0 - CGFloat(NUM_ROWS)) * 2.0);
         if(NUM_ROWS >= 6)
         {
-            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 12.0);
+            if((DEVICE_VERSION == DEVICE_TYPE.IPHONE_6) || (DEVICE_VERSION == DEVICE_TYPE.IPHONE_6_PLUS))
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 12.0);
+            }
+            else if(DEVICE_VERSION == DEVICE_TYPE.IPAD)
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 20.0);
+            }
+            else    // IPHONE 4 OR 5
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 11.0);
+            }
+            
         }
         if(NUM_ROWS == 5)
         {
-            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 15.0);
+            if((DEVICE_VERSION == DEVICE_TYPE.IPHONE_6) || (DEVICE_VERSION == DEVICE_TYPE.IPHONE_6_PLUS))
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 15.0);
+            }
+            else if(DEVICE_VERSION == DEVICE_TYPE.IPAD)
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 28.0);
+            }
+            else    // IPHONE 4 OR 5
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 14.0);
+            }
         }
         if(NUM_ROWS == 4)
         {
-            self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 18.0);
+            if((DEVICE_VERSION == DEVICE_TYPE.IPHONE_6) || (DEVICE_VERSION == DEVICE_TYPE.IPHONE_6_PLUS))
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 18.0);
+            }
+            else if(DEVICE_VERSION == DEVICE_TYPE.IPAD)
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 30.0);
+            }
+            else    // IPHONE 4 OR 5
+            {
+                self.map[self.START_LOC].titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO" , size: 17.0);
+            }
         }
     }
 
@@ -723,7 +757,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         prev_button.layer.borderWidth = 1.0;
         prev_button.layer.borderColor = UIColor.whiteColor().CGColor;
         prev_button.layer.backgroundColor = UIColor.blackColor().CGColor;
-        prev_button.addTarget(self, action: "deceremenet_level", forControlEvents: UIControlEvents.TouchUpInside);
+        prev_button.addTarget(self, action: "decrement_level", forControlEvents: UIControlEvents.TouchUpInside);
         
         // configure repeat button
         var repeat_x:CGFloat = prev_button.frame.origin.x + global_but_dim + global_but_margin;
@@ -930,7 +964,7 @@ class NextGameContoller: ViewController
     
     func set_time(var time:String)
     {
-        time_label.text = time;
+        time_label.text = time + " seconds";
     }
     
     override func viewDidLoad()
@@ -972,12 +1006,32 @@ class NextGameContoller: ViewController
         superview.addConstraint(x_button_centery);
         superview.addConstraint(x_button_centerx);
         
+        // configure fonts
+        var font_size:CGFloat = 30.0;
+        var text_size:CGFloat = 20.0;
+        
+        switch DEVICE_VERSION
+        {
+        case .IPHONE_4: font_size = 21.0; text_size = 15.0;
+            
+        case .IPHONE_5: font_size = 22.0; text_size = 16.0;
+            
+        case .IPHONE_6: font_size = 25.0; text_size = 17.0;
+            
+        case .IPHONE_6_PLUS: font_size = 26.0; text_size = 18.0;
+            
+        case .IPAD: font_size = 33.0; text_size = 28.0;
+            
+        default: font_size = 30.0;
+        }
+
+        
         // confiugure label
         var label_height:CGFloat = complete_container.bounds.height / 8.0;
         completed_label.frame = CGRect(x: 0.0, y: (complete_container.bounds.height / 3.0) - (label_height / 2.0), width: complete_container.bounds.width, height: label_height);
         completed_label.textAlignment = NSTextAlignment.Center;
         complete_container.addSubview(completed_label);
-        completed_label.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 25.0);
+        completed_label.font = UIFont(name: "Galano Grotesque Alt DEMO", size: font_size);
         
         // configure next level button
         complete_container.addSubview(next_level);
@@ -990,13 +1044,13 @@ class NextGameContoller: ViewController
         next_level.layer.borderWidth = 1.0;
         next_level.layer.borderColor = UIColor.whiteColor().CGColor;
         next_level.setTitleColor(LIGHT_BLUE, forState: UIControlState.Highlighted);
-        next_level.titleLabel?.font = UIFont(name: "MicroFLF", size: 17.0);
+        next_level.titleLabel?.font = UIFont(name: "MicroFLF", size: text_size);
         
         // configure time label
         time_label.frame = superview.bounds;
         time_label.textAlignment = NSTextAlignment.Center;
         time_label.textColor = UIColor.whiteColor();
-        time_label.font = UIFont(name: "MicroFLF", size: 17.0);
+        time_label.font = UIFont(name: "MicroFLF", size: text_size);
         superview.addSubview(time_label);
     }
 }
@@ -1131,8 +1185,8 @@ class AchievementController:UIViewController
         super.viewDidLoad();
         superview = self.view;
         var height:CGFloat = back_button_size;
-        var width:CGFloat = superview.bounds.width / 1.5;
-        var y:CGFloat = global_but_margin;
+        var width:CGFloat = superview.bounds.width - global_but_dim - (global_but_margin * 3.0);
+        var y:CGFloat = gameController.back_button.frame.origin.y;
         var x:CGFloat = superview.bounds.width + width;
         out_frame = CGRect(x: x, y: y, width: width, height: height);
         in_frame = CGRect(x: superview.bounds.width - width - global_but_margin, y: y, width: width, height: height);
@@ -1157,8 +1211,6 @@ class AchievementController:UIViewController
         UIView.animateWithDuration(speed, delay: pause, options: nil, animations: {self.superview.frame = self.out_frame}, completion: nil);
     }
 }
-
-
 
 //----------------------------------------------------------------------------------------------------------------
 //      END ACHIEVMENT VIEW CONTROLLER CLASS

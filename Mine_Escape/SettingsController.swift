@@ -155,13 +155,6 @@ class SettingsController : ViewController
             container_view.layoutIfNeeded();
             container_view.setNeedsLayout();
             
-            /*
-            var label_height = container_view.bounds.height / 5.0;
-            var label_width = container_view.bounds.width;
-            var label_x:CGFloat = 0.0;
-            var label_y = CGFloat(i) * label_height;
-            */
-            
             var label = UIButton();
             label.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
             label.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
@@ -237,7 +230,7 @@ class ClearDataController : ViewController
         // configure container
         superview.addSubview(container_view);
         var dim:CGFloat = superview.bounds.width - (2.0 * margin);
-        var y:CGFloat = (superview.bounds.height - dim - banner_view.bounds.height) / 2.0;
+        var y:CGFloat = (superview.bounds.height - dim) * 0.5;
         container_view.frame = CGRect(x: margin, y: y, width: dim, height: dim);
         container_view.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         container_view.layer.borderWidth = 1.0;
@@ -245,11 +238,31 @@ class ClearDataController : ViewController
         container_view.layoutIfNeeded();
         container_view.setNeedsLayout();
         
+        // configure fonts
+        var font_size:CGFloat = 30.0;
+        var text_size:CGFloat = 20.0;
+        
+        switch DEVICE_VERSION
+        {
+        case .IPHONE_4: font_size = 21.0; text_size = 20.0;
+            
+        case .IPHONE_5: font_size = 22.0; text_size = 21.0;
+            
+        case .IPHONE_6: font_size = 24.0; text_size = 23.0;
+            
+        case .IPHONE_6_PLUS: font_size = 25.0; text_size = 24.0;
+            
+        case .IPAD: font_size = 32.0; text_size = 45.0;
+            
+        default: font_size = 30.0;
+        }
+
+        
         // add text label
         var t_margin:CGFloat = container_view.bounds.width * 0.1;
         var text_x:CGFloat = margin;
         var text_y:CGFloat = container_view.bounds.height / 8.0;
-        var text_height:CGFloat = container_view.bounds.height / 3.0;
+        var text_height:CGFloat = container_view.bounds.height / 2.0;
         var text_width:CGFloat = container_view.bounds.width - (2.0 * t_margin);
         text_view.frame = CGRect(x: text_x, y: text_y, width: text_width, height: text_height);
         text_view.text = text;
@@ -257,15 +270,15 @@ class ClearDataController : ViewController
         text_view.textColor = UIColor.blackColor();
         text_view.textColor = UIColor.orangeColor();
         text_view.backgroundColor = UIColor.clearColor();
-        text_view.font = UIFont(name: "MicroFLF", size: 21.0);
+        text_view.font = UIFont(name: "MicroFLF", size: text_size);
         
         container_view.addSubview(text_view);
         
         // add yes button
-        var yes_x:CGFloat = t_margin;
         var yes_y:CGFloat = container_view.bounds.height * 2.0 / 3.0;
         var yes_width:CGFloat = text_width / 2.0;
-        var yes_height:CGFloat = text_height / 2.0;
+        var yes_height:CGFloat = text_height / 3.0;
+        var yes_x:CGFloat = t_margin + yes_width - 1.0;
         var yes_button = UIButton(frame: CGRect(x: yes_x, y: yes_y, width: yes_width, height: yes_height));
         yes_button.layer.borderWidth = 1.0;
         yes_button.layer.borderColor = UIColor.whiteColor().CGColor;
@@ -273,12 +286,12 @@ class ClearDataController : ViewController
         yes_button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         yes_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
         yes_button.addTarget(self, action: "delete_data", forControlEvents: UIControlEvents.TouchUpInside);
-        yes_button.titleLabel?.font = UIFont(name: "MicroFLF", size: 23.0);
+        yes_button.titleLabel?.font = UIFont(name: "MicroFLF", size: font_size);
         container_view.addSubview(yes_button);
         
         
         // add no button
-        var no_x:CGFloat = yes_x + yes_width - 1.0; // sift left 1 to account for border
+        var no_x:CGFloat = t_margin; // sift left 1 to account for border
         var no_y:CGFloat = yes_y;
         var no_height:CGFloat = yes_height;
         var no_width:CGFloat = yes_width + 1.0; // to account for border
@@ -289,7 +302,7 @@ class ClearDataController : ViewController
         no_button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         no_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
         no_button.addTarget(self, action: "exit", forControlEvents: UIControlEvents.TouchUpInside);
-        no_button.titleLabel?.font = UIFont(name: "MicroFLF", size: 23.0);
+        no_button.titleLabel?.font = UIFont(name: "MicroFLF", size: font_size);
         container_view.addSubview(no_button);
     }
     
