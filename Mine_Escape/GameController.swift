@@ -214,6 +214,7 @@ class GameController : UIViewController, ADBannerViewDelegate
     
     func increment_level()
     {
+        play_sound(SOUND.DEFAULT);
         CURRENT_LEVEL += 1;
         if(CURRENT_LEVEL >= NUM_LEVELS)
         {
@@ -223,6 +224,7 @@ class GameController : UIViewController, ADBannerViewDelegate
     }
     func decrement_level()
     {
+        play_sound(SOUND.DEFAULT);
         CURRENT_LEVEL--;
         if(CURRENT_LEVEL < 0)
         {

@@ -141,7 +141,7 @@ class LevelController : ViewController
             }
             else
             {
-                println(String(format:"Error: %i Managed Objects Stored for Single Level No. %i", results.count, i));
+                NSLog("Error: %i Managed Objects Stored for Single Level No. %i", results.count, i);
             }
         }
     }

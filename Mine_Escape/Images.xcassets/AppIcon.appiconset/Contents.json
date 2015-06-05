@@ -1,13 +1,15 @@
 {
   "images" : [
     {
-      "idiom" : "iphone",
       "size" : "29x29",
+      "idiom" : "iphone",
+      "filename" : "MineEscapeAppicon 29.png",
       "scale" : "1x"
     },
     {
-      "idiom" : "iphone",
       "size" : "29x29",
+      "idiom" : "iphone",
+      "filename" : "MineEscapeAppicon 58-1.png",
       "scale" : "2x"
     },
     {
@@ -17,8 +19,9 @@
       "scale" : "3x"
     },
     {
-      "idiom" : "iphone",
       "size" : "40x40",
+      "idiom" : "iphone",
+      "filename" : "MineEscapeAppicon 80.png",
       "scale" : "2x"
     },
     {
@@ -58,8 +61,9 @@
       "scale" : "1x"
     },
     {
-      "idiom" : "ipad",
       "size" : "29x29",
+      "idiom" : "ipad",
+      "filename" : "MineEscapeAppicon 58.png",
       "scale" : "2x"
     },
     {
@@ -111,14 +115,16 @@
       "scale" : "2x"
     },
     {
-      "idiom" : "car",
       "size" : "120x120",
+      "idiom" : "car",
+      "filename" : "MineEscapeAppicon 2.png",
       "scale" : "1x"
     },
     {
       "size" : "24x24",
       "idiom" : "watch",
       "scale" : "2x",
+      "filename" : "MineEscapeAppicon 3-2.png",
       "role" : "notificationCenter",
       "subtype" : "38mm"
     },
@@ -126,6 +132,7 @@
       "size" : "27.5x27.5",
       "idiom" : "watch",
       "scale" : "2x",
+      "filename" : "MineEscapeAppicon 3-1.png",
       "role" : "notificationCenter",
       "subtype" : "42mm"
     },
@@ -139,6 +146,7 @@
     {
       "size" : "29x29",
       "idiom" : "watch",
+      "filename" : "MineEscapeAppicon 3.png",
       "role" : "companionSettings",
       "scale" : "3x"
     },
@@ -146,6 +154,7 @@
       "size" : "40x40",
       "idiom" : "watch",
       "scale" : "2x",
+      "filename" : "MineEscapeAppicon 2-2.png",
       "role" : "appLauncher",
       "subtype" : "38mm"
     },
@@ -153,6 +162,7 @@
       "size" : "44x44",
       "idiom" : "watch",
       "scale" : "2x",
+      "filename" : "MineEscapeAppicon 2-1.png",
       "role" : "longLook",
       "subtype" : "42mm"
     },
@@ -160,6 +170,7 @@
       "size" : "86x86",
       "idiom" : "watch",
       "scale" : "2x",
+      "filename" : "MineEscapeAppicon 172.png",
       "role" : "quickLook",
       "subtype" : "38mm"
     },
@@ -167,6 +178,7 @@
       "size" : "98x98",
       "idiom" : "watch",
       "scale" : "2x",
+      "filename" : "MineEscapeAppicon 196.png",
       "role" : "quickLook",
       "subtype" : "42mm"
     }
