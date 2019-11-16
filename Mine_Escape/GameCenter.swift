@@ -21,33 +21,30 @@ class GKGameController: UIViewController, GKGameCenterControllerDelegate
     func authenticateLocalPlayer()
     {
         localPlayer = GKLocalPlayer.localPlayer()
-        localPlayer.authenticateHandler = {(ViewController, error) -> Void in
-            if((ViewController) != nil)
-            {
-                // 1 Show login if player is not logged in
-                self.presentViewController(ViewController, animated: true, completion: nil)
+        localPlayer.authenticateHandler = {(viewController, error) -> Void in
+            guard let vC = viewController else {
+                if (self.localPlayer.isAuthenticated)
+                {
+                    // 2 Player is already euthenticated & logged in, load game center
+                    self.gcEnabled = true
+                }
+                    
+                else
+                {
+                    // 3 Game center is not enabled on the users device
+                    self.gcEnabled = false
+                    print("Local player could not be authenticated, disabling game center")
+                }
             }
-            
-            else if (self.localPlayer.authenticated)
-            {
-                // 2 Player is already euthenticated & logged in, load game center
-                self.gcEnabled = true
-            }
-            
-            else
-            {
-                // 3 Game center is not enabled on the users device
-                self.gcEnabled = false
-                println("Local player could not be authenticated, disabling game center")
-                println(error);
-            }
+            // 1 Show login if player is not logged in
+            self.present(vC, animated: true, completion: nil)
         }
     }
     
-    func update_achievements(var difficulty:String)
+    func update_achievements(difficulty:String)
     {
         var mega:Int = -1;
-        for(var i = 0; i < DIFFICULTY.count; ++i)
+        for i in 0..<DIFFICULTY.count
         {
             if(difficulty == DIFFICULTY[i])
             {
@@ -73,64 +70,74 @@ class GKGameController: UIViewController, GKGameCenterControllerDelegate
         }
         
         // query all levels of specified difficulty
-        var min_level:Int = NUM_SUB_LEVELS * mega;
-        var max_level:Int = min_level + NUM_SUB_LEVELS - 1;
+        let min_level:Int = NUM_SUB_LEVELS * mega;
+        let max_level:Int = min_level + NUM_SUB_LEVELS - 1;
         // fetch level progress
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
-        var request = NSFetchRequest(entityName: "Level");
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Level");
         var predictae = NSPredicate(format: "(progress = 3) AND (level_no > %i) AND (level_no < %i)", min_level - 1, max_level + 1);
         request.predicate = predictae;
-        var error:NSError?;
-        var results:[NSManagedObject] = managedContext?.executeFetchRequest(request, error: &error) as! [NSManagedObject];
-        var percent = Double(results.count) / Double(NUM_SUB_LEVELS) * 100.0;
-        var achievement_id = "mine.escape." + attachment;
-        report_achievement(achievement_id, percent: percent);
+        do {
+            let results:[NSManagedObject] = try managedContext?.fetch(request) as! [NSManagedObject];
+            let percent = Double(results.count) / Double(NUM_SUB_LEVELS) * 100.0;
+            let achievement_id = "mine.escape." + attachment;
+            report_achievement(achievement_id: achievement_id, percent: percent);
+        } catch (let error) {
+            print("Error retrieving achievement \(error.localizedDescription)")
+        }
         
         // 2. check for under 4 Complete 10/25/100/125 achievements
         var complete_nums = [10,25,50,125];
-        for(var i = 0; i < complete_nums.count; ++i)
+        for i in 0..<complete_nums.count
         {
             predictae = NSPredicate(format: "progress = 3");
             request.predicate = predictae;
-            var comp_error:NSError?;
-            var comp_results:[NSManagedObject] = managedContext?.executeFetchRequest(request, error: &error) as! [NSManagedObject];
-            percent = Double(comp_results.count) / Double(complete_nums[i]) * 100.0;
-            achievement_id = "mine.escape.complete" + String(complete_nums[i]);
-            report_achievement(achievement_id, percent: percent);
+            do {
+                let comp_results:[NSManagedObject] = try managedContext?.fetch(request) as! [NSManagedObject];
+                let percent = Double(comp_results.count) / Double(complete_nums[i]) * 100.0;
+                let achievement_id = "mine.escape.complete" + String(complete_nums[i]);
+                report_achievement(achievement_id: achievement_id, percent: percent);
+            } catch (let error) {
+                print("Error retrieving achievement \(error.localizedDescription)")
+            }
         }
         
         // 3. check for blitzer achievements
         predictae = NSPredicate(format: "(progress = 3) AND (level_no > %i) AND (level_no < %i) AND (time < %f)", min_level - 1, max_level + 1, blitz_speed);
         request.predicate = predictae;
-        var blitz_results:[NSManagedObject] = managedContext?.executeFetchRequest(request, error: &error) as! [NSManagedObject];
-        if(blitz_results.count > 0)
-        {
-            percent = 100.0;
-            achievement_id = "mine.escape." + difficulty.lowercaseString + ".blitzer";
-            report_achievement(achievement_id, percent: percent);
+        do {
+            let blitz_results:[NSManagedObject] = try managedContext?.fetch(request) as! [NSManagedObject];
+            if(blitz_results.count > 0)
+            {
+                let percent = 100.0;
+                let achievement_id = "mine.escape." + difficulty.lowercased() + ".blitzer";
+                report_achievement(achievement_id: achievement_id, percent: percent);
+            }
+        } catch (let error) {
+            print("Error retrieving achievement \(error.localizedDescription)")
         }
     }
     
-    func report_achievement(var achievement_id:String, var percent:Double)
+    func report_achievement(achievement_id:String, percent:Double)
     {
-        var achievement = GKAchievement(identifier: achievement_id);
+        let achievement = GKAchievement(identifier: achievement_id);
         achievement.showsCompletionBanner = true;
         achievement.percentComplete = percent;
-        GKAchievement.reportAchievements([achievement], withCompletionHandler:
+        GKAchievement.report([achievement], withCompletionHandler:
             {(NSError) in
                 if(NSError != nil)
                 {
-                    println("Error. Unable to report achievement");
+                    print("Error. Unable to report achievement");
                 }
             }
         );
     }
 
-    func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController!)
+    func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController)
     {
         //code to dismiss your gameCenterViewController
         // for example:
-        gameCenterViewController.dismissViewControllerAnimated(true, completion: nil);
+        gameCenterViewController.dismiss(animated: true, completion: nil);
     }
 }
