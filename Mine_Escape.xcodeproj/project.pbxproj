@@ -216,6 +216,7 @@
 					46E62D061B0A5E7D00A07B7B = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = UUTSGAGY2G;
+						ProvisioningStyle = Automatic;
 					};
 					46E62D1E1B0A5E7E00A07B7B = {
 						CreatedOnToolsVersion = 6.3.1;
@@ -228,6 +229,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -417,13 +419,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Alex Harrison (UUTSGAGY2G)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Alex Harrison (UUTSGAGY2G)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = UUTSGAGY2G;
 				INFOPLIST_FILE = Mine_Escape/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "59b7a98a-3fd4-497b-ae5f-f65f735088f7";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -431,13 +437,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Alex Harrison (UUTSGAGY2G)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Alex Harrison (UUTSGAGY2G)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = UUTSGAGY2G;
 				INFOPLIST_FILE = Mine_Escape/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "59b7a98a-3fd4-497b-ae5f-f65f735088f7";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
