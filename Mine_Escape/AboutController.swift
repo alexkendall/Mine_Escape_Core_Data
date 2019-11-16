@@ -18,7 +18,7 @@ class AboutController : ViewController
 
     func GoToMain()
     {
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
         self.view.removeFromSuperview();
     }
     

@@ -26,10 +26,6 @@ var levels_generated = false;
 
 class ViewController: UIViewController {
     
-    override func prefersStatusBarHidden() -> Bool
-    {
-        return true;
-    }
     override func viewDidLoad()
     {
         super.viewDidLoad();

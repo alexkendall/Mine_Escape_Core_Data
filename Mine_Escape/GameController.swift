@@ -1156,10 +1156,10 @@ class PauseGameController:UIViewController
         
         play_button.frame = CGRect(x: x, y: y, width: width, height: height);
         superview.addSubview(play_button);
-        play_button.setBackgroundImage(UIImage(named: "play"), forState: UIControlState.Normal);
+        play_button.setBackgroundImage(UIImage(named: "play"), for: UIControlState.Normal); 
         play_button.alpha = 0.7;
-        play_button.setTitle("RESUME", forState: UIControlState.Normal);
-        play_button.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal);
+        play_button.setTitle("RESUME", for: UIControlState.Normal);
+        play_button.setTitleColor(UIColor.blackColor(), for: UIControlState.Normal);
         play_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 30.0);
         play_button.addTarget(gameController, action: "resume_game", forControlEvents: UIControlEvents.TouchUpInside);
         play_button.titleLabel?.alpha = 1.0;
@@ -1179,8 +1179,8 @@ class AchievementController:UIViewController
     var out_frame = CGRect();
     var in_frame = CGRect();
     var label = UILabel();
-    var speed = NSTimeInterval(1.0);
-    var pause = NSTimeInterval(5.0);
+    var speed = TimeInterval(1.0);
+    var pause = TimeInterval(5.0);
     
     override func viewDidLoad()
     {
@@ -1195,14 +1195,14 @@ class AchievementController:UIViewController
         superview.frame = out_frame;
         superview.addSubview(label);
         label.font = UIFont(name: "MicroFLF", size: 14.0);
-        label.textColor = UIColor.blackColor();
+        label.textColor = UIColor.black
         label.frame = superview.bounds;
-        label.textAlignment = NSTextAlignment.Center;
+        label.textAlignment = NSTextAlignment.center
         superview.addSubview(label);
         superview.backgroundColor = LIGHT_BLUE;
     }
     
-    func set_text(var in_text:String)
+    func set_text(in_text:String)
     {
         label.text = in_text;
     }

@@ -47,7 +47,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
     enum subtitle_index {case FREE_PLAY, ABOUT, HOW_TO_PLAY, SETTINGS, ACHIEVEMENTS};
     var subtitle_margin:CGFloat = CGFloat();
     var subtitle_result_frames = Array<CGRect>();
-    var delay = NSTimeInterval();
+    var delay = TimeInterval();
     var start_alpha:Bool = false;
     var alpha:CGFloat = 0.0;
     
@@ -57,9 +57,9 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
     var gcDefaultLeaderBoard = String() // Stores the default leaderboardID
     //  end leaderboard variables---------------------------------------------------
     
-    func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController!)
+    func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController)
     {
-        gameCenterViewController.dismissViewControllerAnimated(true, completion: nil)
+        gameCenterViewController.dismiss(animated: true, completion: nil)
     }
     
     func authenticateLocalPlayer()
@@ -69,14 +69,14 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
             {(viewController : UIViewController!, error : NSError!) -> Void in
                 if viewController != nil
                 {
-                    self.presentViewController(viewController, animated:true, completion: nil)
+                    self.present(viewController, animated:true, completion: nil)
                 }
                 else
                 {
-                    if localPlayer.authenticated
+                    if localPlayer.isAuthenticated
                     {
                         self.gcEnabled = true
-                        localPlayer.loadDefaultLeaderboardIdentifierWithCompletionHandler
+                        localPlayer.loadDefaultLeaderboardIdentifier
                             {(leaderboardIdentifier, error) -> Void in
                                 if(error != nil)
                                 {
@@ -86,26 +86,26 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
                     }
                     else
                     {
-                        println("not able to authenticate fail")
+                        print("not able to authenticate fail")
                         self.gcEnabled = false
                         
                         if(error != nil)
                         {
-                            println("\(error.description)")
+                            print("\(error.description)")
                         }
                         else
                         {
-                            println("error is nil")
+                            print("error is nil")
                         }
                     }
                 }
-        }
+            } as! (UIViewController?, Error?) -> Void
     }
     
-    func update_achievements(var difficulty:String)
+    func update_achievements( difficulty:String)
     {
         var mega:Int = -1;
-        for(var i = 0; i < DIFFICULTY.count; ++i)
+        for i in 0..<DIFFICULTY.count
         {
             if(difficulty == DIFFICULTY[i])
             {
@@ -119,12 +119,10 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         var min_level:Int = NUM_SUB_LEVELS * mega;
         var max_level:Int = min_level + NUM_SUB_LEVELS - 1;
         
-        println(String(format: "Min Level: %d --- Max Level: %d", min_level, max_level));
-        
         // fetch level progress
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
-        var request = NSFetchRequest(entityName: "Level");
+        var request = NSFetchRequest<NSFetchRequestResult>(entityName: "Level");
         var predictae = NSPredicate(format: "(progress = 3) AND (level_no > %i) AND (level_no < %i)", min_level - 1, max_level + 1);
         request.predicate = predictae;
         var error:NSError?;
@@ -246,10 +244,10 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         title_view = UILabel(frame: title_frame);
         title_view.text = "Mine Escape";
         title_view.font = UIFont(name: "AirstrikeBold", size: font_size);
-        title_view.textAlignment = NSTextAlignment.Center;
-        title_view.textColor = UIColor.orangeColor();
+        title_view.textAlignment = NSTextAlignment.center;
+        title_view.textColor = UIColor.orangeColor;
         superview.addSubview(title_view);
-        var names = UIFont.familyNames();
+        var names = UIFont.familyNames;
         
         // confgure blocker view
         blocker = UIView(frame: self.init_blocker_frame);
@@ -315,29 +313,29 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
     
     func show_achievements()
     {
-        var achievement_controller = GKGameCenterViewController();
+        let achievement_controller = GKGameCenterViewController();
         achievement_controller.gameCenterDelegate = self;
-        presentViewController(achievement_controller, animated: true, completion: nil);
+        present(achievement_controller, animated: true, completion: nil);
     }
     
     func goToLevels()
     {
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
         superview.addSubview(LevelsController.view);
     }
     func goToAbout()
     {
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
         superview.addSubview(AboutViewController.view);
     }
     func goToHow()
     {
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
         superview.addSubview(HowController.view);
     }
     func goToSettings()
     {
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
         superview.addSubview(settingsController.view);
     }
     
