@@ -25,11 +25,12 @@ class HowToController : ViewController
         superview = self.view;
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
         superview.bounds = superview.frame;
-        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
         
         // generate title subview
+        let margin:CGFloat = superview.bounds.height / 20.0;
+
         var title = UILabel();
-        var margin:CGFloat = superview.bounds.height / 20.0;
         var font_size:CGFloat = 30.0;
         var text_size:CGFloat = 20.0;
         
@@ -48,25 +49,25 @@ class HowToController : ViewController
         default: font_size = 30.0;
         }
         
-        add_title_button(&title, &superview, "HOW TO PLAY", margin, font_size);
+        add_title_button(title_label: &title, superview: &superview, text: "HOW TO PLAY", margin: margin, size: font_size);
         
         // configure text view
-        add_subview(text_view, superview, (margin * 2.5), margin + back_button_size, margin, margin);
+        add_subview(subview: text_view, superview: superview, top_margin: (margin * 2.5), bottom_margin: margin + back_button_size, left_margin: margin, right_margin: margin);
         text_view.text = text;
-        text_view.textAlignment = NSTextAlignment.Left;
-        text_view.textColor = UIColor.whiteColor();
-        text_view.backgroundColor = UIColor.clearColor();
+        text_view.textAlignment = NSTextAlignment.left;
+        text_view.textColor = UIColor.white;
+        text_view.backgroundColor = UIColor.clear;
         text_view.font = UIFont(name: "MicroFLF", size: text_size);
-        text_view.editable = false;
+        text_view.isEditable = false;
         
         // create back button
-        add_back_button(&back_button, &superview);
-        back_button.addTarget(self, action: "GoToMain", forControlEvents: UIControlEvents.TouchUpInside);
+        add_back_button(back_button: &back_button, superview: &superview);
+        back_button.addTarget(self, action: Selector("GoToMain"), for: UIControlEvents.touchUpInside);
     }
     
-    func GoToMain()
+    @objc func GoToMain()
     {
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
         self.view.removeFromSuperview();
     }
 }
