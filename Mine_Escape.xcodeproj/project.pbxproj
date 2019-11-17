@@ -31,6 +31,7 @@
 		46E62D3F1B0A5F4500A07B7B /* game_lost.wav in Resources */ = {isa = PBXBuildFile; fileRef = 46E62D3B1B0A5F4500A07B7B /* game_lost.wav */; };
 		46E62D401B0A5F4500A07B7B /* won_game.wav in Resources */ = {isa = PBXBuildFile; fileRef = 46E62D3C1B0A5F4500A07B7B /* won_game.wav */; };
 		46E62D421B0A7D8700A07B7B /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E62D411B0A7D8700A07B7B /* MainController.swift */; };
+		B2F7DD682381939300A05F3B /* LevelManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F7DD672381939300A05F3B /* LevelManagedObject.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 		46E62D3B1B0A5F4500A07B7B /* game_lost.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = game_lost.wav; sourceTree = "<group>"; };
 		46E62D3C1B0A5F4500A07B7B /* won_game.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = won_game.wav; sourceTree = "<group>"; };
 		46E62D411B0A7D8700A07B7B /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
+		B2F7DD672381939300A05F3B /* LevelManagedObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelManagedObject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 				46336C0A1B0EEF2300AAEA75 /* airstrikebold.ttf */,
 				4623920F1B0FF15000AA0610 /* MicroFLF.ttf */,
 				462392111B0FF51D00AA0610 /* Galano.otf */,
+				B2F7DD662381934D00A05F3B /* CoreData */,
 				46E62D0C1B0A5E7D00A07B7B /* AppDelegate.swift */,
 				46E62D411B0A7D8700A07B7B /* MainController.swift */,
 				4648E7051B0AAF5900380242 /* AboutController.swift */,
@@ -164,6 +167,14 @@
 				46E62D241B0A5E7E00A07B7B /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B2F7DD662381934D00A05F3B /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				B2F7DD672381939300A05F3B /* LevelManagedObject.swift */,
+			);
+			name = CoreData;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -282,6 +293,7 @@
 				46E62D121B0A5E7D00A07B7B /* ViewController.swift in Sources */,
 				46E62D0D1B0A5E7D00A07B7B /* AppDelegate.swift in Sources */,
 				4648E7041B0AA51600380242 /* LevelsController.swift in Sources */,
+				B2F7DD682381939300A05F3B /* LevelManagedObject.swift in Sources */,
 				46E62D421B0A7D8700A07B7B /* MainController.swift in Sources */,
 				46E62D101B0A5E7D00A07B7B /* Mine_Escape.xcdatamodeld in Sources */,
 				461303981B13C27B00D16C31 /* GameCenter.swift in Sources */,

@@ -132,6 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let url = self.applicationDocumentsDirectory.appendingPathComponent("Mine_Escape.sqlite")
         var error: NSError? = nil
         var failureReason = "There was an error creating or loading the application's saved data."
+        /*
         if coordinator!.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil) == nil {
             coordinator = nil
             // Report any error we got.
@@ -145,6 +146,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NSLog("Unresolved error \(error), \(error!.userInfo)")
             abort()
         }
+         */
         
         return coordinator
     }()

@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 enum MINE_POLICY{case LOCAL, GLOBAL, MIXED};
-var levels = Array<Level>();
+var levels = Array<MELevel>();
 let NUM_LEVELS = 125;
 let NUM_SUB_LEVELS = 25;
 let NUM_MEGA_LEVELS = 5;
@@ -19,7 +19,7 @@ var VOLUME_LEVEL:Float = 1.0;
 var level_data:[NSManagedObject] = [NSManagedObject]();
 
 // LEVEL CLASS THAT HOLDS LEVEL DIM, SPEED, POLICY DATA
-class Level:UIButton
+class MELevel:UIButton
 {
     var level:Int = 0;
     var speed:Int = 0;

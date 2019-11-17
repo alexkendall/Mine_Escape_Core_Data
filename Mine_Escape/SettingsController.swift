@@ -29,47 +29,46 @@ class SettingsController : ViewController
         let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
         
-        var fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Volume");
-        var error:NSError?;
-        var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
-        
-        if(results.count == 0)
-        {
-            var descr = NSEntityDescription.entity(forEntityName: "Volume", in: managedContext!);
-            var managed_object = NSManagedObject(entity: descr!, insertInto: managedContext);
-            managed_object.setValue(10, forKey: "value");
-            managedContext?.insert(managed_object);
-            
-            var error:NSError?;
-            managedContext?.save();
-        }
-        else
-        {
-            self.volume = results[0].value(forKey: "value") as! Int;
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Volume");
+        do {
+            let results = try managedContext?.execute(request) as? [AnyObject]
+            if let managedResults = results as [AnyObject]? {
+                if managedResults.count == 0 {
+                    let descr = NSEntityDescription.entity(forEntityName: "Volume", in: managedContext!);
+                    let managed_object = NSManagedObject(entity: descr!, insertInto: managedContext);
+                    managed_object.setValue(10, forKey: "value");
+                    managedContext?.insert(managed_object);
+                    try managedContext?.save();
+                } else {
+                    self.volume = managedResults[0].value(forKey: "value") as! Int;
+                }
+            }
+        } catch (let error) {
+            print("error \(error)")
         }
         volume_indicator.setTitle("VOLUME: " + String(volume), for: UIControlState.normal);
         VOLUME_LEVEL = Float(volume) / 10.0;
     }
     
-    func GoToMain()
+    @objc func GoToMain()
     {
         play_sound(sound_effect: SOUND.DEFAULT);
         self.view.removeFromSuperview();
     }
     
-    func set_volume()
+    @objc func set_volume()
     {
         volume_indicator.setTitle("VOLUME: " + String(volume), for: UIControlState.normal);
         VOLUME_LEVEL = Float(volume) / 10.0;
         play_sound(sound_effect: SOUND.DEFAULT);
     }
     
-    func clicked_reset()
+    @objc func clicked_reset()
     {
         superview.addSubview(clearController.view);
     }
     
-    func change_volume(sender:UIButton!)
+    @objc func change_volume(sender:UIButton!)
     {
         volume += sender.tag;
         if(volume < 0)
@@ -85,24 +84,29 @@ class SettingsController : ViewController
         let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
         
-        var fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Volume");
-        var error:NSError?;
-        var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
-        
-        assert(results.count == 1, "INVALID FETCH OF VOLUME ENTITY");
-        for(var i = 0; i < results.count; ++i)
-        {
-            var obj = results[i];
-            managedContext?.deleteObject(obj);
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Volume");
+        do {
+            let results = try managedContext?.fetch(request)
+            if let resultObjs = results {
+                for obj in resultObjs
+                {
+                    if let managedObject = obj as? NSManagedObject {
+                        managedContext?.delete(managedObject)
+                    }
+                }
+            }
+        } catch (let error) {
+            print("error \(error)")
         }
-        
-        var descr = NSEntityDescription.entity(forEntityName: "Volume", in: managedContext!);
-        var managed_object = NSManagedObject(entity: descr!, insertInto: managedContext);
+        let descr = NSEntityDescription.entity(forEntityName: "Volume", in: managedContext!);
+        let managed_object = NSManagedObject(entity: descr!, insertInto: managedContext);
         managed_object.setValue(volume, forKey: "value");
         managedContext?.insert(managed_object);
-        
-        managedContext?.save(&error);
-        
+        do {
+            try managedContext?.save()
+        } catch(let error) {
+            print("error \(error)")
+        }
     }
     
     
@@ -138,7 +142,7 @@ class SettingsController : ViewController
         
         add_title_button(title_label: title, superview: superview, text: "SETTINGS", margin: margin, size: font_size);
         add_back_button(back_button: &back_button, superview: &superview);
-        back_button.addTarget(self, action: "GoToMain", for: UIControlEvents.touchUpInside);
+        back_button.addTarget(self, action: Selector("GoToMain"), for: UIControlEvents.touchUpInside);
         
         var container_view = UIView();
         var top = margin * 2.5;
@@ -150,15 +154,15 @@ class SettingsController : ViewController
         //container_view.backgroundColor = UIColor.whiteColor();
         
         
-        for(var i = 0; i < label_text.count; ++i)
+        for i in 0..<label_text.count
         {
             container_view.layoutIfNeeded();
             container_view.setNeedsLayout();
             
             var label = UIButton();
-            label.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
-            label.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
-            label.setTitle(label_text[i], forState: UIControlState.Normal);
+            label.setTitleColor(UIColor.white, for: UIControlState.normal);
+            label.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
+            label.setTitle(label_text[i], for: UIControlState.normal);
             label.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
             label.sizeToFit();
             var label_width:CGFloat = label.frame.width;
@@ -178,11 +182,11 @@ class SettingsController : ViewController
                 var minus_x = label.frame.origin.x - minus_dim;
                 var minus_y = label_y;
                 minus_button = UIButton(frame: CGRect(x: minus_x, y: minus_y, width: minus_dim, height: minus_dim));
-                minus_button.setTitle("-", forState: UIControlState.Normal);
-                minus_button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
-                minus_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
+                minus_button.setTitle("-", for: UIControlState.normal);
+                minus_button.setTitleColor(UIColor.white, for: UIControlState.normal);
+                minus_button.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
                 minus_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
-                minus_button.addTarget(self, action: "change_volume:", forControlEvents: UIControlEvents.TouchDown);
+                minus_button.addTarget(self, action: Selector("change_volume:"), for: UIControlEvents.touchDown);
                 minus_button.tag = -1;
                 container_view.addSubview(minus_button);
                 
@@ -191,22 +195,22 @@ class SettingsController : ViewController
                 var plus_x = label.frame.origin.x + label.frame.width;
                 var plus_y = minus_y;
                 plus_button = UIButton(frame: CGRect(x: plus_x, y: plus_y, width: plus_dim, height: plus_dim));
-                plus_button.setTitle("+", forState: UIControlState.Normal);
-                plus_button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
-                plus_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
+                plus_button.setTitle("+", for: UIControlState.normal);
+                plus_button.setTitleColor(UIColor.white, for: UIControlState.normal);
+                plus_button.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
                 plus_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
-                plus_button.addTarget(self, action: "change_volume:", forControlEvents: UIControlEvents.TouchDown);
+                plus_button.addTarget(self, action: Selector("change_volume:"), for: UIControlEvents.touchDown);
                 plus_button.tag = 1;
                 container_view.addSubview(plus_button);
                 
             }
             if(i == 1) // RESTORE PROGRESS
             {
-                label.addTarget(self, action: "clicked_reset", forControlEvents: UIControlEvents.TouchUpInside);
+                label.addTarget(self, action: #selector(SettingsController.clicked_reset), for: UIControlEvents.touchUpInside);
             }
             
         }
-        volume_indicator.setTitle("VOLUME: " + String(volume), forState: UIControlState.Normal);
+        volume_indicator.setTitle("VOLUME: " + String(volume), for: UIControlState.normal);
     }
 }
 
@@ -223,14 +227,14 @@ class ClearDataController : ViewController
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
         
         // shouldn't be able to click add
-        var margin:CGFloat = superview.bounds.height / 20.0;
+        let margin:CGFloat = superview.bounds.height / 20.0;
         addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
         
         
         // configure container
         superview.addSubview(container_view);
-        var dim:CGFloat = superview.bounds.width - (2.0 * margin);
-        var y:CGFloat = (superview.bounds.height - dim) * 0.5;
+        let dim:CGFloat = superview.bounds.width - (2.0 * margin);
+        let y:CGFloat = (superview.bounds.height - dim) * 0.5;
         container_view.frame = CGRect(x: margin, y: y, width: dim, height: dim);
         container_view.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         container_view.layer.borderWidth = 1.0;
@@ -259,11 +263,11 @@ class ClearDataController : ViewController
 
         
         // add text label
-        var t_margin:CGFloat = container_view.bounds.width * 0.1;
-        var text_x:CGFloat = margin;
-        var text_y:CGFloat = container_view.bounds.height / 8.0;
-        var text_height:CGFloat = container_view.bounds.height / 2.0;
-        var text_width:CGFloat = container_view.bounds.width - (2.0 * t_margin);
+        let t_margin:CGFloat = container_view.bounds.width * 0.1;
+        let text_x:CGFloat = margin;
+        let text_y:CGFloat = container_view.bounds.height / 8.0;
+        let text_height:CGFloat = container_view.bounds.height / 2.0;
+        let text_width:CGFloat = container_view.bounds.width - (2.0 * t_margin);
         text_view.frame = CGRect(x: text_x, y: text_y, width: text_width, height: text_height);
         text_view.text = text;
         text_view.textAlignment = NSTextAlignment.center;
@@ -275,14 +279,14 @@ class ClearDataController : ViewController
         container_view.addSubview(text_view);
         
         // add yes button
-        var yes_y:CGFloat = container_view.bounds.height * 2.0 / 3.0;
-        var yes_width:CGFloat = text_width / 2.0;
-        var yes_height:CGFloat = text_height / 3.0;
-        var yes_x:CGFloat = t_margin + yes_width - 1.0;
-        var yes_button = UIButton(frame: CGRect(x: yes_x, y: yes_y, width: yes_width, height: yes_height));
+        let yes_y:CGFloat = container_view.bounds.height * 2.0 / 3.0;
+        let yes_width:CGFloat = text_width / 2.0;
+        let yes_height:CGFloat = text_height / 3.0;
+        let yes_x:CGFloat = t_margin + yes_width - 1.0;
+        let yes_button = UIButton(frame: CGRect(x: yes_x, y: yes_y, width: yes_width, height: yes_height));
         yes_button.layer.borderWidth = 1.0;
         yes_button.layer.borderColor = UIColor.white.cgColor;
-        yes_button.setTitle("Yes", for: UIControlState.Normal);
+        yes_button.setTitle("Yes", for: UIControlState.normal);
         yes_button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         yes_button.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
         yes_button.addTarget(self, action: "delete_data", for: UIControlEvents.touchUpInside);
@@ -291,14 +295,14 @@ class ClearDataController : ViewController
         
         
         // add no button
-        var no_x:CGFloat = t_margin; // sift left 1 to account for border
-        var no_y:CGFloat = yes_y;
-        var no_height:CGFloat = yes_height;
-        var no_width:CGFloat = yes_width + 1.0; // to account for border
-        var no_button = UIButton(frame: CGRect(x: no_x, y: no_y, width: no_width, height: no_height));
+        let no_x:CGFloat = t_margin; // sift left 1 to account for border
+        let no_y:CGFloat = yes_y;
+        let no_height:CGFloat = yes_height;
+        let no_width:CGFloat = yes_width + 1.0; // to account for border
+        let no_button = UIButton(frame: CGRect(x: no_x, y: no_y, width: no_width, height: no_height));
         no_button.layer.borderWidth = 1.0;
         no_button.layer.borderColor = UIColor.white.cgColor;
-        no_button.setTitle("No", for: UIControlState.Normal);
+        no_button.setTitle("No", for: UIControlState.normal);
         no_button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         no_button.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
         no_button.addTarget(self, action: #selector(Thread.exit), for: UIControlEvents.touchUpInside);
@@ -308,30 +312,35 @@ class ClearDataController : ViewController
     
     func delete_data()
     {
+        /*
         let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
         
-        var fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Level");
+        let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Level");
         
         var error:NSError?;
-        var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
-        
-        for(var i = 0; i < results.count; ++i)
-        {
-            managedContext?.deleteObject(results[i]);
+        do {
+            let results:[NSManagedObject] = try managedContext?.execute(fetch) as! [NSManagedObject];
+            
+            for i in 0..<results.count
+            {
+                managedContext?.delete(results[i]);
+            }
+            try managedContext?.save();
+        } catch (let error) {
+            print(error)
         }
-        managedContext?.save(&error);
-        
-        for(var i = 0; i < LevelsController.level_buttons.count; ++i)
+        for i in 0..<LevelsController.level_buttons.count
         {
             LevelsController.level_buttons[i].progress = 0;
             
-            for(var j = 0; j < 3; ++j)
+            for j in 0..<3
             {
-                LevelsController.level_buttons[i].level_status_indicator[j].backgroundColor = UIColor.clearColor();
+                LevelsController.level_buttons[i].level_status_indicator[j].backgroundColor = UIColor.clear
                 LevelsController.level_buttons[i].level_data = nil;
             }
         }
+         */
         LevelsController.loadData();
         exit();
     }

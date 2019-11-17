@@ -1056,9 +1056,9 @@ class NextGameContoller: ViewController
         var next_width:CGFloat = complete_container.bounds.width - (2.0 * margin);
         var next_height:CGFloat = complete_container.bounds.height / 6.0;
         next_level.frame = CGRect(x: next_x, y: next_y, width: next_width, height: next_height);
-        next_level.setTitleColor(UIColor.whiteColor, for: UIControlState.Normal);
+        next_level.setTitleColor(UIColor.white, for: UIControlState.normal);
         next_level.layer.borderWidth = 1.0;
-        next_level.layer.borderColor = UIColor.white.CGColor;
+        next_level.layer.borderColor = UIColor.white.cgColor;
         next_level.setTitleColor(LIGHT_BLUE, for: UIControlState.highlighted);
         next_level.titleLabel?.font = UIFont(name: "MicroFLF", size: text_size);
         
@@ -1104,7 +1104,7 @@ class BeatDifficultyController:UIViewController
         // configure view
         superview = self.view;
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.frame.width, height: superview.frame.height - banner_view.frame.height);
-        addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.CGColor]);
+        addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
        
         margin = superview.bounds.height * 0.05;
         let x:CGFloat = margin;

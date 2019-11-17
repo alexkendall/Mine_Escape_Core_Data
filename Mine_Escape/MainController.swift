@@ -64,7 +64,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
     
     func authenticateLocalPlayer()
     {
-        var localPlayer = GKLocalPlayer.localPlayer();
+        let localPlayer = GKLocalPlayer.localPlayer();
         localPlayer.authenticateHandler =
             {(viewController : UIViewController!, error : NSError!) -> Void in
                 if viewController != nil
@@ -99,7 +99,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
                         }
                     }
                 }
-            } as! (UIViewController?, Error?) -> Void
+            } as? (UIViewController?, Error?) -> Void
     }
     
     func update_achievements( difficulty:String)
