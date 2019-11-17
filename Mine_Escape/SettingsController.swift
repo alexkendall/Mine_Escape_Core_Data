@@ -26,42 +26,42 @@ class SettingsController : ViewController
     
     func load_volume()
     {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
         
-        var fetch = NSFetchRequest(entityName: "Volume");
+        var fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Volume");
         var error:NSError?;
         var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
         
         if(results.count == 0)
         {
-            var descr = NSEntityDescription.entityForName("Volume", inManagedObjectContext: managedContext!);
-            var managed_object = NSManagedObject(entity: descr!, insertIntoManagedObjectContext: managedContext);
+            var descr = NSEntityDescription.entity(forEntityName: "Volume", in: managedContext!);
+            var managed_object = NSManagedObject(entity: descr!, insertInto: managedContext);
             managed_object.setValue(10, forKey: "value");
-            managedContext?.insertObject(managed_object);
+            managedContext?.insert(managed_object);
             
             var error:NSError?;
-            managedContext?.save(&error);
+            managedContext?.save();
         }
         else
         {
-            self.volume = results[0].valueForKey("value") as! Int;
+            self.volume = results[0].value(forKey: "value") as! Int;
         }
-        volume_indicator.setTitle("VOLUME: " + String(volume), forState: UIControlState.Normal);
+        volume_indicator.setTitle("VOLUME: " + String(volume), for: UIControlState.normal);
         VOLUME_LEVEL = Float(volume) / 10.0;
     }
     
     func GoToMain()
     {
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
         self.view.removeFromSuperview();
     }
     
     func set_volume()
     {
-        volume_indicator.setTitle("VOLUME: " + String(volume), forState: UIControlState.Normal);
+        volume_indicator.setTitle("VOLUME: " + String(volume), for: UIControlState.normal);
         VOLUME_LEVEL = Float(volume) / 10.0;
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
     }
     
     func clicked_reset()
@@ -82,10 +82,10 @@ class SettingsController : ViewController
         }
         set_volume();
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
         
-        var fetch = NSFetchRequest(entityName: "Volume");
+        var fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Volume");
         var error:NSError?;
         var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
         
@@ -96,10 +96,10 @@ class SettingsController : ViewController
             managedContext?.deleteObject(obj);
         }
         
-        var descr = NSEntityDescription.entityForName("Volume", inManagedObjectContext: managedContext!);
-        var managed_object = NSManagedObject(entity: descr!, insertIntoManagedObjectContext: managedContext);
+        var descr = NSEntityDescription.entity(forEntityName: "Volume", in: managedContext!);
+        var managed_object = NSManagedObject(entity: descr!, insertInto: managedContext);
         managed_object.setValue(volume, forKey: "value");
-        managedContext?.insertObject(managed_object);
+        managedContext?.insert(managed_object);
         
         managedContext?.save(&error);
         
@@ -113,7 +113,7 @@ class SettingsController : ViewController
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
         superview.bounds = superview.frame;
         
-        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
         
         // generate title subview
         var title = UILabel();
@@ -136,9 +136,9 @@ class SettingsController : ViewController
         default: font_size = 30.0;
         }
         
-        add_title_button(&title, &superview, "SETTINGS", margin, font_size);
-        add_back_button(&back_button, &superview);
-        back_button.addTarget(self, action: "GoToMain", forControlEvents: UIControlEvents.TouchUpInside);
+        add_title_button(title_label: title, superview: superview, text: "SETTINGS", margin: margin, size: font_size);
+        add_back_button(back_button: &back_button, superview: &superview);
+        back_button.addTarget(self, action: "GoToMain", for: UIControlEvents.touchUpInside);
         
         var container_view = UIView();
         var top = margin * 2.5;
@@ -146,7 +146,7 @@ class SettingsController : ViewController
         var right_margin = margin;
         var bottom_margin = back_button_size + banner_view.bounds.height;
         
-        add_subview(container_view, superview, top, bottom_margin, left_margin, right_margin);
+        add_subview(subview: container_view, superview: superview, top_margin: top, bottom_margin: bottom_margin, left_margin: left_margin, right_margin: right_margin);
         //container_view.backgroundColor = UIColor.whiteColor();
         
         
@@ -224,7 +224,7 @@ class ClearDataController : ViewController
         
         // shouldn't be able to click add
         var margin:CGFloat = superview.bounds.height / 20.0;
-        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
         
         
         // configure container
@@ -234,7 +234,7 @@ class ClearDataController : ViewController
         container_view.frame = CGRect(x: margin, y: y, width: dim, height: dim);
         container_view.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
         container_view.layer.borderWidth = 1.0;
-        container_view.layer.borderColor = UIColor.whiteColor().CGColor;
+        container_view.layer.borderColor = UIColor.white.cgColor;
         container_view.layoutIfNeeded();
         container_view.setNeedsLayout();
         
@@ -266,10 +266,10 @@ class ClearDataController : ViewController
         var text_width:CGFloat = container_view.bounds.width - (2.0 * t_margin);
         text_view.frame = CGRect(x: text_x, y: text_y, width: text_width, height: text_height);
         text_view.text = text;
-        text_view.textAlignment = NSTextAlignment.Center;
-        text_view.textColor = UIColor.blackColor();
-        text_view.textColor = UIColor.orangeColor();
-        text_view.backgroundColor = UIColor.clearColor();
+        text_view.textAlignment = NSTextAlignment.center;
+        text_view.textColor = UIColor.black;
+        text_view.textColor = UIColor.orange;
+        text_view.backgroundColor = UIColor.clear;
         text_view.font = UIFont(name: "MicroFLF", size: text_size);
         
         container_view.addSubview(text_view);
@@ -281,11 +281,11 @@ class ClearDataController : ViewController
         var yes_x:CGFloat = t_margin + yes_width - 1.0;
         var yes_button = UIButton(frame: CGRect(x: yes_x, y: yes_y, width: yes_width, height: yes_height));
         yes_button.layer.borderWidth = 1.0;
-        yes_button.layer.borderColor = UIColor.whiteColor().CGColor;
-        yes_button.setTitle("Yes", forState: UIControlState.Normal);
+        yes_button.layer.borderColor = UIColor.white.cgColor;
+        yes_button.setTitle("Yes", for: UIControlState.Normal);
         yes_button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
-        yes_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
-        yes_button.addTarget(self, action: "delete_data", forControlEvents: UIControlEvents.TouchUpInside);
+        yes_button.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
+        yes_button.addTarget(self, action: "delete_data", for: UIControlEvents.touchUpInside);
         yes_button.titleLabel?.font = UIFont(name: "MicroFLF", size: font_size);
         container_view.addSubview(yes_button);
         
@@ -297,21 +297,21 @@ class ClearDataController : ViewController
         var no_width:CGFloat = yes_width + 1.0; // to account for border
         var no_button = UIButton(frame: CGRect(x: no_x, y: no_y, width: no_width, height: no_height));
         no_button.layer.borderWidth = 1.0;
-        no_button.layer.borderColor = UIColor.whiteColor().CGColor;
-        no_button.setTitle("No", forState: UIControlState.Normal);
+        no_button.layer.borderColor = UIColor.white.cgColor;
+        no_button.setTitle("No", for: UIControlState.Normal);
         no_button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4);
-        no_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
-        no_button.addTarget(self, action: "exit", forControlEvents: UIControlEvents.TouchUpInside);
+        no_button.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
+        no_button.addTarget(self, action: #selector(Thread.exit), for: UIControlEvents.touchUpInside);
         no_button.titleLabel?.font = UIFont(name: "MicroFLF", size: font_size);
         container_view.addSubview(no_button);
     }
     
     func delete_data()
     {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
         
-        var fetch = NSFetchRequest(entityName: "Level");
+        var fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Level");
         
         var error:NSError?;
         var results:[NSManagedObject] = managedContext?.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];

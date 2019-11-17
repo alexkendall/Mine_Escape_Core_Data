@@ -472,7 +472,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         var mine_speed = speed_pool[Int(speed_index)];
         
         //
-        var local_unmarked = unmarked_neighbors(loc_id);
+        var local_unmarked = unmarked_neighbors(index: loc_id);
         var global_unmarked = unmarked_global();
         
         if((policy == MINE_POLICY.LOCAL) && (local_unmarked.count > 0) )
@@ -480,14 +480,14 @@ class GameController : UIViewController, ADBannerViewDelegate
             var temp_index = Int(arc4random_uniform(UInt32(local_unmarked.count)));
             var index = local_unmarked[temp_index];
             map[index].speed = mine_speed;
-            mark_mine(index);
+            mark_mine(loc_id: index);
         }
         else if((policy == MINE_POLICY.GLOBAL) && (global_unmarked.count > 0))
         {
             var temp_index = Int(arc4random_uniform(UInt32(global_unmarked.count)));
             var index = global_unmarked[temp_index];
             map[index].speed = mine_speed;
-            mark_mine(index);
+            mark_mine(loc_id: index);
         }
         else    // MIXED policy
         {
@@ -495,11 +495,11 @@ class GameController : UIViewController, ADBannerViewDelegate
             var rand_num = arc4random_uniform(2); // can be either 0 or 1
             if(rand_num == 0)
             {
-                generate_mines(MINE_POLICY.LOCAL, loc_id: loc_id);
+                generate_mines(policy: MINE_POLICY.LOCAL, loc_id: loc_id);
             }
             else
             {
-                generate_mines(MINE_POLICY.GLOBAL, loc_id: loc_id);
+                generate_mines(policy: MINE_POLICY.GLOBAL, loc_id: loc_id);
             }
         }
     }
@@ -523,7 +523,7 @@ class GameController : UIViewController, ADBannerViewDelegate
     
     func resume_game_clock()
     {
-        self.game_timer = NSTimer.scheduledTimerWithTimeInterval(precision, target: self, selector: "update_game_clock", userInfo: nil, repeats: true);
+        self.game_timer = Timer.scheduledTimer(timeInterval: precision, target: self, selector: "update_game_clock", userInfo: nil, repeats: true);
     }
     
     func mark_location(button:UIButton)
@@ -534,37 +534,37 @@ class GameController : UIViewController, ADBannerViewDelegate
             if(loc_id == START_LOC) // dont start game until user presses start button
             {
                 GAME_STARTED = true;
-                map[loc_id].setTitleColor(UIColor.clearColor(), forState: UIControlState.Normal);
-                mark_location(button);
+                map[loc_id].setTitleColor(UIColor.clear, for: UIControlState.Normal);
+                mark_location(button: button);
                 map[loc_id].explored = true;
-                play_sound(SOUND.EXPLORED);
+                play_sound(sound_effect: SOUND.EXPLORED);
                 // begin game timer
-                game_timer = NSTimer.scheduledTimerWithTimeInterval(precision, target: self, selector: "update_game_clock", userInfo: nil, repeats: true);
+                game_timer = Timer.scheduledTimer(timeInterval: precision, target: self, selector: "update_game_clock", userInfo: nil, repeats: true);
             }
         }
         else if(!GAME_OVER)
         {
             if(map[loc_id].mine_exists)
             {
-                play_sound(SOUND.LOST);
+                play_sound(sound_effect: SOUND.LOST);
                 
                 // game is over
                 GAME_OVER = true;
                 end_game();
-                map[loc_id].setTitleColor(UIColor.redColor(), forState: UIControlState.Normal);
-                map[loc_id].backgroundColor = UIColor.blackColor();
+                map[loc_id].setTitleColor(UIColor.red, for: UIControlState.Normal);
+                map[loc_id].backgroundColor = UIColor.black;
                 map[loc_id].layer.borderWidth = 1.0;
-                map[loc_id].layer.borderColor = UIColor.whiteColor().CGColor;
-                map[loc_id].set_image("mine_white");
+                map[loc_id].layer.borderColor = UIColor.white.cgColor;
+                map[loc_id].set_image(zname: "mine_white");
             }
             else if(!map[loc_id].explored)
             {
-                play_sound(SOUND.EXPLORED);
+                play_sound(sound_effect: SOUND.EXPLORED);
                 map[loc_id].mark_explored();
-                ++COUNT;
+                COUNT+=1;
                 if(won_game())
                 {
-                    play_sound(SOUND.WON);
+                    play_sound(sound_effect: SOUND.WON);
                     
                     self.bottom_text.textColor = LIGHT_BLUE;
                     GAME_OVER = true;
@@ -573,7 +573,7 @@ class GameController : UIViewController, ADBannerViewDelegate
                 else if((!GAME_OVER) && ((NUM_LOCS - COUNT) > 2))
                     // mine will never fill last unexplored cell
                 {
-                    generate_mines(self.POLICY, loc_id: loc_id);
+                    generate_mines(policy: self.POLICY, loc_id: loc_id);
                 }
             }
         }
@@ -700,10 +700,10 @@ class GameController : UIViewController, ADBannerViewDelegate
         var back_width:CGFloat = global_but_dim;
         var back_height:CGFloat = global_but_dim;
         back_button = UIButton(frame: CGRect(x: back_x, y: back_y, width: back_width, height: back_height));
-        back_button.setBackgroundImage(UIImage(named: "prev_level"), for: UIControlState.Normal);
+        back_button.setBackgroundImage(UIImage(named: "prev_level"), for: UIControlState.normal);
         back_button.layer.borderWidth = 1.0;
-        back_button.layer.borderColor = UIColor.whiteColor.CGColor;
-        back_button.addTarget(self, action:"GoToLevelMenu", for: UIControlEvents.TouchUpInside);
+        back_button.layer.borderColor = UIColor.white.cgColor;
+        back_button.addTarget(self, action:"GoToLevelMenu", for: UIControlEvents.touchUpInside);
         superview.addSubview(back_button);
         back_button.layoutIfNeeded();
         back_button.setNeedsLayout();
@@ -776,7 +776,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         var repeat_width:CGFloat = global_but_dim;
         var repeat_height:CGFloat = global_but_dim;
         repeat_button = UIButton(frame: CGRect(x: repeat_x, y: button_y, width: repeat_width, height: repeat_height));
-        repeat_button.setBackgroundImage(repeat_image, forState: UIControlState.normal);
+        repeat_button.setBackgroundImage(repeat_image, for: UIControlState.normal);
         repeat_button.layer.borderWidth = 1.0;
         repeat_button.layer.borderColor = UIColor.white.cgColor;
         repeat_button.layer.backgroundColor = UIColor.black.cgColor;
@@ -787,7 +787,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         var next_width:CGFloat = global_but_dim;
         var next_height:CGFloat = global_but_dim;
         next_button = UIButton(frame: CGRect(x: next_x, y: button_y, width: next_width, height: next_height));
-        next_button.setBackgroundImage(next_image, forState: UIControlState.normal);
+        next_button.setBackgroundImage(next_image, for: UIControlState.normal);
         next_button.layer.borderWidth = 1.0;
         next_button.layer.borderColor = UIColor.white.cgColor;
         next_button.layer.backgroundColor = UIColor.black.cgColor;
@@ -820,7 +820,7 @@ class Mine_cell:UIButton
         insignia = "";
         explored = false;
         speed = SPEED.SLOW;
-        super.init(frame:CGRectZero);
+        super.init(frame:CGRect.zero);
     }
     init(location_identifier:Int)
     {
@@ -830,7 +830,7 @@ class Mine_cell:UIButton
         insignia = "";
         timer_running = false;
         speed = SPEED.SLOW;
-        super.init(frame:CGRectZero);
+        super.init(frame:CGRect.zero);
         loc_id = location_identifier;
     }
     func pause()
@@ -846,34 +846,34 @@ class Mine_cell:UIButton
     {
         if(timer.isValid)
         {
-            timer.fireDate = NSDate(timeInterval: startup_time, sinceDate: NSDate()) as Date;
+            timer.fireDate = NSDate(timeInterval: startup_time, since: NSDate() as Date) as Date;
         }
     }
     
     func set_image(zname:String)
     {
-        var image = UIImage(named: name);
-        setBackgroundImage(image, forState: UIControlState.Normal);
+        var image = UIImage(named: zname);
+        setBackgroundImage(image, for: UIControlState.Normal);
     }
     func update()
     {
         if(time_til_disappears > 0)
         {
-            --time_til_disappears;
+            time_til_disappears -=1;
             if(speed == SPEED.SLOW)
             {
                 switch time_til_disappears
                 {
                 case 3:
-                    set_image(name: "mine_red");
+                    set_image(zname: "mine_red");
                 case 2:
-                    set_image(name: "mine_orange");
+                    set_image(zname: "mine_orange");
                 case 1:
-                    set_image(name: "mine_yellow");
+                    set_image(zname: "mine_yellow");
                 case 0:
-                    setImage(nil, forState: UIControlState.Normal);
+                    setImage(nil, for: UIControlState.Normal);
                 default:
-                    setImage(nil, forState: UIControlState.Normal);
+                    setImage(nil, for: UIControlState.Normal);
                 }
             }
             else if(speed == SPEED.FAST)
@@ -881,45 +881,45 @@ class Mine_cell:UIButton
                 switch time_til_disappears
                 {
                 case 3:
-                    set_image(name: "mine_dark_blue");
+                    set_image(zname: "mine_dark_blue");
                 case 2:
-                    set_image(name: "mine_blue");
+                    set_image(zname: "mine_blue");
                 case 1:
-                    set_image(name: "mine_light_blue");
+                    set_image(zname: "mine_light_blue");
                 case 0:
-                    setImage(nil, forState: UIControlState.Normal);
+                    setImage(nil, for: UIControlState.Normal);
                 default:
-                    setImage(nil, forState: UIControlState.Normal);
+                    setImage(nil, for: UIControlState.Normal);
                 }
             }
         }
         else    // remove mine indicator
         {
             timer.invalidate();
-            setTitleColor(UIColor.clearColor(), forState: UIControlState.Normal);
+            setTitleColor(UIColor.clear, for: UIControlState.Normal);
             imageView?.image = nil;
             timer_running = false;
-            setBackgroundImage(nil, forState: UIControlState.Normal);
+            setBackgroundImage(nil, for: UIControlState.Normal);
         }
     }
     func mark_mine()
     {
         mine_exists = true;
-        setTitle(insignia, forState: UIControlState.Normal);
-        set_image("mine_black");
+        setTitle(insignia, for: UIControlState.Normal);
+        set_image(zname: "mine_black");
         
         if(timer_running == false)
         {
             if(speed == SPEED.SLOW)
             {
                 time_til_disappears = 4;
-                timer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: "update", userInfo: nil, repeats: true);
+                timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: "update", userInfo: nil, repeats: true);
                 timer_running = true;
             }
             else if(speed == SPEED.FAST)
             {
                 time_til_disappears = 4;
-                timer = NSTimer.scheduledTimerWithTimeInterval(0.125, target: self, selector: "update", userInfo: nil, repeats: true);
+                timer = Timer.scheduledTimerWithTimeInterval(0.125, target: self, selector: #selector(UIMenuController.update), userInfo: nil, repeats: true);
                 timer_running = true;
             }
         }
@@ -929,7 +929,7 @@ class Mine_cell:UIButton
         if(!explored)
         {
             explored = true;
-            backgroundColor = UIColor.grayColor();
+            backgroundColor = UIColor.gray;
         }
     }
 }
@@ -954,27 +954,31 @@ class NextGameContoller: ViewController
     
     func markWon()
     {
-        completed_label.textColor = UIColor.orangeColor();
+        completed_label.textColor = UIColor.orange;
         completed_label.text = String(format: "Level %i Completed", getLocalLevel());
-        next_level.setTitle("Next Level", forState: UIControlState.Normal);
-        next_level.removeTarget(gameController, action: "reset", forControlEvents: UIControlEvents.TouchUpInside);
-        next_level.addTarget(gameController, action: "increment_level", forControlEvents: UIControlEvents.TouchUpInside);
-        x_button.layer.borderColor = UIColor.orangeColor().CGColor;
-        x_button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
+        next_level.setTitle("Next Level", for: UIControlState.normal);
+        next_level.removeTarget(gameController, action: "reset", for: UIControlEvents.touchUpInside);
+        next_level.addTarget(gameController, action: "increment_level", for: UIControlEvents.touchUpInside);
+        x_button.layer.borderColor = UIColor.orange.cgColor;
+        x_button.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
         
     }
     func markLost()
     {
-        completed_label.textColor = UIColor.redColor();
+        completed_label.textColor = UIColor.red;
         completed_label.text = String(format: "Level %i Failed", getLocalLevel());
-        next_level.setTitle("Repeat Level", forState: UIControlState.Normal);
-        next_level.removeTarget(gameController, action: "increment_level", forControlEvents: UIControlEvents.TouchUpInside);
-        next_level.addTarget(gameController, action: "reset", forControlEvents: UIControlEvents.TouchUpInside);
-        x_button.layer.borderColor = UIColor.redColor().CGColor;
-        x_button.setTitleColor(UIColor.redColor(), forState: UIControlState.Highlighted);
+        next_level.setTitle("Repeat Level", for: UIControlState.Normal);
+        next_level.removeTarget(gameController, action: "increment_level", for: UIControlEvents.touchUpInside);
+        if #available(iOS 12.0, *) {
+            next_level.addTarget(gameController, action: #selector(MTLIndirectRenderCommand.reset), for: UIControlEvents.touchUpInside)
+        } else {
+            // Fallback on earlier versions
+        };
+        x_button.layer.borderColor = UIColor.red.cgColor;
+        x_button.setTitleColor(UIColor.red, for: UIControlState.highlighted);
     }
     
-    func set_time(var time:String)
+    func set_time( time:String)
     {
         time_label.text = time + " seconds";
     }
@@ -995,23 +999,23 @@ class NextGameContoller: ViewController
         superview.addSubview(complete_container);
         complete_container.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.8);
         complete_container.layer.borderWidth = 1.0;
-        complete_container.layer.borderColor = UIColor.whiteColor().CGColor;
+        complete_container.layer.borderColor = UIColor.white.cgColor;
 
         // add x button
-        x_button.setTranslatesAutoresizingMaskIntoConstraints(false);
-        x_button.setTitle("X", forState: UIControlState.Normal);
+        x_button.translatesAutoresizingMaskIntoConstraints(false);
+        x_button.setTitle("X", for: UIControlState.Normal);
         x_button.clipsToBounds = true;
         x_button.layer.cornerRadius = 15.0;
         x_button.layer.borderWidth = 1.0;
-        x_button.backgroundColor = UIColor.blackColor();
+        x_button.backgroundColor = UIColor.black;
         x_button.alpha = 0.85;
-        x_button.addTarget(self, action: "exit", forControlEvents: UIControlEvents.TouchDown);
+        x_button.addTarget(self, action: #selector(Thread.exit), for: UIControlEvents.touchDown);
         
         
         // add constraints
-        var x_button_centery = NSLayoutConstraint(item: x_button, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: 0.0);
+        var x_button_centery = NSLayoutConstraint(item: x_button, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: complete_container, attribute: NSLayoutAttribute.top, multiplier: 1.0, constant: 0.0);
         
-        var x_button_centerx = NSLayoutConstraint(item: x_button, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: complete_container, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: 0.0);
+        var x_button_centerx = NSLayoutConstraint(item: x_button, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: complete_container, attribute: NSLayoutAttribute.right, multiplier: 1.0, constant: 0.0);
         
         // conform hiearchy
         superview.addSubview(x_button);
@@ -1041,7 +1045,7 @@ class NextGameContoller: ViewController
         // confiugure label
         var label_height:CGFloat = complete_container.bounds.height / 8.0;
         completed_label.frame = CGRect(x: 0.0, y: (complete_container.bounds.height / 3.0) - (label_height / 2.0), width: complete_container.bounds.width, height: label_height);
-        completed_label.textAlignment = NSTextAlignment.Center;
+        completed_label.textAlignment = NSTextAlignment.center;
         complete_container.addSubview(completed_label);
         completed_label.font = UIFont(name: "Galano Grotesque Alt DEMO", size: font_size);
         
@@ -1052,16 +1056,16 @@ class NextGameContoller: ViewController
         var next_width:CGFloat = complete_container.bounds.width - (2.0 * margin);
         var next_height:CGFloat = complete_container.bounds.height / 6.0;
         next_level.frame = CGRect(x: next_x, y: next_y, width: next_width, height: next_height);
-        next_level.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+        next_level.setTitleColor(UIColor.whiteColor, for: UIControlState.Normal);
         next_level.layer.borderWidth = 1.0;
-        next_level.layer.borderColor = UIColor.whiteColor().CGColor;
-        next_level.setTitleColor(LIGHT_BLUE, forState: UIControlState.Highlighted);
+        next_level.layer.borderColor = UIColor.white.CGColor;
+        next_level.setTitleColor(LIGHT_BLUE, for: UIControlState.highlighted);
         next_level.titleLabel?.font = UIFont(name: "MicroFLF", size: text_size);
         
         // configure time label
         time_label.frame = superview.bounds;
-        time_label.textAlignment = NSTextAlignment.Center;
-        time_label.textColor = UIColor.whiteColor();
+        time_label.textAlignment = NSTextAlignment.center;
+        time_label.textColor = UIColor.white;
         time_label.font = UIFont(name: "MicroFLF", size: text_size);
         superview.addSubview(time_label);
     }
@@ -1081,7 +1085,7 @@ class BeatDifficultyController:UIViewController
     var text:String = "Congratulations! You have defeated all levels on MEDIUM!";
     var continue_button:UIButton = UIButton();
     
-    func setDifficulty(var in_difficulty:String)
+    func setDifficulty( in_difficulty:String)
     {
         text = "Congratulations! You have defeated all levels on " + in_difficulty + "!";
         gameController.nextController.view.removeFromSuperview();
@@ -1100,26 +1104,26 @@ class BeatDifficultyController:UIViewController
         // configure view
         superview = self.view;
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.frame.width, height: superview.frame.height - banner_view.frame.height);
-        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.CGColor]);
        
         margin = superview.bounds.height * 0.05;
-        var x:CGFloat = margin;
-        var y:CGFloat = (superview.bounds.height - superview.bounds.width) / 2.0;
-        var width:CGFloat = superview.bounds.width - (2.0 * margin);
-        var height:CGFloat = width;
-        var frame = CGRect(x: x, y: y, width: width, height: height);
+        let x:CGFloat = margin;
+        let y:CGFloat = (superview.bounds.height - superview.bounds.width) / 2.0;
+        let width:CGFloat = superview.bounds.width - (2.0 * margin);
+        let height:CGFloat = width;
+        let frame = CGRect(x: x, y: y, width: width, height: height);
         
         // configure text_view
         superview.addSubview(text_view);
         text_view.frame = frame;
-        text_view.textAlignment = NSTextAlignment.Center;
-        text_view.textColor = UIColor.whiteColor();
+        text_view.textAlignment = NSTextAlignment.center;
+        text_view.textColor = UIColor.white;
         text_view.text = text;
         text_view.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 30.0);
         text_view.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5);
         text_view.layer.borderWidth = 1.0;
-        text_view.layer.borderColor = UIColor.whiteColor().CGColor;
-        text_view.editable = false;
+        text_view.layer.borderColor = UIColor.white.cgColor;
+        text_view.isEditable = false;
         
         // configure continue button
         var cont_x:CGFloat = text_view.bounds.width * 0.25;
@@ -1128,8 +1132,8 @@ class BeatDifficultyController:UIViewController
         var cont_height:CGFloat = cont_width;
         continue_button.frame = CGRect(x: cont_x, y: cont_y, width: cont_width, height: cont_height);
         text_view.addSubview(continue_button);
-        continue_button.setBackgroundImage(UIImage(named: "next_level"), forState: UIControlState.Normal);
-        continue_button.addTarget(self, action: "exit", forControlEvents: UIControlEvents.TouchUpInside);
+        continue_button.setBackgroundImage(UIImage(named: "next_level"), for: UIControlState.Normal);
+        continue_button.addTarget(self, action: "exit", for: UIControlEvents.touchUpInside);
     }
 }
 
@@ -1171,7 +1175,7 @@ class PauseGameController:UIViewController
         play_button.setTitle("RESUME", for: UIControlState.normal);
         play_button.setTitleColor(UIColor.black, for: UIControlState.normal);
         play_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 30.0);
-        play_button.addTarget(gameController, action: Selector("resume_game"), for: UIControlEvents.TouchUpInside);
+        play_button.addTarget(gameController, action: Selector("resume_game"), for: UIControlEvents.touchUpInside);
         play_button.titleLabel?.alpha = 1.0;
     }
 }

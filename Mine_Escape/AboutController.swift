@@ -30,7 +30,7 @@ class AboutController : ViewController
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
         superview.bounds = superview.frame;
         
-        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
         
         var baseline_height:CGFloat = 75.0;
         var seperation:CGFloat = 50.0;
@@ -55,24 +55,24 @@ class AboutController : ViewController
     
             default: font_size = 30.0;
         }
-        add_title_button(&title, &superview, "ABOUT", margin, font_size);
+        add_title_button(title_label: title, superview: superview, text: "ABOUT", margin: margin, size: font_size);
         
         // configure text view
-        text_view.setTranslatesAutoresizingMaskIntoConstraints(false);
+        text_view.translatesAutoresizingMaskIntoConstraints = false
         text_view.text = text;
-        text_view.textAlignment = NSTextAlignment.Left;
-        text_view.textColor = UIColor.whiteColor();
-        text_view.backgroundColor = UIColor.clearColor();
+        text_view.textAlignment = NSTextAlignment.left;
+        text_view.textColor = UIColor.white;
+        text_view.backgroundColor = UIColor.clear;
         text_view.font = UIFont(name: "MicroFLF", size: text_size);
-        text_view.editable = false;
+        text_view.isEditable = false;
         var text_margin = superview.bounds.height * 0.05;
-        add_subview(text_view, superview, (margin * 2.5), text_margin, text_margin, text_margin);
+        add_subview(subview: text_view, superview: superview, top_margin: (margin * 2.5), bottom_margin: text_margin, left_margin: text_margin, right_margin: text_margin);
         
         
 
         // create back button
-        add_back_button(&back_button, &superview);
-        back_button.addTarget(self, action: "GoToMain", forControlEvents: UIControlEvents.TouchUpInside);
+        add_back_button(back_button: &back_button, superview: &superview);
+        back_button.addTarget(self, action: Selector("GoToMain"), for: UIControlEvents.touchUpInside);
     }
 }
 

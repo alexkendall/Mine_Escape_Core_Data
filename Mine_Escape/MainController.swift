@@ -120,7 +120,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         var max_level:Int = min_level + NUM_SUB_LEVELS - 1;
         
         // fetch level progress
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext;
         var request = NSFetchRequest<NSFetchRequestResult>(entityName: "Level");
         var predictae = NSPredicate(format: "(progress = 3) AND (level_no > %i) AND (level_no < %i)", min_level - 1, max_level + 1);
@@ -128,18 +128,18 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         var error:NSError?;
         var results:[NSManagedObject] = managedContext?.executeFetchRequest(request, error: &error) as! [NSManagedObject];
         var percent = 100.0; //Double(results.count) / Double(NUM_SUB_LEVELS) * 100.0;
-        var achievement_id = "mine.escape." + difficulty.lowercaseString;
+        var achievement_id = "mine.escape." + difficulty.lowercaseStringWith;
         self.report_achievement(achievement_id, percent: percent);
     }
     
-    func report_achievement(var achievement_id:String, var percent:Double)
+    func report_achievement( achievement_id:String, percent:Double)
     {
         var achievement = GKAchievement(identifier: achievement_id, player: GKGameViewController.localPlayer);
         assert(achievement != nil, "Invalid identifier");
         achievement.showsCompletionBanner = true;   // for debug mode only -> remove later
         println("Previous percentage: " + String(stringInterpolationSegment: achievement.percentComplete));
         achievement.percentComplete = percent;
-        GKAchievement.reportAchievements([achievement], withCompletionHandler:
+        GKAchievement.report([achievement], withCompletionHandler:
             {(NSError) in
                 if(NSError != nil)
                 {
@@ -158,22 +158,22 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         return true;
     }
     
-    override func viewDidAppear(animated: Bool)
+    override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated);
-        UIView.animateWithDuration(1.5, animations: {self.blocker.frame = self.result_blocker_frame; self.mine_view.frame = self.result_mine_frame;});
+        UIView.animate(withDuration: 1.5, animations: {self.blocker.frame = self.result_blocker_frame; self.mine_view.frame = self.result_mine_frame;});
         for(var i = 0; i < subtitles.count; ++i)
         {
             UIView.animateWithDuration(0.5, delay: 1.5, options: nil, animations: {self.subtitles[i].frame = self.subtitle_result_frames[i]}, completion: nil);
         }
-        var period:NSTimeInterval = 0.01;
-        var alpha_timer = NSTimer.scheduledTimerWithTimeInterval(period, target: self, selector: "appear_bottom:", userInfo: nil, repeats: true);
+        var period:TimeInterval = 0.01;
+        var alpha_timer = Timer.scheduledTimer(timeInterval: period, target: self, selector: "appear_bottom:", userInfo: nil, repeats: true);
         delay = 2.0 * (1.0 / period);
         
         
     }
     
-    func appear_bottom(timer:NSTimer)
+    func appear_bottom(timer:Timer)
     {
         if(!start_alpha)
         {
@@ -202,7 +202,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         // configure superview
         superview = self.view;
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
-        addGradient(superview, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
         
         margin = superview.bounds.height * 0.05;
         
@@ -245,26 +245,26 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         title_view.text = "Mine Escape";
         title_view.font = UIFont(name: "AirstrikeBold", size: font_size);
         title_view.textAlignment = NSTextAlignment.center;
-        title_view.textColor = UIColor.orangeColor;
+        title_view.textColor = UIColor.orange;
         superview.addSubview(title_view);
         var names = UIFont.familyNames;
         
         // confgure blocker view
         blocker = UIView(frame: self.init_blocker_frame);
-        addGradient(blocker, [UIColor.blackColor().CGColor, LIGHT_BLUE.CGColor]);
+        addGradient(view: blocker, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
         superview.addSubview(blocker);
         
         // configure logo view
         var mine_width = title_height;
         mine_view = UIButton(frame: self.init_mine_frame);
-        mine_view.setBackgroundImage(UIImage(named: "mine_orange"), forState: UIControlState.Normal);
+        mine_view.setBackgroundImage(UIImage(named: "mine_orange"), for: UIControlState.normal);
         superview.addSubview(mine_view);
         
         // configure subtitles
         var total_height = superview.bounds.height - (title_margin * 2.0);
         var sub_height = total_height / CGFloat(subtitle_texts.count + 2);
         
-        for(var sub:Int = 0; sub < subtitle_texts.count; ++sub)
+        for sub in 0..<subtitle_texts.count
         {
             var top_marg:CGFloat = (sub_height * CGFloat(sub + 1)) + title_margin + (0.5 * sub_height);
             var sub_width:CGFloat = superview.bounds.width;
@@ -274,38 +274,38 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
             {
                 case subtitle_index.FREE_PLAY.hashValue:
                     subtitle = UIButton(frame: CGRect(x: -sub_width, y: top_marg, width: sub_width, height: sub_height));
-                    subtitle.addTarget(self, action: "goToLevels", forControlEvents: UIControlEvents.TouchUpInside);
+                    subtitle.addTarget(self, action: "goToLevels", for: UIControlEvents.touchUpInside);
                 
                 case subtitle_index.ABOUT.hashValue:
                     subtitle = UIButton(frame: CGRect(x: sub_width, y: top_marg, width: sub_width, height: sub_height));
-                    subtitle.addTarget(self, action: "goToAbout", forControlEvents: UIControlEvents.TouchUpInside);
+                    subtitle.addTarget(self, action: "goToAbout", for: UIControlEvents.touchUpInside);
                 
                 case subtitle_index.HOW_TO_PLAY.hashValue:
                     subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
                     subtitle.alpha = 0.0;
-                    subtitle.addTarget(self, action: "goToHow", forControlEvents: UIControlEvents.TouchUpInside);
+                    subtitle.addTarget(self, action: "goToHow", for: UIControlEvents.touchUpInside);
                 
                 case subtitle_index.SETTINGS.hashValue:
                     subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
                     subtitle.alpha = 0.0;
-                    subtitle.addTarget(self, action: "goToSettings", forControlEvents: UIControlEvents.TouchUpInside);
+                    subtitle.addTarget(self, action: "goToSettings", Selector("goToSettings"), UIControlEvents.touchUpInside);
                 
                 case subtitle_index.ACHIEVEMENTS.hashValue:
                     subtitle = UIButton(frame: CGRect(x: 0, y: superview.bounds.height + sub_height, width: sub_width, height: sub_height));
-                    subtitle.addTarget(self, action: "show_achievements", forControlEvents: UIControlEvents.TouchUpInside);
+                    subtitle.addTarget(self, action: "show_achievements", for: UIControlEvents.touchUpInside);
                 
                 default:
-                    println("Should not execute default statement of switch");
+                    print("Should not execute default statement of switch");
                     subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
-                    subtitle.addTarget(self, action: "show_achievements", forControlEvents: UIControlEvents.TouchUpInside);
+                    subtitle.addTarget(self, action: "show_achievements", for: UIControlEvents.touchUpInside);
             }
             
             subtitle.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
             subtitle_result_frames.append(CGRect(x: 0.0, y: top_marg, width: sub_width, height: sub_height));
             superview.addSubview(subtitle);
-            subtitle.setTitle(subtitle_texts[sub], forState: UIControlState.Normal);
-            subtitle.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Highlighted);
-            subtitle.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal);
+            subtitle.setTitle(subtitle_texts[sub], for: UIControlState.normal);
+            subtitle.setTitleColor(UIColor.orange, for: UIControlState.highlighted);
+            subtitle.setTitleColor(UIColor.white, for: UIControlState.normal);
             subtitles.append(subtitle);
             authenticateLocalPlayer();
         }
