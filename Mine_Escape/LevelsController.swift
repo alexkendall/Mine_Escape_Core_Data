@@ -310,7 +310,7 @@ class TimeController:UIViewController
         addGradient(view: superview, colors: [UIColor.black.cgColor, LIGHT_BLUE.cgColor]);
         var back_button = UIButton();
         add_back_button(back_button: &back_button, superview: &superview);
-        back_button.addTarget(self, action: "enter_levels", Selector("enter_levels"), UIControlEvents.TouchUpInside);
+        back_button.addTarget(self, action: Selector("enter_levels"), for: UIControlEvents.touchUpInside);
         
         // configure title
         // generate title subview

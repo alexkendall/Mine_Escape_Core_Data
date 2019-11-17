@@ -104,6 +104,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
     
     func update_achievements( difficulty:String)
     {
+        /*
         var mega:Int = -1;
         for i in 0..<DIFFICULTY.count
         {
@@ -128,43 +129,40 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
         var error:NSError?;
         var results:[NSManagedObject] = managedContext?.executeFetchRequest(request, error: &error) as! [NSManagedObject];
         var percent = 100.0; //Double(results.count) / Double(NUM_SUB_LEVELS) * 100.0;
-        var achievement_id = "mine.escape." + difficulty.lowercaseStringWith;
+        var achievement_id = "mine.escape." + difficulty.lowercased()
         self.report_achievement(achievement_id, percent: percent);
+         */
     }
     
     func report_achievement( achievement_id:String, percent:Double)
     {
+        /*
         var achievement = GKAchievement(identifier: achievement_id, player: GKGameViewController.localPlayer);
         assert(achievement != nil, "Invalid identifier");
         achievement.showsCompletionBanner = true;   // for debug mode only -> remove later
-        println("Previous percentage: " + String(stringInterpolationSegment: achievement.percentComplete));
+        print("Previous percentage: " + String(stringInterpolationSegment: achievement.percentComplete));
         achievement.percentComplete = percent;
         GKAchievement.report([achievement], withCompletionHandler:
             {(NSError) in
                 if(NSError != nil)
                 {
-                    println("Error. Unable to report achievement");
+                    print("Error. Unable to report achievement");
                 }
             }
         );
-        println("Achievement: " +  achievement_id + "--- Percentage Complete: " + String(stringInterpolationSegment: achievement.percentComplete));
-        
+        print("Achievement: " +  achievement_id + "--- Percentage Complete: " + String(stringInterpolationSegment: achievement.percentComplete));
+        */
     }
     
     // -- END LEADERBOARD INFORMATION ---------------------------------------------------
-    
-    override func prefersStatusBarHidden() -> Bool
-    {
-        return true;
-    }
     
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated);
         UIView.animate(withDuration: 1.5, animations: {self.blocker.frame = self.result_blocker_frame; self.mine_view.frame = self.result_mine_frame;});
-        for(var i = 0; i < subtitles.count; ++i)
+        for i in 0..<subtitles.count
         {
-            UIView.animateWithDuration(0.5, delay: 1.5, options: nil, animations: {self.subtitles[i].frame = self.subtitle_result_frames[i]}, completion: nil);
+            UIView.animate(withDuration: 0.5, delay: 1.5, options: UIViewAnimationOptions.curveLinear, animations: {self.subtitles[i].frame = self.subtitle_result_frames[i]}, completion: nil)
         }
         var period:TimeInterval = 0.01;
         var alpha_timer = Timer.scheduledTimer(timeInterval: period, target: self, selector: "appear_bottom:", userInfo: nil, repeats: true);
@@ -177,7 +175,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
     {
         if(!start_alpha)
         {
-            delay--;
+            delay -= 1;
         }
         else
         {
@@ -288,7 +286,7 @@ class MainController: UIViewController, ADBannerViewDelegate, GKGameCenterContro
                 case subtitle_index.SETTINGS.hashValue:
                     subtitle = UIButton(frame: CGRect(x: 0, y: top_marg, width: sub_width, height: sub_height));
                     subtitle.alpha = 0.0;
-                    subtitle.addTarget(self, action: "goToSettings", Selector("goToSettings"), UIControlEvents.touchUpInside);
+                    subtitle.addTarget(self, action: Selector("goToSettings"), for: UIControlEvents.touchUpInside);
                 
                 case subtitle_index.ACHIEVEMENTS.hashValue:
                     subtitle = UIButton(frame: CGRect(x: 0, y: superview.bounds.height + sub_height, width: sub_width, height: sub_height));

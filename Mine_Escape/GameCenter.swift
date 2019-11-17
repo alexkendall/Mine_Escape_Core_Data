@@ -35,6 +35,7 @@ class GKGameController: UIViewController, GKGameCenterControllerDelegate
                     self.gcEnabled = false
                     print("Local player could not be authenticated, disabling game center")
                 }
+                return
             }
             // 1 Show login if player is not logged in
             self.present(vC, animated: true, completion: nil)

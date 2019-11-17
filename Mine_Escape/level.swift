@@ -80,7 +80,7 @@ func gen_levels()
                 policy = MINE_POLICY.GLOBAL;
             }
             let level_no = i; // (mega * NUM_SUB_LEVELS) + i;
-            levels.append(Level(in_level: level_no, in_speed: speed, in_policy: policy, in_dimension: 4 + mega, in_difficulty: DIFFICULTY[mega]));
+            levels.append(MELevel(in_level: level_no, in_speed: speed, in_policy: policy, in_dimension: 4 + mega, in_difficulty: DIFFICULTY[mega]));
         }
     }
 }
