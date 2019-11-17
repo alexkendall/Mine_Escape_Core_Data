@@ -23,9 +23,9 @@ func getLocalLevel()->Int
 
 class GameController : UIViewController, ADBannerViewDelegate
 {
-    var game_timer = NSTimer();
-    var game_clock:NSTimeInterval = 0.0;
-    var precision:NSTimeInterval = 0.01; // measure to nearest .01 second
+    var game_timer = Timer();
+    var game_clock:TimeInterval = 0.0;
+    var precision:TimeInterval = 0.01; // measure to nearest .01 second
     var clock_str = String();
     var achievementController = AchievementController();
     
@@ -57,7 +57,7 @@ class GameController : UIViewController, ADBannerViewDelegate
     
     func resume_game()
     {
-        for(var i = 0; i < self.map.count; ++i)
+        for i in 0..<self.map.count
         {
             map[i].resume();
         }
@@ -70,7 +70,7 @@ class GameController : UIViewController, ADBannerViewDelegate
     {
         if(!bannerIsVisible)
         {
-            UIView.animateWithDuration(0.5, delay: 2.0, options: nil, animations: {banner_view.frame = banner_loadedFrame}, completion: nil);
+            UIView.animate(withDuration: 0.5, delay: 2.0, options: UIViewAnimationOptions.curveLinear, animations: {banner_view.frame = banner_loadedFrame}, completion: nil);
             bannerIsVisible = true;
         }
     }
@@ -80,24 +80,24 @@ class GameController : UIViewController, ADBannerViewDelegate
         return;
     }
     
-    func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!)
+    private func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!)
     {
         if(bannerIsVisible) // remove add if it is visible until it can be fetched
         {
-            UIView.animateWithDuration(0.5, delay: 0.0, options: nil, animations: {banner_view.frame = banner_notLoadedFrame}, completion: nil);
+            UIView.animate(withDuration: 0.5, delay: 0.0, options: UIViewAnimationOptions.curveLinear, animations: {banner_view.frame = banner_notLoadedFrame}, completion: nil);
         }
         bannerIsVisible = false;
         NSLog("%s", "App failed to retrive advertisement!");
         return;
     }
     
-    func bannerViewActionShouldBegin(banner: ADBannerView!, willLeaveApplication willLeave: Bool) -> Bool
+    func bannerViewActionShouldBegin(_ banner: ADBannerView, willLeaveApplication willLeave: Bool) -> Bool
     {
         if(!willLeave)    // pause game if game is active
         {
             if(!GAME_OVER && GAME_STARTED)
             {
-                for(var i = 0; i < self.map.count; ++i)
+                for i in 0..<self.map.count
                 {
                     map[i].pause();
                 }
@@ -108,7 +108,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         return true;
     }
     
-    func bannerViewActionDidFinish(banner: ADBannerView!)
+    func bannerViewActionDidFinish(_ banner: ADBannerView)
     {
         return;
     }
@@ -117,8 +117,8 @@ class GameController : UIViewController, ADBannerViewDelegate
     
     func setProperties()
     {
-        var delegate = UIApplication.sharedApplication().delegate as! AppDelegate;
-        delegate.window?.backgroundColor = UIColor.blackColor();
+        let delegate = UIApplication.shared.delegate as! AppDelegate;
+        delegate.window?.backgroundColor = UIColor.black;
         
         self.NUM_ROWS = levels[CURRENT_LEVEL].dimension;
         self.MINE_SPEED = levels[CURRENT_LEVEL].speed;
@@ -127,28 +127,28 @@ class GameController : UIViewController, ADBannerViewDelegate
         self.NUM_COLS = NUM_ROWS;
         self.NUM_LOCS = NUM_COLS * NUM_ROWS;
         level_indicator.text = String(format:"LEVEL %i", getLocalLevel());
-        switch difficulty_indicator.text as String!
+        switch difficulty_indicator.text
         {
-            case EASY: difficulty_indicator.textColor = UIColor.greenColor();
-            case MEDIUM: difficulty_indicator.textColor = UIColor.yellowColor();
-            case HARD:  difficulty_indicator.textColor = UIColor.orangeColor();
-            case INSANE:  difficulty_indicator.textColor = UIColor.whiteColor();
-            case IMPOSSIBLE:  difficulty_indicator.textColor = UIColor.redColor();
-            default: difficulty_indicator.textColor = UIColor.whiteColor();
+        case EASY: difficulty_indicator.textColor = UIColor.green;
+        case MEDIUM: difficulty_indicator.textColor = UIColor.yellow;
+        case HARD:  difficulty_indicator.textColor = UIColor.orange;
+        case INSANE:  difficulty_indicator.textColor = UIColor.white;
+        case IMPOSSIBLE:  difficulty_indicator.textColor = UIColor.red;
+        default: difficulty_indicator.textColor = UIColor.white;
         }
         level_indicator.textColor = LIGHT_BLUE;
-        var total = UILabel();
+        let total = UILabel();
         total.text = level_indicator.text! + difficulty_indicator.text!;
         total.sizeToFit();
-        var total_width:CGFloat = total.frame.width;  // get total width text takes up
+        let total_width:CGFloat = total.frame.width;  // get total width text takes up
         
         total.text = level_indicator.text!;
         total.sizeToFit();
-        var level_width:CGFloat = total.frame.width;
-        var dific_width:CGFloat = total_width - level_width;
+        let level_width:CGFloat = total.frame.width;
+        let dific_width:CGFloat = total_width - level_width;
         
         var padding:CGFloat = dific_width - level_width;
-        var height = global_but_dim;
+        let height = global_but_dim;
         
         var y_origin = ((superview.bounds.height - superview.bounds.width) * 0.5) - global_but_dim;
         if((DEVICE_VERSION == DEVICE_TYPE.IPAD) || (DEVICE_VERSION == DEVICE_TYPE.IPHONE_4))
@@ -156,14 +156,14 @@ class GameController : UIViewController, ADBannerViewDelegate
             y_origin = ((superview.bounds.height - superview.bounds.width) * 0.25) - (global_but_dim * 0.5);
         }
         
-        var const_margin:CGFloat = 25.0
+        var _:CGFloat = 25.0
 
         if(padding > 0) // must pad level side to center
         {
-            var level_width = (superview.bounds.width / 2.0) - padding;
-            var diffic_width = (superview.bounds.width / 2.0);
-            var margin:CGFloat = 15.0;
-            var shift:CGFloat = (padding - margin) / 2.0;
+            let level_width = (superview.bounds.width / 2.0) - padding;
+            let diffic_width = (superview.bounds.width / 2.0);
+            let margin:CGFloat = 15.0;
+            let shift:CGFloat = (padding - margin) / 2.0;
             level_indicator.frame = CGRect(x: shift, y: y_origin , width: level_width, height: height);
             difficulty_indicator.frame = CGRect(x: (superview.bounds.width / 2.0) - shift, y: y_origin, width: diffic_width, height: height);
         }
@@ -171,10 +171,10 @@ class GameController : UIViewController, ADBannerViewDelegate
         else    // must pad difficulty side to center
         {
             padding *= -1;
-            var level_width = (superview.bounds.width / 2.0);
-            var diffic_width = (superview.bounds.width / 2.0) - padding;
-            var margin:CGFloat = 15.0;
-            var shift:CGFloat = (padding - margin) / 2.0;
+            let level_width = (superview.bounds.width / 2.0);
+            let diffic_width = (superview.bounds.width / 2.0) - padding;
+            let margin:CGFloat = 15.0;
+            let shift:CGFloat = (padding - margin) / 2.0;
             
             level_indicator.frame = CGRect(x: shift, y: y_origin , width: level_width, height: height);
             difficulty_indicator.frame = CGRect(x: (superview.bounds.width / 2.0) + padding - shift, y: y_origin, width: diffic_width, height: height);
@@ -200,11 +200,11 @@ class GameController : UIViewController, ADBannerViewDelegate
         difficulty_indicator.font = UIFont(name: "Galano Grotesque Alt DEMO", size: text_size);
     }
     
-    func reset()
+    @objc func reset()
     {
 
         setProperties();
-        map.removeAll(keepCapacity: false);
+        map.removeAll(keepingCapacity: false);
         self.COUNT = 0;
         self.GAME_OVER = false;
         self.GAME_STARTED = false;
@@ -212,9 +212,9 @@ class GameController : UIViewController, ADBannerViewDelegate
         game_clock = 0.0;
     }
     
-    func increment_level()
+    @objc func increment_level()
     {
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
         CURRENT_LEVEL += 1;
         if(CURRENT_LEVEL >= NUM_LEVELS)
         {
@@ -222,10 +222,10 @@ class GameController : UIViewController, ADBannerViewDelegate
         }
         reset();
     }
-    func decrement_level()
+    @objc func decrement_level()
     {
-        play_sound(SOUND.DEFAULT);
-        CURRENT_LEVEL--;
+        play_sound(sound_effect: SOUND.DEFAULT);
+        CURRENT_LEVEL-=1;
         if(CURRENT_LEVEL < 0)
         {
             CURRENT_LEVEL = 0;
@@ -233,18 +233,18 @@ class GameController : UIViewController, ADBannerViewDelegate
         reset();
     }
     
-    func GoToLevelMenu()
+    @objc func GoToLevelMenu()
     {
-        var delegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let delegate = UIApplication.shared.delegate as! AppDelegate;
         delegate.window?.backgroundColor = LIGHT_BLUE;
         self.view.removeFromSuperview();
-        play_sound(SOUND.DEFAULT);
+        play_sound(sound_effect: SOUND.DEFAULT);
     }
     
-    func GoToMainMenu()
+    @objc func GoToMainMenu()
     {
         self.view.removeFromSuperview();
-        var parent:LevelController = self.parentViewController as! LevelController;
+        let parent:LevelController = self.parent as! LevelController;
         parent.go_to_main();
     }
 
@@ -253,7 +253,7 @@ class GameController : UIViewController, ADBannerViewDelegate
         return (COUNT == NUM_LOCS);
     }
     
-    func neighbors(var index:Int)->(Array<Int>)
+    func neighbors(index:Int)->(Array<Int>)
     {
         var neighbor_indicies:Array<Int> = Array<Int>();
         
@@ -281,11 +281,11 @@ class GameController : UIViewController, ADBannerViewDelegate
         return neighbor_indicies;
     }
     
-    func unmarked_neighbors(var index:Int)->(Array<Int>)
+    func unmarked_neighbors(index:Int)->(Array<Int>)
     {
-        var neighbor_indicies:Array<Int> = neighbors(index);
+        var neighbor_indicies:Array<Int> = neighbors(index: index);
         var unexplored:Array<Int> = Array<Int>();
-        for(var i = 0; i < neighbor_indicies.count; ++i)
+        for i in 0..<neighbor_indicies.count
         {
             if(!map[neighbor_indicies[i]].mine_exists && !map[neighbor_indicies[i]].explored)
             {
@@ -295,33 +295,35 @@ class GameController : UIViewController, ADBannerViewDelegate
         return unexplored;
     }
     
-    func printNeighbors(var index:Int)
+    func printNeighbors(index:Int)
     {
-        println("--------------------------------------");
+        /*
+        print("--------------------------------------");
         var neighbor_indicies:Array<Int> = neighbors(index);
-        println(String(format:"Neighbors of location %i", index));
-        for(var i = 0; i <  neighbor_indicies.count; ++i)
+        print(String(format:"Neighbors of location %i", index));
+        for i in 0..<neighbor_indicies.count
         {
             println(String(neighbor_indicies[i]));
         }
-        println("--------------------------------------\n");
+        print("--------------------------------------\n");
+         */
     }
     
-    func mark_mine(var loc_id:Int)
+    func mark_mine(loc_id:Int)
     {
         map[loc_id].mark_mine();
         map[loc_id].mine_exists = true;
-        ++COUNT;
+        COUNT += 1;
     }
     
     // MARKS GAME ACCORDINGLY IF WON OR LOST AND INVALIDATES ALL TIMERS
     func end_game()
     {
         let game_time = game_clock; // game clock is reset we need temp variable to hold time...
-        nextController.set_time(String(format: "%.2f", game_time));
+        nextController.set_time(time: String(format: "%.2f", game_time));
         stop_game_clock();
         LevelsController.loadData();
-        for(var i = 0; i < NUM_LOCS; ++i)
+        for i in 0..<NUM_LOCS
         {
             if(map[i].mine_exists == true)
             {
@@ -333,7 +335,7 @@ class GameController : UIViewController, ADBannerViewDelegate
                 }
                 else
                 {
-                    map[i].backgroundColor = UIColor.redColor();
+                    map[i].backgroundColor = UIColor.red;
                 }
             }
         }
@@ -353,37 +355,45 @@ class GameController : UIViewController, ADBannerViewDelegate
             prog = 1;
         }
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate;
         let managedContext = appDelegate.managedObjectContext!;
         
-        var fetch = NSFetchRequest(entityName: "Level");
+        var fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Level");
         var pred = NSPredicate(format: "level_no = %i", CURRENT_LEVEL);
         fetch.predicate = pred;
         
         var error:NSError?;
-        var results:[NSManagedObject] = managedContext.executeFetchRequest(fetch, error: &error) as! [NSManagedObject];
-        var beat_difficulty = false;
-        var flag = false;
-        var difficulty = levels[CURRENT_LEVEL].difficulty;
+        do {
+            var results:[NSManagedObject] = try managedContext.execute(fetch) as! [NSManagedObject];
+            var beat_difficulty = false;
+            var flag = false;
+            var difficulty = levels[CURRENT_LEVEL].difficulty;
+        } catch (let error) {
+            print(error)
+        }
         if(LevelsController.level_buttons[CURRENT_LEVEL].level_data == nil)
         {
-            var description = NSEntityDescription.entityForName("Level", inManagedObjectContext: managedContext);
-            var managedObject = NSManagedObject(entity: description!, insertIntoManagedObjectContext: managedContext);
+            var description = NSEntityDescription.entity(forEntityName: "Level", in: managedContext);
+            var managedObject = NSManagedObject(entity: description!, insertInto: managedContext);
             managedObject.setValue(CURRENT_LEVEL, forKey: "level_no");
             managedObject.setValue(prog, forKey: "progress");
             managedObject.setValue(Float(game_time), forKey: "time");
             LevelsController.level_buttons[CURRENT_LEVEL].level_data = managedObject;
-            managedContext.insertObject(managedObject);
+            managedContext.insert(managedObject);
             var error2:NSError?;
-            managedContext.save(&error2);
+            do {
+                try managedContext.save()
+            } catch (let error) {
+                print(error)
+            }
         }
         else
         {
             // get prev progress-> update only if current score greater than prev
-            var prev_progress:Int = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.valueForKey("progress") as! Int;
+            var prev_progress:Int = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.value(forKey: "progress") as! Int;
             if(prog > prev_progress)
             {
-                managedContext.deleteObject(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
+                managedContext.delete(LevelsController.level_buttons[CURRENT_LEVEL].level_data!);
                 var error_:NSError?;
                 managedContext.save(&error);
                 // delete all other references to the object
@@ -403,13 +413,13 @@ class GameController : UIViewController, ADBannerViewDelegate
             else if((prog == prev_progress) && (prog == 3)) // update best time if necessary
             {
                 // get previoius time
-                var previous_time:Float = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.valueForKey("time") as! Float;
+                var previous_time:Float = LevelsController.level_buttons[CURRENT_LEVEL].level_data?.value(forKey: "time") as! Float;
                 if(Float(game_time) < previous_time)
                 {
                     LevelsController.level_buttons[CURRENT_LEVEL].level_data?.setValue(Float(game_time), forKey: "time");
                     // save new time update
                     managedContext.save(&error);
-                    achievementController.set_text(String(format: "New Best Time For Level %i", getLocalLevel()));
+                    achievementController.set_text(in_text: String(format: "New Best Time For Level %i", getLocalLevel()));
                     achievementController.animate();
                 }
             }
@@ -674,7 +684,7 @@ class GameController : UIViewController, ADBannerViewDelegate
     {
         super.viewDidLoad();
         superview = self.view;
-        superview.backgroundColor = UIColor.blackColor();
+        superview.backgroundColor = UIColor.black;
         superview.frame = CGRect(x: 0.0, y: 0.0, width: superview.bounds.width, height: superview.bounds.height - banner_view.bounds.height);
         superview.bounds = superview.frame;
         superview.layoutIfNeeded();
@@ -690,17 +700,17 @@ class GameController : UIViewController, ADBannerViewDelegate
         var back_width:CGFloat = global_but_dim;
         var back_height:CGFloat = global_but_dim;
         back_button = UIButton(frame: CGRect(x: back_x, y: back_y, width: back_width, height: back_height));
-        back_button.setBackgroundImage(UIImage(named: "prev_level"), forState: UIControlState.Normal);
+        back_button.setBackgroundImage(UIImage(named: "prev_level"), for: UIControlState.Normal);
         back_button.layer.borderWidth = 1.0;
-        back_button.layer.borderColor = UIColor.whiteColor().CGColor;
-        back_button.addTarget(self, action:"GoToLevelMenu", forControlEvents: UIControlEvents.TouchUpInside);
+        back_button.layer.borderColor = UIColor.whiteColor.CGColor;
+        back_button.addTarget(self, action:"GoToLevelMenu", for: UIControlEvents.TouchUpInside);
         superview.addSubview(back_button);
         back_button.layoutIfNeeded();
         back_button.setNeedsLayout();
         
         // configure level indicator
-        level_indicator.textAlignment = NSTextAlignment.Right;
-        difficulty_indicator.textAlignment = NSTextAlignment.Left;
+        level_indicator.textAlignment = NSTextAlignment.right;
+        difficulty_indicator.textAlignment = NSTextAlignment.left;
         superview.addSubview(difficulty_indicator);
         superview.addSubview(level_indicator);
         setProperties();
@@ -712,35 +722,35 @@ class GameController : UIViewController, ADBannerViewDelegate
         self.NUM_COLS = NUM_ROWS;
         self.NUM_LOCS = NUM_COLS * NUM_ROWS;
         
-        map.removeAll(keepCapacity: true);
+        map.removeAll(keepingCapacity: true);
         setProperties();
         generateMap();  // generate map to play on
         
         var margin_height = (superview.bounds.height - superview.bounds.width) / 2.0;
         
         superview.layer.borderWidth = 2.0;
-        superview.layer.borderColor = UIColor.blackColor().CGColor
+        superview.layer.borderColor = UIColor.black.cgColor
         
-        self.bottom_text.setTranslatesAutoresizingMaskIntoConstraints(false);
-        var center_x = NSLayoutConstraint(item: bottom_text, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
+        self.bottom_text.translatesAutoresizingMaskIntoConstraints = false
+        var center_x = NSLayoutConstraint(item: bottom_text, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.centerX, multiplier: 1.0, constant: 0.0);
         
         var center_y_const = (superview.bounds.width + superview.bounds.height) / 2.0;
-        var center_y = NSLayoutConstraint(item: bottom_text, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: center_y_const);
+        var center_y = NSLayoutConstraint(item: bottom_text, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.top, multiplier: 1.0, constant: center_y_const);
         
-        var menu_font_size:CGFloat = 20.0
+        var _:CGFloat = 20.0
         superview.addSubview(self.bottom_text);
         superview.addConstraint(center_x);
         superview.addConstraint(center_y);
         
-        self.bottom_text.textColor = UIColor.whiteColor();
-        self.bottom_text.textAlignment = NSTextAlignment.Center;
+        self.bottom_text.textColor = UIColor.white;
+        self.bottom_text.textAlignment = NSTextAlignment.center;
         self.bottom_text.font = UIFont(name: "Arial-BoldMT" , size: 35.0);
 
         update_local_level();
 
-        var repeat_image = UIImage(named: "repeat_level");
-        var prev_image = UIImage(named: "prev_level");
-        var next_image = UIImage(named: "next_level");
+        let repeat_image = UIImage(named: "repeat_level");
+        let prev_image = UIImage(named: "prev_level");
+        let next_image = UIImage(named: "next_level");
         
         
         // get y for buttons, this will be different depending on device
@@ -755,33 +765,33 @@ class GameController : UIViewController, ADBannerViewDelegate
         var prev_width:CGFloat = global_but_dim;
         var prev_height:CGFloat = global_but_dim;
         prev_button = UIButton(frame: CGRect(x: prev_x, y: button_y, width: prev_width, height: prev_height));
-        prev_button.setBackgroundImage(prev_image, forState: UIControlState.Normal);
+        prev_button.setBackgroundImage(prev_image, for: UIControlState.normal);
         prev_button.layer.borderWidth = 1.0;
-        prev_button.layer.borderColor = UIColor.whiteColor().CGColor;
-        prev_button.layer.backgroundColor = UIColor.blackColor().CGColor;
-        prev_button.addTarget(self, action: "decrement_level", forControlEvents: UIControlEvents.TouchUpInside);
+        prev_button.layer.borderColor = UIColor.white.cgColor;
+        prev_button.layer.backgroundColor = UIColor.black.cgColor;
+        prev_button.addTarget(self, action: "decrement_level", for: UIControlEvents.touchUpInside);
         
         // configure repeat button
         var repeat_x:CGFloat = prev_button.frame.origin.x + global_but_dim + global_but_margin;
         var repeat_width:CGFloat = global_but_dim;
         var repeat_height:CGFloat = global_but_dim;
         repeat_button = UIButton(frame: CGRect(x: repeat_x, y: button_y, width: repeat_width, height: repeat_height));
-        repeat_button.setBackgroundImage(repeat_image, forState: UIControlState.Normal);
+        repeat_button.setBackgroundImage(repeat_image, forState: UIControlState.normal);
         repeat_button.layer.borderWidth = 1.0;
-        repeat_button.layer.borderColor = UIColor.whiteColor().CGColor;
-        repeat_button.layer.backgroundColor = UIColor.blackColor().CGColor;
-        repeat_button.addTarget(self, action: "reset", forControlEvents: UIControlEvents.TouchUpInside);
+        repeat_button.layer.borderColor = UIColor.white.cgColor;
+        repeat_button.layer.backgroundColor = UIColor.black.cgColor;
+        repeat_button.addTarget(self, action: "reset", for: UIControlEvents.touchUpInside);
         
         // configure next button
         var next_x:CGFloat = repeat_button.frame.origin.x + global_but_dim + global_but_margin;
         var next_width:CGFloat = global_but_dim;
         var next_height:CGFloat = global_but_dim;
         next_button = UIButton(frame: CGRect(x: next_x, y: button_y, width: next_width, height: next_height));
-        next_button.setBackgroundImage(next_image, forState: UIControlState.Normal);
+        next_button.setBackgroundImage(next_image, forState: UIControlState.normal);
         next_button.layer.borderWidth = 1.0;
-        next_button.layer.borderColor = UIColor.whiteColor().CGColor;
-        next_button.layer.backgroundColor = UIColor.blackColor().CGColor;
-        next_button.addTarget(self, action: "increment_level", forControlEvents: UIControlEvents.TouchUpInside);
+        next_button.layer.borderColor = UIColor.white.cgColor;
+        next_button.layer.backgroundColor = UIColor.black.cgColor;
+        next_button.addTarget(self, action: "increment_level", for: UIControlEvents.touchUpInside);
         
         superview.addSubview(prev_button);
         superview.addSubview(repeat_button);
@@ -799,10 +809,10 @@ class Mine_cell:UIButton
     var insignia:String = "";
     var explored:Bool = false;
     var time_til_disappears:Int = 0;
-    var timer = NSTimer();
+    var timer = Timer();
     var timer_running:Bool = false;
     var speed:SPEED;
-    var startup_time:NSTimeInterval = NSTimeInterval();
+    var startup_time:TimeInterval = TimeInterval();
     
     required init(coder aDecoder: NSCoder) {
         loc_id = -1;
@@ -825,22 +835,22 @@ class Mine_cell:UIButton
     }
     func pause()
     {
-        if(timer.valid)
+        if(timer.isValid)
         {
             var paused_date = NSDate();
             startup_time = timer.fireDate.timeIntervalSinceDate(paused_date);
-            timer.fireDate = NSDate(timeIntervalSinceReferenceDate: Double.infinity);   // keep timer from firing
+            timer.fireDate = NSDate(timeIntervalSinceReferenceDate: Double.infinity) as Date;   // keep timer from firing
         }
     }
     func resume()
     {
-        if(timer.valid)
+        if(timer.isValid)
         {
-            timer.fireDate = NSDate(timeInterval: startup_time, sinceDate: NSDate());
+            timer.fireDate = NSDate(timeInterval: startup_time, sinceDate: NSDate()) as Date;
         }
     }
     
-    func set_image(var name:String)
+    func set_image(zname:String)
     {
         var image = UIImage(named: name);
         setBackgroundImage(image, forState: UIControlState.Normal);
@@ -855,11 +865,11 @@ class Mine_cell:UIButton
                 switch time_til_disappears
                 {
                 case 3:
-                    set_image("mine_red");
+                    set_image(name: "mine_red");
                 case 2:
-                    set_image("mine_orange");
+                    set_image(name: "mine_orange");
                 case 1:
-                    set_image("mine_yellow");
+                    set_image(name: "mine_yellow");
                 case 0:
                     setImage(nil, forState: UIControlState.Normal);
                 default:
@@ -871,11 +881,11 @@ class Mine_cell:UIButton
                 switch time_til_disappears
                 {
                 case 3:
-                    set_image("mine_dark_blue");
+                    set_image(name: "mine_dark_blue");
                 case 2:
-                    set_image("mine_blue");
+                    set_image(name: "mine_blue");
                 case 1:
-                    set_image("mine_light_blue");
+                    set_image(name: "mine_light_blue");
                 case 0:
                     setImage(nil, forState: UIControlState.Normal);
                 default:
@@ -1140,28 +1150,28 @@ class PauseGameController:UIViewController
         super.viewDidLoad();
         superview =  self.view;
         
-        var super_x:CGFloat = 0.0;
-        var super_y:CGFloat = (superview.bounds.height - superview.bounds.width - banner_view.bounds.height) / 2.0;
-        var super_width:CGFloat = superview.bounds.width;
-        var super_height:CGFloat = super_width;
+        let super_x:CGFloat = 0.0;
+        let super_y:CGFloat = (superview.bounds.height - superview.bounds.width - banner_view.bounds.height) / 2.0;
+        let super_width:CGFloat = superview.bounds.width;
+        let super_height:CGFloat = super_width;
         superview.frame = CGRect(x: super_x, y: super_y, width: super_width, height: super_height);
         superview.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3);
         
         // configure visual attributes
-        var margin:CGFloat = superview.bounds.width * 0.1;
-        var x:CGFloat = margin;
-        var y:CGFloat = margin;
-        var width:CGFloat = superview.bounds.width - (2.0 * margin);
-        var height:CGFloat = width;
+        let margin:CGFloat = superview.bounds.width * 0.1;
+        let x:CGFloat = margin;
+        let y:CGFloat = margin;
+        let width:CGFloat = superview.bounds.width - (2.0 * margin);
+        let height:CGFloat = width;
         
         play_button.frame = CGRect(x: x, y: y, width: width, height: height);
         superview.addSubview(play_button);
-        play_button.setBackgroundImage(UIImage(named: "play"), for: UIControlState.Normal); 
+        play_button.setBackgroundImage(UIImage(named: "play"), for: UIControlState.normal);
         play_button.alpha = 0.7;
-        play_button.setTitle("RESUME", for: UIControlState.Normal);
-        play_button.setTitleColor(UIColor.blackColor(), for: UIControlState.Normal);
+        play_button.setTitle("RESUME", for: UIControlState.normal);
+        play_button.setTitleColor(UIColor.black, for: UIControlState.normal);
         play_button.titleLabel?.font = UIFont(name: "Galano Grotesque Alt DEMO", size: 30.0);
-        play_button.addTarget(gameController, action: "resume_game", forControlEvents: UIControlEvents.TouchUpInside);
+        play_button.addTarget(gameController, action: Selector("resume_game"), for: UIControlEvents.TouchUpInside);
         play_button.titleLabel?.alpha = 1.0;
     }
 }
@@ -1186,10 +1196,10 @@ class AchievementController:UIViewController
     {
         super.viewDidLoad();
         superview = self.view;
-        var height:CGFloat = back_button_size;
-        var width:CGFloat = superview.bounds.width - global_but_dim - (global_but_margin * 3.0);
-        var y:CGFloat = gameController.back_button.frame.origin.y;
-        var x:CGFloat = superview.bounds.width + width;
+        let height:CGFloat = back_button_size;
+        let width:CGFloat = superview.bounds.width - global_but_dim - (global_but_margin * 3.0);
+        let y:CGFloat = gameController.back_button.frame.origin.y;
+        let x:CGFloat = superview.bounds.width + width;
         out_frame = CGRect(x: x, y: y, width: width, height: height);
         in_frame = CGRect(x: superview.bounds.width - width - global_but_margin, y: y, width: width, height: height);
         superview.frame = out_frame;
@@ -1209,8 +1219,8 @@ class AchievementController:UIViewController
 
     func animate()
     {
-        UIView.animateWithDuration(speed, animations: {self.superview.frame = self.in_frame});
-        UIView.animateWithDuration(speed, delay: pause, options: nil, animations: {self.superview.frame = self.out_frame}, completion: nil);
+        UIView.animate(withDuration: speed, animations: {self.superview.frame = self.in_frame});
+        UIView.animate(withDuration: speed, delay: pause, options: nil, animations: {self.superview.frame = self.out_frame}, completion: nil);
     }
 }
 

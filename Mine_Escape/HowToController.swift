@@ -30,7 +30,7 @@ class HowToController : ViewController
         // generate title subview
         let margin:CGFloat = superview.bounds.height / 20.0;
 
-        var title = UILabel();
+        let title = UILabel();
         var font_size:CGFloat = 30.0;
         var text_size:CGFloat = 20.0;
         
@@ -49,7 +49,7 @@ class HowToController : ViewController
         default: font_size = 30.0;
         }
         
-        add_title_button(title_label: &title, superview: &superview, text: "HOW TO PLAY", margin: margin, size: font_size);
+        add_title_button(title_label: title, superview: superview, text: "HOW TO PLAY", margin: margin, size: font_size);
         
         // configure text view
         add_subview(subview: text_view, superview: superview, top_margin: (margin * 2.5), bottom_margin: margin + back_button_size, left_margin: margin, right_margin: margin);
