@@ -12,18 +12,18 @@ import UIKit
 var back_button_size:CGFloat = 40.0;
 
 // created gradient on background view
-func configure_gradient(inout background:UIView, top_color:UIColor, bottom_color:UIColor)
+func configure_gradient( background:inout UIView, top_color:UIColor, bottom_color:UIColor)
 {
-    background.setTranslatesAutoresizingMaskIntoConstraints(false);
+    background.translatesAutoresizingMaskIntoConstraints = false
     
     // generate constraints for background
-    var width = NSLayoutConstraint(item: background, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: super_view, attribute: NSLayoutAttribute.Width, multiplier: 1.0, constant: 0.0);
+    let width = NSLayoutConstraint(item: background, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: super_view, attribute: NSLayoutAttribute.width, multiplier: 1.0, constant: 0.0);
     
-    var height = NSLayoutConstraint(item: background, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: super_view, attribute: NSLayoutAttribute.Height, multiplier: 1.0, constant: 0.0);
+    let height = NSLayoutConstraint(item: background, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: super_view, attribute: NSLayoutAttribute.height, multiplier: 1.0, constant: 0.0);
     
-    var centerx = NSLayoutConstraint(item: background, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: super_view, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
+    let centerx = NSLayoutConstraint(item: background, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: super_view, attribute: NSLayoutAttribute.centerX, multiplier: 1.0, constant: 0.0);
     
-    var centery = NSLayoutConstraint(item: background, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: super_view, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: 0.0);
+    let centery = NSLayoutConstraint(item: background, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: super_view, attribute: NSLayoutAttribute.centerY, multiplier: 1.0, constant: 0.0);
     
     super_view.addSubview(background);
     super_view.addConstraint(width);
@@ -31,16 +31,16 @@ func configure_gradient(inout background:UIView, top_color:UIColor, bottom_color
     super_view.addConstraint(centerx);
     super_view.addConstraint(centery);
     
-    var test_loc = [0,1];
-    var test_color = [top_color.CGColor, bottom_color.CGColor];
+    let test_loc = [0,1];
+    let test_color = [top_color.cgColor, bottom_color.cgColor];
     
-    var gradient = CAGradientLayer();
+    let gradient = CAGradientLayer();
     gradient.frame = super_view.bounds;
-    gradient.locations = test_loc;
+    gradient.locations = test_loc as [NSNumber];
     gradient.colors = test_color;
     gradient.startPoint = CGPoint(x: 0.5, y: 0.0);
     gradient.endPoint = CGPoint(x: 0.5, y: 1.0);
-    background.layer.insertSublayer(gradient, atIndex: 0);
+    background.layer.insertSublayer(gradient, at: 0);
     
     super_view.addSubview(background);
     super_view.addConstraint(width);
@@ -50,30 +50,30 @@ func configure_gradient(inout background:UIView, top_color:UIColor, bottom_color
 }
 
 // adds back button to bottom left corner of view
-func add_back_button(inout back_button:UIButton, inout superview:UIView)
+func add_back_button( back_button:inout UIButton, superview:inout UIView)
 {
     // configure back button properties
-    var back_image = UIImage(named: "prev_level");
-    back_button.setTranslatesAutoresizingMaskIntoConstraints(false);
-    back_button.backgroundColor = UIColor.clearColor();
+    let back_image = UIImage(named: "prev_level");
+    back_button.translatesAutoresizingMaskIntoConstraints = false;
+    back_button.backgroundColor = UIColor.clear;
     back_button.layer.borderWidth = 1.0;
-    back_button.layer.borderColor = UIColor.whiteColor().CGColor;
-    back_button.setBackgroundImage(back_image, forState: UIControlState.Normal);
+    back_button.layer.borderColor = UIColor.white.cgColor;
+    back_button.setBackgroundImage(back_image, for: UIControlState.normal);
     
     // configure back button constraints
     
-    var back_margin:CGFloat = superview.bounds.width * 0.025;
-    var back_length:CGFloat = 40.0;
+    let back_margin:CGFloat = superview.bounds.width * 0.025;
+    let back_length:CGFloat = 40.0;
     global_but_margin = back_margin;
     global_but_dim = back_length;
     
-    var back_left = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: back_margin);
+    let back_left = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.left, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.left, multiplier: 1.0, constant: back_margin);
     
-    var back_bottom = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -back_margin);
+    let back_bottom = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.bottom, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.bottom, multiplier: 1.0, constant: -back_margin);
     
-    var back_height = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: back_button, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -back_length);
+    let back_height = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.top, relatedBy: NSLayoutRelation.equal, toItem: back_button, attribute: NSLayoutAttribute.bottom, multiplier: 1.0, constant: -back_length);
     
-    var back_width = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: back_button, attribute: NSLayoutAttribute.Height, multiplier: 1.0, constant: 0.0);
+    let back_width = NSLayoutConstraint(item:back_button, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: back_button, attribute: NSLayoutAttribute.height, multiplier: 1.0, constant: 0.0);
     
     // configure back button hiearchy
     
@@ -86,23 +86,23 @@ func add_back_button(inout back_button:UIButton, inout superview:UIView)
 }
 
 // adds title label
-func add_title_button(inout title_label:UILabel, inout superview:UIView, text:String, margin:CGFloat, size:CGFloat)
+func add_title_button( title_label: UILabel, superview: UIView, text:String, margin:CGFloat, size:CGFloat)
 {
     // configure title label properties
     title_label.font = UIFont(name: "Galano Grotesque Alt DEMO", size: size);
     title_label.text = text;
-    title_label.textColor = UIColor.orangeColor();
-    title_label.textAlignment = NSTextAlignment.Center;
+    title_label.textColor = UIColor.orange;
+    title_label.textAlignment = NSTextAlignment.center;
     
-    var center = NSLayoutConstraint(item:title_label, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: 0.0);
+    let center = NSLayoutConstraint(item:title_label, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.centerX, multiplier: 1.0, constant: 0.0);
     
-    var width = NSLayoutConstraint(item:title_label, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Width, multiplier: 1.0, constant: 0.0);
+    let width = NSLayoutConstraint(item:title_label, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.width, multiplier: 1.0, constant: 0.0);
     
-    var top = NSLayoutConstraint(item:title_label, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: margin);
+    let top = NSLayoutConstraint(item:title_label, attribute: NSLayoutAttribute.top, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.top, multiplier: 1.0, constant: margin);
     
     // configure back button hiearchy
     
-    title_label.setTranslatesAutoresizingMaskIntoConstraints(false);
+    title_label.translatesAutoresizingMaskIntoConstraints = false;
     superview.addSubview(title_label);
     superview.addConstraint(center);
     superview.addConstraint(width);
@@ -110,23 +110,22 @@ func add_title_button(inout title_label:UILabel, inout superview:UIView, text:St
 }
 
 // GENERATES SUPERVIEW WITH VIEW WITH CONSTRAINTS
-func insert_subview(var ht_ratio:CGFloat,var width_ratio:CGFloat, var x:CGFloat, var y:CGFloat, inout parent_view:UIView, inout child_view:UIView)
+func insert_subview(ht_ratio:CGFloat,cwidth_ratio:CGFloat, x:CGFloat, y:CGFloat, parent_view:inout UIView, child_view: UIView)
 {
-    parent_view.setTranslatesAutoresizingMaskIntoConstraints(false);
-    child_view.setTranslatesAutoresizingMaskIntoConstraints(false);
-    var width_parent = parent_view.bounds.width;
-    var height_parent = parent_view.bounds.height;
-    var width_offset = width_parent * x;
-    var height_offset = height_parent * y;
+    parent_view.translatesAutoresizingMaskIntoConstraints = false;    child_view.translatesAutoresizingMaskIntoConstraints = false
+    let width_parent = parent_view.bounds.width;
+    let height_parent = parent_view.bounds.height;
+    let width_offset = width_parent * x;
+    let height_offset = height_parent * y;
     
     // CONSTRAINTS
-    var height_constr = NSLayoutConstraint(item: child_view, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: parent_view, attribute: NSLayoutAttribute.Height, multiplier: ht_ratio, constant: 0.0);
+    let height_constr = NSLayoutConstraint(item: child_view, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: parent_view, attribute: NSLayoutAttribute.height, multiplier: ht_ratio, constant: 0.0);
     
-    var width_constr = NSLayoutConstraint(item: child_view, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: parent_view, attribute: NSLayoutAttribute.Width, multiplier: width_ratio, constant: 0.0);
+    let width_constr = NSLayoutConstraint(item: child_view, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: parent_view, attribute: NSLayoutAttribute.width, multiplier: cwidth_ratio, constant: 0.0);
     
-    var center_x = NSLayoutConstraint(item: child_view, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: parent_view, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: width_offset);
+    let center_x = NSLayoutConstraint(item: child_view, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: parent_view, attribute: NSLayoutAttribute.left, multiplier: 1.0, constant: width_offset);
     
-    var center_y = NSLayoutConstraint(item: child_view, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: parent_view, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -height_offset);
+    let center_y = NSLayoutConstraint(item: child_view, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: parent_view, attribute: NSLayoutAttribute.bottom, multiplier: 1.0, constant: -height_offset);
     
     parent_view.addSubview(child_view);
     parent_view.addConstraint(height_constr);
@@ -140,18 +139,18 @@ func insert_subview(var ht_ratio:CGFloat,var width_ratio:CGFloat, var x:CGFloat,
 // requires: nothing
 // modifies: subview
 // effects: centers subview to superview, sets height and width to height and width ratios of superview
-func add_subview(var subview:UIView, var superview:UIView, var top_margin:CGFloat, var bottom_margin:CGFloat, var left_margin:CGFloat, var right_margin:CGFloat)
+func add_subview( subview:UIView, superview:UIView, top_margin:CGFloat, bottom_margin:CGFloat, left_margin:CGFloat, right_margin:CGFloat)
 {
-    subview.setTranslatesAutoresizingMaskIntoConstraints(false);
+    subview.translatesAutoresizingMaskIntoConstraints = false;
     
     // confogure constraints
-    var left = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Left, multiplier: 1.0, constant: left_margin);
+    let left = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.left, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.left, multiplier: 1.0, constant: left_margin);
     
-    var right = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Right, multiplier: 1.0, constant: -right_margin);
+    let right = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.right, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.right, multiplier: 1.0, constant: -right_margin);
     
-    var top = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Top, multiplier: 1.0, constant: top_margin);
+    let top = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.top, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.top, multiplier: 1.0, constant: top_margin);
     
-    var bottom = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: superview, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: -bottom_margin);
+    let bottom = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.bottom, relatedBy: NSLayoutRelation.equal, toItem: superview, attribute: NSLayoutAttribute.bottom, multiplier: 1.0, constant: -bottom_margin);
     
     // configure hiearchy
     superview.addSubview(subview);
@@ -163,7 +162,7 @@ func add_subview(var subview:UIView, var superview:UIView, var top_margin:CGFloa
     superview.addConstraint(bottom);
 }
 
-func AddSubview(inout subview:UIView, inout superview:UIView, var in_x:CGFloat, var in_y:CGFloat, var width:CGFloat, var height:CGFloat)
+func AddSubview(subview:UIView, superview:UIView, in_x:CGFloat, in_y:CGFloat, width:CGFloat, height:CGFloat)
 {
     subview.frame = CGRect(x: in_x, y: in_y, width: width, height: height);
     superview.addSubview(subview);
@@ -171,11 +170,11 @@ func AddSubview(inout subview:UIView, inout superview:UIView, var in_x:CGFloat, 
 
 //-------------------------------------------------------------------------------------------------------------------------
 
-func addGradient(var view:UIView, var colors:Array<CGColor>)
+func addGradient(view:UIView, colors:Array<CGColor>)
 {
-    var gradient = CAGradientLayer();
+    let gradient = CAGradientLayer();
     gradient.frame = view.bounds;
     gradient.colors = colors;
-    view.layer.insertSublayer(gradient, atIndex: 0);
+    view.layer.insertSublayer(gradient, at: 0);
 }
 
